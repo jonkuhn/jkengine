@@ -96,10 +96,10 @@ void TileMapShaderProgram::Map(Texture& mapTexture, const glm::vec2& mapSizeInTi
     _shaderProgram.SetUniform("tileMapSizeInTiles", mapSizeInTiles);
 }
 
-void TileMapShaderProgram::Atlas(Texture& atlasTexture, const glm::vec2& atlasSizeInTiles)
+void TileMapShaderProgram::Atlas(TileAtlas& atlas)
 {
     const int atlasTextureIndex = 1;
-    atlasTexture.Bind(atlasTextureIndex);
+    atlas.AtlasTexture().Bind(atlasTextureIndex);
     _shaderProgram.SetUniform("tileAtlas", atlasTextureIndex);
-    _shaderProgram.SetUniform("tileAtlasSizeInTiles", atlasSizeInTiles);
+    _shaderProgram.SetUniform("tileAtlasSizeInTiles", atlas.Size());
 }

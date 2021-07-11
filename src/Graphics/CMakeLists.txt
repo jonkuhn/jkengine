@@ -12,6 +12,7 @@ target_sources(Graphics
     PngImage.cpp
     ILibPngWrapper.h
     LibPngWrapper.h
+    ITileAtlas.h
     ITileMap.h
     OpenGL/Engine.h
     OpenGL/Engine.cpp
@@ -33,6 +34,7 @@ target_sources(Graphics
     OpenGL/Simple3dVertex.h
     OpenGL/Texture.h
     OpenGL/Texture.cpp
+    OpenGL/TileAtlas.h
     OpenGL/TileMap.h
     OpenGL/TileMap.cpp
     OpenGL/TileMapShaderProgram.h

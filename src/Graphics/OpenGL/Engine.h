@@ -7,7 +7,7 @@
 #include "OpenGLWrapper.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
-#include "TileMap.h"
+#include "TileAtlas.h"
 #include "TileMapShaderProgram.h"
 #include "UnitQuadVertexArray.h"
 #include "VertexArray.h"
@@ -25,9 +25,7 @@ namespace Graphics::OpenGL
             return _window;
         }
 
-        std::unique_ptr<Graphics::ITileMap> CreateTileMap(
-            IImage& tileMap,
-            const glm::vec2& mapSizeInTiles,
+        std::unique_ptr<Graphics::ITileAtlas> CreateTileAtlas(
             IImage& tileAtlas,
             const glm::vec2& atlasSizeInTiles) override;
 
@@ -39,7 +37,6 @@ namespace Graphics::OpenGL
         UnitQuadVertexArray _unitQuadVertexArray;
 
         std::vector<std::unique_ptr<Texture>> _textures;
-        std::vector<std::unique_ptr<TileMap>> _tileMaps;
 
         Texture* CreateTexture(const Texture::Params &params);
     };

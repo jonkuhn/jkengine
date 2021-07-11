@@ -4,6 +4,7 @@
 #include "IOpenGLWrapper.h"
 #include "ShaderProgram.h"
 #include "Texture.h"
+#include "TileAtlas.h"
 
 namespace Graphics::OpenGL
 {
@@ -23,7 +24,7 @@ namespace Graphics::OpenGL
         void ViewMatrix(const glm::mat4& view);
         void ProjectionMatrix(const glm::mat4& projection);
         void Map(Texture& mapTexture, const glm::vec2  &mapSizeInTiles);
-        void Atlas(Texture& mapTexture, const glm::vec2& atlasSizeInTiles);
+        void Atlas(TileAtlas& atlas);
 
     private:
         // Take a hard dependency on ShaderProgram here because this class's

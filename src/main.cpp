@@ -119,12 +119,12 @@ int main()
     //    .MinFilter(Texture::MinFilterMode::Nearest)
     //    .MagFilter(Texture::MagFilterMode::Nearest));
 
-    auto tileMap = engine.CreateTileMap(
-        randomTileMap,
-        glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES),
+    auto tileAtlas = engine.CreateTileAtlas(
         tileAtlasImage,
         glm::vec2(TILE_ATLAS_WIDTH_IN_TILES, TILE_ATLAS_HEIGHT_IN_TILES)
     );
+
+    auto tileMap = tileAtlas->CreateTileMap(randomTileMap);
 
     const float MOVE_SPEED = 5.0f;
 

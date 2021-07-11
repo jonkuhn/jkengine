@@ -8,16 +8,14 @@
 #pragma clang diagnostic pop
 
 #include "IImage.h"
-#include "ITileMap.h"
+#include "ITileAtlas.h"
 
 namespace Graphics
 {
     class IEngine
     {
     public:
-        virtual std::unique_ptr<ITileMap> CreateTileMap(
-            IImage &tileMap,
-            const glm::vec2& mapSizeInTiles,
+        virtual std::unique_ptr<ITileAtlas> CreateTileAtlas(
             IImage &tileAtlas,
             const glm::vec2& atlasSizeInTiles) = 0;
 

@@ -13,23 +13,14 @@ Engine::Engine(int winWidth, int winHeight, const std::string& title)
 
 }
 
-std::unique_ptr<Graphics::ITileMap> Engine::CreateTileMap(
-    IImage& tileMapImage,
-    const glm::vec2& mapSizeInTiles,
+std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
     IImage& tileAtlasImage,
     const glm::vec2& atlasSizeInTiles)
 {
-    auto tileMapUniquePtr = std::make_unique<TileMap>(
+    return std::make_unique<TileAtlas>(
+        &_gl,
         &_tileMapShaderProgram,
         &_unitQuadVertexArray,
-        Texture(
-            &_gl,
-            Texture::Params(tileMapImage)
-                .WrapModeS(Texture::WrapMode::ClampToBorder)
-                .WrapModeT(Texture::WrapMode::ClampToBorder)
-                .MinFilter(Texture::MinFilterMode::Nearest)
-                .MagFilter(Texture::MagFilterMode::Nearest)),
-        mapSizeInTiles,
         Texture(
             &_gl,
             Texture::Params(tileAtlasImage)
@@ -38,5 +29,4 @@ std::unique_ptr<Graphics::ITileMap> Engine::CreateTileMap(
                 .MinFilter(Texture::MinFilterMode::Nearest)
                 .MagFilter(Texture::MagFilterMode::Nearest)),
         atlasSizeInTiles);
-    return tileMapUniquePtr;
 }
