@@ -2,6 +2,7 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
+#include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #pragma clang diagnostic pop
 
@@ -63,7 +64,7 @@ void ShaderProgram::Use()
     _gl->UseProgram(_handle.get());
 }
 
-void ShaderProgram::SetUniform(const std::string name, int value)
+void ShaderProgram::SetUniform(const std::string& name, int value)
 {
     // First, ensure this is the program in use, so the caller doesn't
     // have to call Use() before calling SetUniform.
@@ -71,7 +72,7 @@ void ShaderProgram::SetUniform(const std::string name, int value)
     _gl->Uniform1i(_gl->GetUniformLocation(_handle.get(), name.c_str()), value);
 }
 
-void ShaderProgram::SetUniform(const std::string name, const glm::mat4& value)
+void ShaderProgram::SetUniform(const std::string& name, const glm::mat4& value)
 {
     // First, ensure this is the program in use, so the caller doesn't
     // have to call Use() before calling SetUniform.
@@ -83,7 +84,7 @@ void ShaderProgram::SetUniform(const std::string name, const glm::mat4& value)
         glm::value_ptr(value));
 }
 
-void ShaderProgram::SetUniform(const std::string name, const glm::vec3& value)
+void ShaderProgram::SetUniform(const std::string& name, const glm::vec3& value)
 {
     // First, ensure this is the program in use, so the caller doesn't
     // have to call Use() before calling SetUniform.
@@ -94,7 +95,7 @@ void ShaderProgram::SetUniform(const std::string name, const glm::vec3& value)
         glm::value_ptr(value));
 }
 
-void ShaderProgram::SetUniform(const std::string name, const glm::vec2& value)
+void ShaderProgram::SetUniform(const std::string& name, const glm::vec2& value)
 {
     // First, ensure this is the program in use, so the caller doesn't
     // have to call Use() before calling SetUniform.

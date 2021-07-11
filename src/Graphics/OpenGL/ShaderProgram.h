@@ -5,8 +5,7 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
-#include <glm/mat4x4.hpp>
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
 #include "IShader.h"
@@ -28,10 +27,10 @@ namespace Graphics::OpenGL
 
 
         void Use();
-        void SetUniform(const std::string name, int value);
-        void SetUniform(const std::string name, const glm::mat4& value);
-        void SetUniform(const std::string name, const glm::vec3& value);
-        void SetUniform(const std::string name, const glm::vec2& value);
+        void SetUniform(const std::string& name, int value);
+        void SetUniform(const std::string& name, const glm::mat4& value);
+        void SetUniform(const std::string& name, const glm::vec3& value);
+        void SetUniform(const std::string& name, const glm::vec2& value);
 
     private:
         IOpenGLWrapper* _gl;
