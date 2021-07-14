@@ -10,7 +10,6 @@ namespace Graphics
     {
     public:
         virtual ~ITileAtlas() = default;
-
-        virtual std::unique_ptr<Graphics::ITileMap> CreateTileMap(IImage& tileMap) = 0;
+        virtual std::unique_ptr<Graphics::ITileMap> CreateTileMap(const IImage& tileMap) = 0;
     };
 }

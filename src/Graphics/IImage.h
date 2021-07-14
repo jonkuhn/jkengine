@@ -7,6 +7,7 @@ namespace Graphics
     class IImage
     {
     public:
+        virtual ~IImage() = default;
         virtual const uint8_t* Data() const = 0;
         virtual int Width() const = 0;
         virtual int Height() const = 0;
@@ -23,11 +24,5 @@ namespace Graphics
         };
 
         virtual PixelFormat Format() const = 0;
-
-    protected:
-        // This interface is not intended to expose ownership of the
-        // concrete object implementing it.  Therefore, do not allow
-        // deletion via interface pointers.
-        ~IImage() = default;
     };
 }

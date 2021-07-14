@@ -1,3 +1,4 @@
+#include <array>
 #include <cstdlib>
 #include <iostream>
 #include <cmath>
@@ -80,6 +81,69 @@ private:
     std::vector<uint8_t> _data;
 };
 
+class TestTileMapImage : public IImage
+{
+private:
+    static constexpr int WIDTH = 8;
+    static constexpr int HEIGHT = 4;
+    typedef std::array<std::array<std::array<uint8_t, 4>, WIDTH>, HEIGHT> PixelsType;
+
+    // 8x4x4 array
+    PixelsType _pixels;
+
+public:
+    static constexpr std::array<uint8_t, 4> TileWhite = { 0, 0, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileRed   = { 1, 0, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileGreen = { 2, 0, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileBlue  = { 3, 0, 0, 0 };
+
+    static constexpr std::array<uint8_t, 4> TileBlack   = { 0, 1, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileYellow  = { 1, 1, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileCyan    = { 2, 1, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileMagenta = { 3, 1, 0, 0 };
+
+    static constexpr std::array<uint8_t, 4> TileDarkGray    = { 0, 2, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileLightPurple = { 1, 2, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileLightGreen  = { 2, 2, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileLightPeach  = { 3, 2, 0, 0 };
+
+    static constexpr std::array<uint8_t, 4> TileLightGray = { 0, 3, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TilePurple    = { 1, 3, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileSkyBlue   = { 2, 3, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileOrange    = { 3, 3, 0, 0 };
+
+    TestTileMapImage()
+        : _pixels({ {
+            { TileYellow, TileGreen, TileCyan, TileRed, TileLightGreen, TilePurple, TileLightPurple, TileSkyBlue },
+            { TileOrange, TileWhite, TileBlue, TileLightGray, TileLightPeach, TileBlack, TileMagenta, TileDarkGray },
+            { TileWhite, TileBlue, TileLightGray, TileLightPeach, TileBlack, TileMagenta, TileDarkGray, TileOrange },
+            { TileGreen, TileCyan, TileRed, TileLightGreen, TilePurple, TileLightPurple, TileSkyBlue, TileYellow }
+        } })
+    {
+
+    }
+
+    const uint8_t* Data() const override
+    {
+        return &_pixels[0][0][0];
+    }
+    int Width() const override
+    {
+        return WIDTH;
+    }
+
+    int Height() const override
+    {
+        return HEIGHT;
+    }
+
+    PixelFormat Format() const override
+    {
+        return PixelFormat::RGBA;
+    }
+
+};
+
 int main()
 {
     LibPngWrapper libpng;
@@ -91,8 +155,8 @@ int main()
     // - Each tile to be 64 by 64 pixels
     // - So world is 64,000 by 64,000
     // - So view is 640 by 640
-    const float WORLD_WIDTH_IN_TILES = 100;
-    const float WORLD_HEIGHT_IN_TILES = 100; 
+    const float WORLD_WIDTH_IN_TILES = 8;
+    const float WORLD_HEIGHT_IN_TILES = 4; 
 
     // Define a model matrix that scale's up from a unit quad
     // to world width by world height
@@ -102,7 +166,8 @@ int main()
     model = glm::scale(model, glm::vec3(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES, 0.0f));  
 
     // Generate a random tile map texture using a helper class
-    RandomTileMap randomTileMap(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES);
+    //RandomTileMap randomTileMap(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES);
+    TestTileMapImage randomTileMap;
     //Texture tileMapTexture(&gl, Texture::Params(randomTileMap)
     //    .WrapModeS(Texture::WrapMode::ClampToBorder)
     //    .WrapModeT(Texture::WrapMode::ClampToBorder)
@@ -110,9 +175,9 @@ int main()
     //    .MagFilter(Texture::MagFilterMode::Nearest));
 
     // use a small 2x2 tile atlas for testing purposes
-    const float TILE_ATLAS_WIDTH_IN_TILES = 2;
-    const float TILE_ATLAS_HEIGHT_IN_TILES = 2;
-    PngImage tileAtlasImage(&libpng, "TestFiles/scribbletiles.png");
+    const float TILE_ATLAS_WIDTH_IN_TILES = 4;
+    const float TILE_ATLAS_HEIGHT_IN_TILES = 4;
+    PngImage tileAtlasImage(&libpng, "TestFiles/colortiles4x4.png");
     //Texture tileAtlasTexture(&gl, Texture::Params(tileAtlasImage)
     //    .WrapModeS(Texture::WrapMode::ClampToBorder)
     //    .WrapModeT(Texture::WrapMode::ClampToBorder)
@@ -124,7 +189,7 @@ int main()
         glm::vec2(TILE_ATLAS_WIDTH_IN_TILES, TILE_ATLAS_HEIGHT_IN_TILES)
     );
 
-    auto tileMap = tileAtlas->CreateTileMap(randomTileMap);
+    auto tileMap = tileAtlas->CreateTileMap( randomTileMap);
 
     const float MOVE_SPEED = 5.0f;
 

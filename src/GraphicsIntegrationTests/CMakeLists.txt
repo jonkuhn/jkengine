@@ -8,6 +8,7 @@ target_sources(GraphicsIntegrationTests
   PRIVATE
     main_test.cpp
     PngImageTests.cpp
+    TileMapTests.cpp
     OpenGL/Pixel.h
     OpenGL/Pixel.cpp
     OpenGL/TestHelpers.h
@@ -26,4 +27,4 @@ target_include_directories(GraphicsIntegrationTests PRIVATE
 target_link_libraries(GraphicsIntegrationTests Graphics ${CONAN_LIBS})
 
 file(COPY ./TestFiles/test31x47.png DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)
-file(COPY ./TestFiles/test31x47.jpg DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)
+file(COPY ./TestFiles/colortiles4x4.png DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)

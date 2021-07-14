@@ -41,7 +41,7 @@ namespace Graphics::OpenGL
         TileAtlas& operator=(const TileAtlas& other) = delete;
 
         std::unique_ptr<Graphics::ITileMap> CreateTileMap(
-            IImage& tileMapImage) override
+            const IImage& tileMapImage) override
         {
             return std::make_unique<TileMap>(
                 _tileMapShaderProgram,
