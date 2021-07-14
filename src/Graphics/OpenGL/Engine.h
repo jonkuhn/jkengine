@@ -20,13 +20,13 @@ namespace Graphics::OpenGL
     public:
         Engine(int winWidth, int winHeight, const std::string& title);
 
-        GlfwWindow& GetWindow()
+        GlfwWindow& GetWindow() override
         {
             return _window;
         }
 
         std::unique_ptr<Graphics::ITileAtlas> CreateTileAtlas(
-            IImage& tileAtlas,
+            const IImage& tileAtlas,
             const glm::vec2& atlasSizeInTiles) override;
 
     private:

@@ -9,20 +9,19 @@
 
 #include "IImage.h"
 #include "ITileAtlas.h"
+#include "IWindow.h"
 
 namespace Graphics
 {
     class IEngine
     {
     public:
+        virtual ~IEngine() = default;
+
         virtual std::unique_ptr<ITileAtlas> CreateTileAtlas(
-            IImage &tileAtlas,
+            const IImage &tileAtlas,
             const glm::vec2& atlasSizeInTiles) = 0;
 
-    protected:
-        // This interface is not intended to expose ownership of the
-        // concrete object implementing it.  Therefore, do not allow
-        // deletion via interface pointers.
-        ~IEngine() = default;
+        virtual IWindow& GetWindow() = 0;
     };
 }

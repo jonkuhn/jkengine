@@ -6,6 +6,7 @@ else()
 endif()
 target_sources(Graphics
   PRIVATE
+    Graphics.h
     IEngine.h
     IImage.h
     PngImage.h
@@ -14,6 +15,7 @@ target_sources(Graphics
     LibPngWrapper.h
     ITileAtlas.h
     ITileMap.h
+    IWindow.h
     OpenGL/Engine.h
     OpenGL/Engine.cpp
     OpenGL/GlfwException.h

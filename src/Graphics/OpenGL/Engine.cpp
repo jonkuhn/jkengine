@@ -14,7 +14,7 @@ Engine::Engine(int winWidth, int winHeight, const std::string& title)
 }
 
 std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
-    IImage& tileAtlasImage,
+    const IImage& tileAtlasImage,
     const glm::vec2& atlasSizeInTiles)
 {
     return std::make_unique<TileAtlas>(
