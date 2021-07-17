@@ -13,8 +13,7 @@
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/ShaderProgram.h"
 #include "Graphics/OpenGL/VertexArray.h"
-
-#include "ViewportCapture.h"
+#include "Graphics/OpenGL/ViewportCapture.h"
 
 using namespace testing;
 using namespace Graphics::OpenGL;
@@ -136,7 +135,7 @@ TEST_F(VertexArrayTests, DrawRectangle_ReadAndVerifyPixels)
     _shaderProgram->Use();
     vertexArray.Draw();
 
-    ViewportCapture capture(_gl);
+    ViewportCapture capture(&_gl);
 
     // The 4 corners of the viewport should be the clearColor
     EXPECT_EQ(capture.GetPixel(0, 0), _blackColor);
@@ -176,8 +175,8 @@ TEST_F(VertexArrayTests, DrawTriangle_ReadAndVerifyPixels)
     _shaderProgram->Use();
     vertexArray.Draw();
 
-    ViewportCapture capture(_gl);
-    capture.SaveToFile("DrawTriangle_ReadAndVerifyPixels.data");
+    ViewportCapture capture(&_gl);
+    capture.SaveToFileAsRaw("DrawTriangle_ReadAndVerifyPixels.data");
 
     // The 4 corners of the viewport should be the black color used to clear the viewport
     EXPECT_EQ(capture.GetPixel(0, 0), _blackColor);
@@ -190,13 +189,13 @@ TEST_F(VertexArrayTests, DrawTriangle_ReadAndVerifyPixels)
     // coordinate system conversions)
 
     // top corner 
-    EXPECT_EQ(capture.GetPixel(capture.Width() / 2, 3 * capture.Height() / 4 - 2), _shapeColor);
+    EXPECT_EQ(capture.GetPixel(capture.Width() / 2, capture.Height() / 4 + 2), _shapeColor);
 
     // bottom left corner
-    EXPECT_EQ(capture.GetPixel(capture.Width() / 4 + 5, capture.Height() / 4 + 2), _shapeColor);
+    EXPECT_EQ(capture.GetPixel(capture.Width() / 4 + 5, 3 * capture.Height() / 4 - 2), _shapeColor);
     
     // bottom right corner
-    EXPECT_EQ(capture.GetPixel(3 * capture.Width() / 4 - 5, capture.Height() / 4 + 2), _shapeColor);
+    EXPECT_EQ(capture.GetPixel(3 * capture.Width() / 4 - 5, 3 * capture.Height() / 4 - 2), _shapeColor);
 
     // center should be _shapeColor
     EXPECT_EQ(capture.GetPixel(capture.Width() / 2, capture.Height() / 2), _shapeColor);

@@ -11,6 +11,7 @@
 #include "TileMapShaderProgram.h"
 #include "UnitQuadVertexArray.h"
 #include "VertexArray.h"
+#include "ViewportCapture.h"
 #include "Window.h"
 
 namespace Graphics::OpenGL
@@ -20,7 +21,7 @@ namespace Graphics::OpenGL
     public:
         Engine(int winWidth, int winHeight, const std::string& title);
 
-        GlfwWindow& GetWindow() override
+        GlfwWindow& GetWindow()
         {
             return _window;
         }
@@ -28,6 +29,16 @@ namespace Graphics::OpenGL
         std::unique_ptr<Graphics::ITileAtlas> CreateTileAtlas(
             const IImage& tileAtlas,
             const glm::vec2& atlasSizeInTiles) override;
+
+        bool Update() override
+        {
+            return _window.Update();
+        }
+
+        std::unique_ptr<IScreenshot> TakeScreenshot() override
+        {
+            return std::make_unique<ViewportCapture>(&_gl);
+        }
 
     private:
         GlfwWrapper _glfw;

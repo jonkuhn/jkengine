@@ -9,16 +9,12 @@ target_sources(GraphicsIntegrationTests
     main_test.cpp
     PngImageTests.cpp
     TileMapTests.cpp
-    OpenGL/Pixel.h
-    OpenGL/Pixel.cpp
     OpenGL/TestHelpers.h
     OpenGL/TestHelpers.cpp
     OpenGL/TextureTests.cpp
     OpenGL/ShaderTests.cpp
     OpenGL/ShaderProgramTests.cpp
     OpenGL/VertexArrayTests.cpp
-    OpenGL/ViewportCapture.h
-    OpenGL/ViewportCapture.cpp
     OpenGL/WindowTests.cpp
 )
 target_include_directories(GraphicsIntegrationTests PRIVATE

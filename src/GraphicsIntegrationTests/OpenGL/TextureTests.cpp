@@ -14,9 +14,9 @@
 #include "Graphics/OpenGL/ShaderProgram.h"
 #include "Graphics/OpenGL/Texture.h"
 #include "Graphics/OpenGL/VertexArray.h"
+#include "Graphics/OpenGL/ViewportCapture.h"
 
 #include "TestHelpers.h"
-#include "ViewportCapture.h"
 
 using namespace testing;
 using namespace Graphics::OpenGL;
@@ -93,10 +93,12 @@ public:
         // clear errors
         _gl.GetError();
 
-        _testRectangleVertices.push_back(TestTexturedVertex({-0.5f, -0.5f, 0.0f, 0.0f, 0.0f}));
-        _testRectangleVertices.push_back(TestTexturedVertex({-0.5f,  0.5f, 0.0f, 0.0f, 1.0f}));
-        _testRectangleVertices.push_back(TestTexturedVertex({ 0.5f,  0.5f, 0.0f, 1.0f, 1.0f}));
-        _testRectangleVertices.push_back(TestTexturedVertex({ 0.5f, -0.5f, 0.0f, 1.0f, 0.0f}));
+        // Note the way the t texture coordinates are specified causes OpenGL to
+        // render the image the way it normally displays rather than being inverted
+        _testRectangleVertices.push_back(TestTexturedVertex({-0.5f, -0.5f, 0.0f, 0.0f, 1.0f})); // bottom left
+        _testRectangleVertices.push_back(TestTexturedVertex({-0.5f,  0.5f, 0.0f, 0.0f, 0.0f})); // top left
+        _testRectangleVertices.push_back(TestTexturedVertex({ 0.5f,  0.5f, 0.0f, 1.0f, 0.0f})); // top right
+        _testRectangleVertices.push_back(TestTexturedVertex({ 0.5f, -0.5f, 0.0f, 1.0f, 1.0f})); // bottom right
 
         _testTriangleElementsOfRectangle.push_back(0);
         _testTriangleElementsOfRectangle.push_back(1);
@@ -177,9 +179,9 @@ TEST_F(TextureTests, DrawTexturedRectangle_ReadAndVerifyPixels)
     _shaderProgram->Use();
     vertexArray.Draw();
 
-    ViewportCapture capture(_gl);
+    ViewportCapture capture(&_gl);
 
-    capture.SaveToFile("testtexture.data");
+    capture.SaveToFileAsRaw("testtexture.data");
 
     // The 4 corners of the viewport should be the clearColor (pink)
     EXPECT_EQ(capture.GetPixel(0, 0), _pinkColor);
@@ -190,10 +192,12 @@ TEST_F(TextureTests, DrawTexturedRectangle_ReadAndVerifyPixels)
     auto rectangleCaptureHeight = capture.Height() / 2;
 
     // The test31x47.png image consists of the following
-    // (top to bottom as PNG is normally displayed - OpenGL will flip it
-    // but that means this will be the order from low to high y coordinates
-    // for capture.GetPixel as well because OpenGL uses (0,0) in the lower
-    // left)
+    // (top to bottom as PNG is normally displayed -- which is
+    // how it will be displayed on the screen.  Texture coordinates
+    // take into account converting between conventional window/image
+    // y-axis and OpenGL's.  Note that ViewportCapture::GetPixel works
+    // in terms of conventional coordinates with y-axis going from top
+    // to bottom)
     // 31 x 3 black rectangle
     // 31 x 3 red rectangle
     // 31 x 3 green rectangle

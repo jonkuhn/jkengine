@@ -3,13 +3,12 @@
 #include <memory>
 #include <string>
 
-#include "../IWindow.h"
 #include "IGlfwWrapper.h"
 #include "IOpenGLWindow.h"
 
 namespace Graphics::OpenGL
 {
-    class GlfwWindow final : public IOpenGLWindow, public IWindow
+    class GlfwWindow final : public IOpenGLWindow
     {
     public:
         GlfwWindow(IGlfwWrapper* glfw, int winWidth, int winHeight, const std::string& title);
@@ -30,7 +29,7 @@ namespace Graphics::OpenGL
 
         // Update returns true if the window can stay open and false
         // if it needs to close.
-        bool Update() override;
+        bool Update();
     private:
         static GlfwWindow* s_singleInstance;
         static void FrameBufferSizeCallbackDispatch(GLFWwindow* window, int width, int height);

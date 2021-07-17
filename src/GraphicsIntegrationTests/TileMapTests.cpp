@@ -16,11 +16,6 @@ using namespace Graphics;
 
 namespace
 {
-    constexpr int WINDOW_WIDTH = 800;
-    constexpr int WINDOW_HEIGHT = 600;
-    constexpr float ASPECT_RATIO = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
-
-
     class TestTileMapImage : public IImage
     {
     private:
@@ -88,6 +83,10 @@ namespace
 class TileMapTests : public Test
 {
 public:
+    static constexpr int WINDOW_WIDTH = 800;
+    static constexpr int WINDOW_HEIGHT = 600;
+    static constexpr float ASPECT_RATIO = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+
     TileMapTests()
         : _engine(new OpenGL::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "TileMapTests"))
     {
@@ -125,12 +124,13 @@ TEST_F(TileMapTests, GivenSolidColored4x4TileAtlas_AssignedInDifferentOrderIn16x
         -1.0f,
         1.0f);
 
-
-    auto& window = _engine->GetWindow();
-    while (window.Update())
+    while (_engine->Update())
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         tileMap->Draw(model, view, projection);
     }
+
+    auto screenshot = _engine->TakeScreenshot();
+    screenshot->GetPixel(100, 100);
 }
