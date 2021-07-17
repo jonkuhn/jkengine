@@ -1,18 +1,16 @@
 #pragma once
 #include <iostream>
 
-#include "Graphics/OpenGL/IOpenGLWrapper.h"
-
 struct Pixel
 {
-    GLubyte r, g, b, a;
+    uint8_t r, g, b, a;
 
     Pixel()
         : r(0), g(0), b(0), a(0)
     {
     }
 
-    Pixel(GLubyte r_, GLubyte g_, GLubyte b_, GLubyte a_)
+    Pixel(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_)
         : r(r_), g(g_), b(b_), a(a_)
     {
     }

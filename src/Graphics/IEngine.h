@@ -8,8 +8,8 @@
 #pragma clang diagnostic pop
 
 #include "IImage.h"
+#include "IScreenshot.h"
 #include "ITileAtlas.h"
-#include "IWindow.h"
 
 namespace Graphics
 {
@@ -22,6 +22,8 @@ namespace Graphics
             const IImage &tileAtlas,
             const glm::vec2& atlasSizeInTiles) = 0;
 
-        virtual IWindow& GetWindow() = 0;
+        virtual bool Update() = 0;
+
+        virtual std::unique_ptr<IScreenshot> TakeScreenshot() = 0;
     };
 }

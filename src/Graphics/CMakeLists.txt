@@ -9,13 +9,15 @@ target_sources(Graphics
     Graphics.h
     IEngine.h
     IImage.h
+    Pixel.h
+    Pixel.cpp
     PngImage.h
     PngImage.cpp
     ILibPngWrapper.h
     LibPngWrapper.h
+    IScreenshot.h
     ITileAtlas.h
     ITileMap.h
-    IWindow.h
     OpenGL/Engine.h
     OpenGL/Engine.cpp
     OpenGL/GlfwException.h
@@ -44,6 +46,8 @@ target_sources(Graphics
     OpenGL/UnitQuadVertexArray.h
     OpenGL/UnitQuadVertexArray.cpp
     OpenGL/VertexArray.h
+    OpenGL/ViewportCapture.h
+    OpenGL/ViewportCapture.cpp
     OpenGL/Window.h
     OpenGL/Window.cpp
 )
