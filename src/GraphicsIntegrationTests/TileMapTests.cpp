@@ -16,28 +16,28 @@ using namespace Graphics;
 
 namespace
 {
-    static Pixel ColorBackgroundUglyYellow(0x80, 0x80, 0x00, 0xff);
+    static Color ColorBackgroundUglyYellow(0x80, 0x80, 0x00, 0xff);
 
     // Colors used in "colortiles4x4.png"
-    static Pixel ColorWhite(0xff, 0xff, 0xff, 0xff);
-    static Pixel ColorRed(0xff, 0x00, 0x00, 0xff);
-    static Pixel ColorGreen(0x00, 0xff, 0x00, 0xff);
-    static Pixel ColorBlue(0x00, 0x00, 0xff, 0xff);
+    static Color ColorWhite(0xff, 0xff, 0xff, 0xff);
+    static Color ColorRed(0xff, 0x00, 0x00, 0xff);
+    static Color ColorGreen(0x00, 0xff, 0x00, 0xff);
+    static Color ColorBlue(0x00, 0x00, 0xff, 0xff);
 
-    static Pixel ColorBlack(0x00, 0x00, 0x00, 0xff);
-    static Pixel ColorYellow(0xff, 0xff, 0x00, 0xff);
-    static Pixel ColorCyan(0x00, 0xff, 0xff, 0xff);
-    static Pixel ColorMagenta(0xff, 0x00, 0xff, 0xff);
+    static Color ColorBlack(0x00, 0x00, 0x00, 0xff);
+    static Color ColorYellow(0xff, 0xff, 0x00, 0xff);
+    static Color ColorCyan(0x00, 0xff, 0xff, 0xff);
+    static Color ColorMagenta(0xff, 0x00, 0xff, 0xff);
 
-    static Pixel ColorDarkGray(0x44, 0x44, 0x44, 0xff);
-    static Pixel ColorLightPurple(0xcc, 0xcc, 0xff, 0xff);
-    static Pixel ColorLightGreen(0xcc, 0xff, 0xcc, 0xff);
-    static Pixel ColorLightPeach(0xff, 0xcc, 0xcc, 0xff);
+    static Color ColorDarkGray(0x44, 0x44, 0x44, 0xff);
+    static Color ColorLightPurple(0xcc, 0xcc, 0xff, 0xff);
+    static Color ColorLightGreen(0xcc, 0xff, 0xcc, 0xff);
+    static Color ColorLightPeach(0xff, 0xcc, 0xcc, 0xff);
 
-    static Pixel ColorLightGray(0xcc, 0xcc, 0xcc, 0xff);
-    static Pixel ColorPurple(0xaa, 0x00, 0xff, 0xff);
-    static Pixel ColorSkyBlue(0x00, 0xaa, 0xff, 0xff);
-    static Pixel ColorOrange(0xff, 0xaa, 0x00, 0xff);
+    static Color ColorLightGray(0xcc, 0xcc, 0xcc, 0xff);
+    static Color ColorPurple(0xaa, 0x00, 0xff, 0xff);
+    static Color ColorSkyBlue(0x00, 0xaa, 0xff, 0xff);
+    static Color ColorOrange(0xff, 0xaa, 0x00, 0xff);
 
     // Positions of colors used in "colortiles4x4.png"
     static constexpr std::array<uint8_t, 4> TileWhite = { 0, 0, 0, 0 };
@@ -67,7 +67,7 @@ namespace
         static constexpr int WIDTH = 8;
         static constexpr int HEIGHT = 4;
         typedef std::array<std::array<std::array<uint8_t, 4>, WIDTH>, HEIGHT> TileIndicesType;
-        typedef std::array<std::array<Pixel, WIDTH>, HEIGHT> TileColorsType;
+        typedef std::array<std::array<Color, WIDTH>, HEIGHT> TileColorsType;
 
         // 8x4x4 array
         TileIndicesType _tiles;
@@ -116,7 +116,7 @@ namespace
     template<unsigned int ColumnCount, unsigned int RowCount>
     void ExpectTileColorsInScreenshot(
         IScreenshot& screenshot,
-        std::array<std::array<Pixel, ColumnCount>, RowCount> expectedTileColors)
+        std::array<std::array<Color, ColumnCount>, RowCount> expectedTileColors)
     {
         auto columnWidth = screenshot.Width() / ColumnCount;
         auto rowHeight = screenshot.Height() / RowCount;
@@ -200,7 +200,7 @@ TEST_F(TileMapTests, GivenSolidColored4x4TileAtlas_AssignedInDifferentOrderIn16x
     const unsigned int RowCount = 6;
     ExpectTileColorsInScreenshot<ColumnCount, RowCount>(
         *scr,
-        std::array<std::array<Pixel, ColumnCount>, RowCount>(
+        std::array<std::array<Color, ColumnCount>, RowCount>(
         { {
             // First row is background color
             { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
