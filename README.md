@@ -42,6 +42,7 @@ The development environment I am using is as follows:
   - CMake (twxs.cmake)
   - Vim (vscodevim.vim)
   - Markdown All in One (yzhang.markdown-all-in-one)
+  - Shader Languages Support for VSCode (slevesque.shader)
 
 ## Conan setup notes
 1. `brew install conan`
