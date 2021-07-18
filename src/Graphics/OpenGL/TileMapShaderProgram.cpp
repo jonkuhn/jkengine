@@ -6,9 +6,7 @@ using namespace Graphics::OpenGL;
 
 namespace
 {
-    ShaderProgram createTileMapShaderProgram(IOpenGLWrapper* gl)
-    {
-        const char *vertexShaderSource = R"##RAW##(
+    const char *vertexShaderSource = R"GLSL(
         #version 330 core
         layout (location = 0) in vec3 vertex;
 
@@ -28,14 +26,18 @@ namespace
             // map.  It cannot be calculated from tileMapLocationVec4 because
             // that is in world coordinates and we want the world coordinate
             // position of it to not affect the content of the tile mapped object.
-            tileMapLocation = vertex.xy * tileMapSizeInTiles;
-            vec4 tileMapLocationVec4 = (model * vec4(vertex.xy, 0.0, 1.0));
+            tileMapLocation.x = vertex.x * tileMapSizeInTiles.x;
+
+            // Invert Y so that top right of tile map image is top right of
+            // the displayed tile map
+            tileMapLocation.y = (1.0 - vertex.y) * tileMapSizeInTiles.y;
+
+            vec4 tileMapLocationVec4 = (model * vec4(vertex.xy, 1.0, 1.0));
             gl_Position = projection * view * tileMapLocationVec4;
         }
-        )##RAW##";
-        Shader vertexShader(gl, Shader::Type::Vertex, vertexShaderSource);
+    )GLSL";
 
-        const char *fragmentShaderSource = R"##RAW##(
+    const char *fragmentShaderSource = R"GLSL(
         #version 330 core
         uniform vec2 tileMapSizeInTiles;
         uniform sampler2D tileMap;
@@ -51,7 +53,11 @@ namespace
             vec2 tileAtlasLocation = texture(tileMap, tileMapLocation / tileMapSizeInTiles).xy * 255;
             FragColor = texture(tileAtlas, (tileAtlasLocation + fract(tileMapLocation)) / tileAtlasSizeInTiles);
         }
-        )##RAW##";
+    )GLSL";
+
+    ShaderProgram createTileMapShaderProgram(IOpenGLWrapper* gl)
+    {
+        Shader vertexShader(gl, Shader::Type::Vertex, vertexShaderSource);
         Shader fragmentShader(gl, Shader::Type::Fragment, fragmentShaderSource);
 
         // Note that the vertex and fragment shader instances can be destroyed
