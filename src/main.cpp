@@ -161,9 +161,16 @@ int main()
     // Define a model matrix that scale's up from a unit quad
     // to world width by world height
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(-2.0f, -2.0f, 0.0f));
+    model = glm::translate(model, glm::vec3(-2.0f, -2.0f, 0.8f));
+    model = glm::translate(model, glm::vec3(WORLD_WIDTH_IN_TILES / 2.0f, WORLD_HEIGHT_IN_TILES / 2.0f, 0.0f));
     model = glm::rotate(model, glm::radians(12.5f), glm::vec3(0.0f, 0.0f, -1.0f));
+    model = glm::translate(model, glm::vec3(-WORLD_WIDTH_IN_TILES / 2.0f, -WORLD_HEIGHT_IN_TILES / 2.0f, 0.0f));
     model = glm::scale(model, glm::vec3(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES, 0.0f));  
+
+    glm::mat4 model2 = glm::mat4(1.0f);
+    model2 = glm::translate(model2, glm::vec3(-2.0f, -2.0f, 0.5f));
+    //model2 = glm::rotate(model2, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+    model2 = glm::scale(model2, glm::vec3(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES, 0.0f));  
 
     // Generate a random tile map texture using a helper class
     //RandomTileMap randomTileMap(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES);
@@ -193,19 +200,30 @@ int main()
 
     const float MOVE_SPEED = 5.0f;
 
-    auto cameraX = 0.0f;
-    auto cameraY = 0.0f;
+    auto camera2d = engine.Camera2d();
+    auto aspectRatio = (float)SCR_WIDTH / (float)SCR_HEIGHT;
+    camera2d->FieldOfView(ICamera2d::Fov(
+            -2.5f * aspectRatio,
+            2.5f * aspectRatio,
+            -2.5f,
+            2.5f,
+            1.0f,
+            -1.0f));
     auto cameraDX = 0.0f;
     auto cameraDY = 0.0f;
 
     double previousTime = glfwGetTime();
 
     auto& window = engine.GetWindow();
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
     while (window.Update())
     {
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //tileMapShaderProgram.Use();
         
@@ -269,49 +287,13 @@ int main()
         //    cameraDY = 0;
         //}
 
-        cameraX += cameraDX * deltaTime;
-        cameraY += cameraDY * deltaTime;
+        auto cameraCenter = glm::vec2(camera2d->Center());
+        cameraCenter.x += cameraDX * deltaTime;
+        cameraCenter.y += cameraDY * deltaTime;
+        camera2d->Center(cameraCenter);
 
-        // 2D Camera
-        // Notes:
-        // - Z component of cameraPosition must be such that the objects
-        //   that should be visible are within the range of zNear to zFar
-        //   from the camera.  (where zNear and zFar are the arguments to
-        //   glm::ortho).  If zNear is negative objects behind the camera
-        //   will be rendered.
-        // - In order for the center argument to lookAt (cameraPos + cameraFront)
-        //   to truly be centered in the window, the left and right and
-        //   top and bottom arguments to glm::ortho must be set such that
-        //   0 is the midpoint (i.e. left = -right bottom = -top)
-        // - cameraFront is a normalized vector that represents the direction
-        //   the camera is pointing
-        // - cameraUp is a normalized vector that points to the up direction
-        //   in world space.  glm::lookAt uses this together with "center"
-        //   (the direction the camera is pointing -- cameraPos + cameraFront)
-        //   to get a vector that points to the right in view space.  This is
-        //   done by taking the cross product of the two to get an orthogonal
-        //   vector.  glm::lookAt then takes the cross product of resulting
-        //   "right" vector and the vector representing the direction the
-        //   camera is pointing to get the "up" vector which is a vector
-        //   pointing out of the top of the camera.  The actual matrix
-        //   returned by glm::lookAt is built from the "direction", "right",
-        //   and "up" vectors (note "up" != cameraUp)
-        //   (See https://learnopengl.com/Getting-started/Camera)
-        glm::vec3 cameraPos   = glm::vec3(cameraX, cameraY, 0.5f);
-        glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-        glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
-        auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        auto aspectRatio = (float)SCR_WIDTH / (float)SCR_HEIGHT;
-        //auto fovWidthInWorldCoordinates = 5.0f;
-        auto projection = glm::ortho(
-            -2.5f * aspectRatio,
-            2.5f * aspectRatio,
-            -2.5f,
-            2.5f,
-            0.0f,
-            1.0f);
-
-        tileMap->Draw(model, view, projection);
+        tileMap->Draw(model);
+        tileMap->Draw(model2);
     }
 
     return 0;
