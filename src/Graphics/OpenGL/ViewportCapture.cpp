@@ -88,7 +88,7 @@ unsigned int ViewportCapture::Height()
     return _dimensions.height;
 }
 
-Pixel ViewportCapture::GetPixel(unsigned int x, unsigned int y)
+Color ViewportCapture::GetPixel(unsigned int x, unsigned int y)
 {
     if (x < 0 || x >= _dimensions.width)
     {
@@ -120,7 +120,7 @@ void ViewportCapture::SaveToFileAsRaw(const std::string& filename)
         auto offset = GetPixelDataOffset(x, y);
         file.write(
             reinterpret_cast<const char *>(&_pixelData[offset]),
-            _dimensions.width * sizeof(Pixel));
+            _dimensions.width * sizeof(Color));
     }
     file.close();
 }

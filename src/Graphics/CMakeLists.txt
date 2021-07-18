@@ -6,12 +6,12 @@ else()
 endif()
 target_sources(Graphics
   PRIVATE
+    Color.h
+    Color.cpp
     Graphics.h
     ICamera2d.h
     IEngine.h
     IImage.h
-    Pixel.h
-    Pixel.cpp
     PngImage.h
     PngImage.cpp
     ILibPngWrapper.h

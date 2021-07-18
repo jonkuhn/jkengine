@@ -5,7 +5,7 @@
 #include "IOpenGLWrapper.h"
 
 #include "../IScreenshot.h"
-#include "../Pixel.h"
+#include "../Color.h"
 
 namespace Graphics::OpenGL
 {
@@ -15,7 +15,7 @@ namespace Graphics::OpenGL
         ViewportCapture(Graphics::OpenGL::IOpenGLWrapper* gl);
         unsigned int Width() override;
         unsigned int Height() override;
-        Pixel GetPixel(unsigned int x, unsigned int y) override;
+        Color GetPixel(unsigned int x, unsigned int y) override;
         void SaveToFileAsRaw(const std::string& filename) override;
 
     private:
@@ -33,7 +33,7 @@ namespace Graphics::OpenGL
         unsigned int GetPixelDataOffset(unsigned int x, unsigned int y);
 
         Dimensions _dimensions;
-        std::vector<Pixel> _pixelData;
+        std::vector<Color> _pixelData;
 
         static Dimensions GetDimensions(IOpenGLWrapper* _gl);
     };
