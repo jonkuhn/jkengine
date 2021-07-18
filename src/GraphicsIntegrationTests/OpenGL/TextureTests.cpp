@@ -34,7 +34,7 @@ namespace
         float t; // t = texture y coordinate
     };
 
-    const char *vertexShaderSource = R"##RAW##(
+    const char *vertexShaderSource = R"GLSL(
     #version 330 core
     layout (location = 0) in vec3 aPos;
     layout (location = 1) in vec2 aTexCoord;
@@ -47,9 +47,9 @@ namespace
         gl_Position = vec4(aPos, 1.0);
         TexCoord = aTexCoord;
     }
-    )##RAW##";
+    )GLSL";
 
-    const char *fragmentShaderSource = R"##RAW##(
+    const char *fragmentShaderSource = R"GLSL(
     #version 330 core
     out vec4 FragColor;
       
@@ -69,7 +69,7 @@ namespace
         }
         FragColor = texColor;
     }
-    )##RAW##";
+    )GLSL";
 
     constexpr unsigned int WINDOW_WIDTH = 800;
     constexpr unsigned int WINDOW_HEIGHT = 600;

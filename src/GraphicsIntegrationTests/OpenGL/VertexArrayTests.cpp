@@ -27,23 +27,23 @@ namespace
         float z;
     };
 
-    const char *vertexShaderSource = R"##RAW##(
+    const char *vertexShaderSource = R"GLSL(
     #version 330 core
     layout (location = 0) in vec3 aPos;
     void main()
     {
         gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
     }
-    )##RAW##";
+    )GLSL";
 
-    const char *fragmentShaderSource = R"##RAW##(
+    const char *fragmentShaderSource = R"GLSL(
     #version 330 core
     out vec4 FragColor;
     void main()
     {
         FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     }
-    )##RAW##";
+    )GLSL";
 
     constexpr unsigned int WINDOW_WIDTH = 800;
     constexpr unsigned int WINDOW_HEIGHT = 600;
