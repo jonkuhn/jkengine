@@ -11,6 +11,7 @@
 
 namespace Graphics::OpenGL
 {
+    class Camera2d;
     class TileAtlas;
     class TileMapShaderProgram;
     class UnitQuadVertexArray;
@@ -21,6 +22,7 @@ namespace Graphics::OpenGL
         TileMap(
             TileMapShaderProgram* tileMapShaderProgram,
             UnitQuadVertexArray* unitQuadVertexArray,
+            Camera2d* camera2d,
             TileAtlas* atlas,
             Texture mapTexture,
             glm::vec2 mapSizeInTiles);
@@ -31,11 +33,12 @@ namespace Graphics::OpenGL
         TileMap(const TileMap& other) = delete;
         TileMap& operator=(const TileMap& other) = delete;
         
-        void Draw(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection) override;
+        void Draw(const glm::mat4& model) override;
 
     private:
         TileMapShaderProgram* _tileMapShaderProgram;
         UnitQuadVertexArray* _unitQuadVertexArray;
+        Camera2d* _camera2d;
         TileAtlas* _atlas;
         Texture _mapTexture;
         glm::vec2 _mapSizeInTiles;

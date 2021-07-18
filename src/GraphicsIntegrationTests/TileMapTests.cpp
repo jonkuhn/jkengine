@@ -18,6 +18,7 @@ namespace
 {
     static Pixel ColorBackgroundUglyYellow(0x80, 0x80, 0x00, 0xff);
 
+    // Colors used in "colortiles4x4.png"
     static Pixel ColorWhite(0xff, 0xff, 0xff, 0xff);
     static Pixel ColorRed(0xff, 0x00, 0x00, 0xff);
     static Pixel ColorGreen(0x00, 0xff, 0x00, 0xff);
@@ -38,6 +39,28 @@ namespace
     static Pixel ColorSkyBlue(0x00, 0xaa, 0xff, 0xff);
     static Pixel ColorOrange(0xff, 0xaa, 0x00, 0xff);
 
+    // Positions of colors used in "colortiles4x4.png"
+    static constexpr std::array<uint8_t, 4> TileWhite = { 0, 0, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileRed   = { 1, 0, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileGreen = { 2, 0, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileBlue  = { 3, 0, 0, 0 };
+
+    static constexpr std::array<uint8_t, 4> TileBlack   = { 0, 1, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileYellow  = { 1, 1, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileCyan    = { 2, 1, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileMagenta = { 3, 1, 0, 0 };
+
+    static constexpr std::array<uint8_t, 4> TileDarkGray    = { 0, 2, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileLightPurple = { 1, 2, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileLightGreen  = { 2, 2, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileLightPeach  = { 3, 2, 0, 0 };
+
+    static constexpr std::array<uint8_t, 4> TileLightGray = { 0, 3, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TilePurple    = { 1, 3, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileSkyBlue   = { 2, 3, 0, 0 };
+    static constexpr std::array<uint8_t, 4> TileOrange    = { 3, 3, 0, 0 };
+
+
     class TestTileMapImage : public IImage
     {
     private:
@@ -50,26 +73,6 @@ namespace
         TileIndicesType _tiles;
 
     public:
-        static constexpr std::array<uint8_t, 4> TileWhite = { 0, 0, 0, 0 };
-        static constexpr std::array<uint8_t, 4> TileRed   = { 1, 0, 0, 0 };
-        static constexpr std::array<uint8_t, 4> TileGreen = { 2, 0, 0, 0 };
-        static constexpr std::array<uint8_t, 4> TileBlue  = { 3, 0, 0, 0 };
-
-        static constexpr std::array<uint8_t, 4> TileBlack   = { 0, 1, 0, 0 };
-        static constexpr std::array<uint8_t, 4> TileYellow  = { 1, 1, 0, 0 };
-        static constexpr std::array<uint8_t, 4> TileCyan    = { 2, 1, 0, 0 };
-        static constexpr std::array<uint8_t, 4> TileMagenta = { 3, 1, 0, 0 };
-
-        static constexpr std::array<uint8_t, 4> TileDarkGray    = { 0, 2, 0, 0 };
-        static constexpr std::array<uint8_t, 4> TileLightPurple = { 1, 2, 0, 0 };
-        static constexpr std::array<uint8_t, 4> TileLightGreen  = { 2, 2, 0, 0 };
-        static constexpr std::array<uint8_t, 4> TileLightPeach  = { 3, 2, 0, 0 };
-
-        static constexpr std::array<uint8_t, 4> TileLightGray = { 0, 3, 0, 0 };
-        static constexpr std::array<uint8_t, 4> TilePurple    = { 1, 3, 0, 0 };
-        static constexpr std::array<uint8_t, 4> TileSkyBlue   = { 2, 3, 0, 0 };
-        static constexpr std::array<uint8_t, 4> TileOrange    = { 3, 3, 0, 0 };
-
         TileColorsType TileColors;
 
         TestTileMapImage()
@@ -148,24 +151,24 @@ namespace
 class TileMapTests : public Test
 {
 public:
-    static constexpr int WINDOW_WIDTH = 800;
-    static constexpr int WINDOW_HEIGHT = 600;
-    static constexpr float ASPECT_RATIO = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
+    static constexpr int WindowWidth = 800;
+    static constexpr int WindowHeight = 600;
+    static constexpr float AspectRatio = static_cast<float>(WindowWidth) / static_cast<float>(WindowHeight);
 
     TileMapTests()
-        : _engine(new OpenGL::Engine(WINDOW_WIDTH, WINDOW_HEIGHT, "TileMapTests"))
     {
 
     }
-protected:
-    std::unique_ptr<IEngine> _engine;
 };
 
 TEST_F(TileMapTests, GivenSolidColored4x4TileAtlas_AssignedInDifferentOrderIn16x16TileMap_ColorSamplesMatchExpectations)
 {
+    auto engine = std::make_unique<OpenGL::Engine>(
+       WindowWidth, WindowHeight, "TileMapTests");
+
     LibPngWrapper libPng;
     PngImage colorTiles4x4(&libPng, "TestFiles/colortiles4x4.png");
-    auto atlas = _engine->CreateTileAtlas(colorTiles4x4, glm::vec2(4.0f, 4.0f));
+    auto atlas = engine->CreateTileAtlas(colorTiles4x4, glm::vec2(4.0f, 4.0f));
     TestTileMapImage testTileMapImage;
     auto tileMap = atlas->CreateTileMap(testTileMapImage);
     
@@ -174,26 +177,24 @@ TEST_F(TileMapTests, GivenSolidColored4x4TileAtlas_AssignedInDifferentOrderIn16x
     model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
     model = glm::scale(model, glm::vec3(static_cast<float>(testTileMapImage.Width()), static_cast<float>(testTileMapImage.Height()), 0.0f));  
 
-    float cameraX = 4.0f;
-    float cameraY = 2.0f;
-    glm::vec3 cameraPos   = glm::vec3(cameraX, cameraY, 0.5f);
-    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
-    auto view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-
-    auto projection = glm::ortho(
+    auto camera = engine->Camera2d();
+    camera->Center(glm::vec2(4.0f, 2.0f));
+    camera->FieldOfView(ICamera2d::Fov(
         -4.0f,
         4.0f,
-        -4.0f * (1 / ASPECT_RATIO),
-        4.0f * (1 / ASPECT_RATIO),
-        -1.0f,
-        1.0f);
+        -4.0f * (1 / AspectRatio),
+        4.0f * (1 / AspectRatio),
+        1.0f,
+        -1.0f));
 
-    glClearColor(0.5f, 0.5f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    tileMap->Draw(model, view, projection);
+    while(engine->Update())
+    {
+        glClearColor(0.5f, 0.5f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        tileMap->Draw(model);
+    }
 
-    auto scr = _engine->TakeScreenshot();
+    auto scr = engine->TakeScreenshot();
 
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;
@@ -216,32 +217,4 @@ TEST_F(TileMapTests, GivenSolidColored4x4TileAtlas_AssignedInDifferentOrderIn16x
             { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
             ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow }
         } }));
-/*
-    auto columnWidth = scr->Width() / columnCount;
-    auto rowHeight = scr->Height() / rowCount;
-    auto sampleDistanceFromEdgeX = columnWidth / 16;
-    auto sampleDistanceFromEdgeY = rowHeight / 16;
-
-    unsigned int sampleLeftX = sampleDistanceFromEdgeX;
-    unsigned int sampleUpperY = sampleDistanceFromEdgeY;
-    unsigned int sampleRightX = columnWidth - sampleDistanceFromEdgeX;
-    unsigned int sampleLowerY = rowHeight - sampleDistanceFromEdgeY;
-    unsigned int sampleCenterX = columnWidth / 2;
-    unsigned int sampleCenterY = rowHeight / 2;
-    
-    for(unsigned int row = 0; row < rowCount; row++)
-    {
-        for(unsigned int column = 0; column < columnCount; column++)
-        {
-            auto expectedColor = expectedTileColors[row][column];
-            auto x = column * columnWidth;
-            auto y = row * rowHeight;
-            EXPECT_EQ(expectedColor, scr->GetPixel(x + sampleLeftX, y + sampleUpperY));
-            EXPECT_EQ(expectedColor, scr->GetPixel(x + sampleRightX, y + sampleUpperY));
-            EXPECT_EQ(expectedColor, scr->GetPixel(x + sampleCenterX, y + sampleCenterY));
-            EXPECT_EQ(expectedColor, scr->GetPixel(x + sampleLeftX, y + sampleLowerY));
-            EXPECT_EQ(expectedColor, scr->GetPixel(x + sampleRightX, y + sampleLowerY));
-        }
-    }
-    */
 }

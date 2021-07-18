@@ -21,6 +21,7 @@ std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
         &_gl,
         &_tileMapShaderProgram,
         &_unitQuadVertexArray,
+        &_camera2d,
         Texture(
             &_gl,
             Texture::Params(tileAtlasImage)

@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "../IEngine.h"
+#include "Camera2d.h"
 #include "GlfwWrapper.h"
 #include "OpenGLWrapper.h"
 #include "ShaderProgram.h"
@@ -35,6 +36,11 @@ namespace Graphics::OpenGL
             return _window.Update();
         }
 
+        ICamera2d* Camera2d() override
+        {
+            return &_camera2d;
+        }
+
         std::unique_ptr<IScreenshot> TakeScreenshot() override
         {
             return std::make_unique<ViewportCapture>(&_gl);
@@ -46,9 +52,6 @@ namespace Graphics::OpenGL
         OpenGLWrapper _gl;
         TileMapShaderProgram _tileMapShaderProgram;
         UnitQuadVertexArray _unitQuadVertexArray;
-
-        std::vector<std::unique_ptr<Texture>> _textures;
-
-        Texture* CreateTexture(const Texture::Params &params);
+        class Camera2d _camera2d;
     };
 }

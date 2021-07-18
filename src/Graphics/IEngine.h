@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
+#include "ICamera2d.h"
 #include "IImage.h"
 #include "IScreenshot.h"
 #include "ITileAtlas.h"
@@ -19,8 +20,10 @@ namespace Graphics
         virtual ~IEngine() = default;
 
         virtual std::unique_ptr<ITileAtlas> CreateTileAtlas(
-            const IImage &tileAtlas,
+            const IImage& tileAtlas,
             const glm::vec2& atlasSizeInTiles) = 0;
+
+        virtual ICamera2d* Camera2d() = 0;
 
         virtual bool Update() = 0;
 

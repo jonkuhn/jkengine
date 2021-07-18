@@ -11,6 +11,7 @@
 
 namespace Graphics::OpenGL
 {
+    class Camera2d;
     class IOpenGLWrapper;
     class TileMapShaderProgram;
     class UnitQuadVertexArray;
@@ -22,12 +23,14 @@ namespace Graphics::OpenGL
             IOpenGLWrapper* gl,
             TileMapShaderProgram* tileMapShaderProgram,
             UnitQuadVertexArray* unitQuadVertexArray,
+            Camera2d* camera2d,
             Texture atlasTexture,
             glm::vec2 atlasSizeInTiles)
           : 
             _gl(gl),
             _tileMapShaderProgram(tileMapShaderProgram),
             _unitQuadVertexArray(unitQuadVertexArray),
+            _camera2d(camera2d),
             _atlasTexture(std::move(atlasTexture)),
             _atlasSizeInTiles(std::move(atlasSizeInTiles))
         {
@@ -46,6 +49,7 @@ namespace Graphics::OpenGL
             return std::make_unique<TileMap>(
                 _tileMapShaderProgram,
                 _unitQuadVertexArray,
+                _camera2d,
                 this,
                 Texture(
                     _gl,
@@ -71,6 +75,7 @@ namespace Graphics::OpenGL
         IOpenGLWrapper* _gl;
         TileMapShaderProgram* _tileMapShaderProgram;
         UnitQuadVertexArray* _unitQuadVertexArray;
+        Camera2d* _camera2d;
         Texture _atlasTexture;
         glm::vec2 _atlasSizeInTiles;
     };

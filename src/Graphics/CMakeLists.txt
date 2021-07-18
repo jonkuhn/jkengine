@@ -7,6 +7,7 @@ endif()
 target_sources(Graphics
   PRIVATE
     Graphics.h
+    ICamera2d.h
     IEngine.h
     IImage.h
     Pixel.h
@@ -18,6 +19,7 @@ target_sources(Graphics
     IScreenshot.h
     ITileAtlas.h
     ITileMap.h
+    OpenGL/Camera2d.h
     OpenGL/Engine.h
     OpenGL/Engine.cpp
     OpenGL/GlfwException.h
