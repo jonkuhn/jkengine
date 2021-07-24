@@ -1,13 +1,15 @@
 #pragma once
 
+#include <unordered_set>
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
 #include "../ITileAtlas.h"
+#include "Registry.h"
 #include "Texture.h"
-#include "TileMap.h"
 
 namespace Graphics::OpenGL
 {
@@ -15,11 +17,13 @@ namespace Graphics::OpenGL
     class IOpenGLWrapper;
     class TileMapShaderProgram;
     class UnitQuadVertexArray;
+    class TileMap;
 
     class TileAtlas final : public ITileAtlas
     {
     public:
         TileAtlas(
+            Registry<TileAtlas>* tileAtlasRegistry,
             IOpenGLWrapper* gl,
             TileMapShaderProgram* tileMapShaderProgram,
             UnitQuadVertexArray* unitQuadVertexArray,
@@ -32,35 +36,24 @@ namespace Graphics::OpenGL
             _unitQuadVertexArray(unitQuadVertexArray),
             _camera2d(camera2d),
             _atlasTexture(std::move(atlasTexture)),
-            _atlasSizeInTiles(std::move(atlasSizeInTiles))
+            _atlasSizeInTiles(std::move(atlasSizeInTiles)),
+            _registration(tileAtlasRegistry, this),
+            _tileMapRegistry()
         {
 
         }
 
-        TileAtlas(TileAtlas&& other) = default;
-        TileAtlas& operator=(TileAtlas&& other) = default;
-
+        // To not allow copy because of Registry and Registration
+        // not being copyable
         TileAtlas(const TileAtlas& other) = delete;
         TileAtlas& operator=(const TileAtlas& other) = delete;
 
-        std::unique_ptr<Graphics::ITileMap> CreateTileMap(
-            const IImage& tileMapImage) override
-        {
-            return std::make_unique<TileMap>(
-                _tileMapShaderProgram,
-                _unitQuadVertexArray,
-                _camera2d,
-                this,
-                Texture(
-                    _gl,
-                    Texture::Params(tileMapImage)
-                        .WrapModeS(Texture::WrapMode::ClampToBorder)
-                        .WrapModeT(Texture::WrapMode::ClampToBorder)
-                        .MinFilter(Texture::MinFilterMode::Nearest)
-                        .MagFilter(Texture::MagFilterMode::Nearest)),
-                glm::vec2(tileMapImage.Width(), tileMapImage.Height())
-            );
-        }
+        // To not allow move because of Registry and Registration
+        // not being moveable
+        TileAtlas(TileAtlas&& other) = delete;
+        TileAtlas& operator=(TileAtlas&& other) = delete;
+
+        std::unique_ptr<Graphics::ITileMap> CreateTileMap(const IImage& tileMapImage) override;
 
         inline Texture& AtlasTexture()
         {
@@ -72,6 +65,8 @@ namespace Graphics::OpenGL
             return _atlasSizeInTiles;
         }
 
+        void DrawAll();
+
     private:
         IOpenGLWrapper* _gl;
         TileMapShaderProgram* _tileMapShaderProgram;
@@ -79,5 +74,7 @@ namespace Graphics::OpenGL
         Camera2d* _camera2d;
         Texture _atlasTexture;
         glm::vec2 _atlasSizeInTiles;
+        Registry<TileAtlas>::Registration _registration;
+        Registry<TileMap> _tileMapRegistry;
     };
 }

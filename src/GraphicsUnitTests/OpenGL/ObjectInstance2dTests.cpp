@@ -12,53 +12,34 @@
 using namespace testing;
 using namespace Graphics::OpenGL;
 
-namespace
-{
-    ObjectInstance2d CreateObjectInstance2d()
-    {
-        return ObjectInstance2d([](ObjectInstance2d*){}, [](ObjectInstance2d*){});
-    }
-}
-
 class ObjectInstance2dTests : public Test
 {
+protected:
+    Registry<ObjectInstance2d> _instanceRegistry;
 
+    ObjectInstance2d CreateObjectInstance2d()
+    {
+        return ObjectInstance2d(&_instanceRegistry);
+    }
 };
 
-TEST_F(ObjectInstance2dTests, Constructor_CallsRegistrationFunction)
+TEST_F(ObjectInstance2dTests, ConstructorDestructor_VerifyRegistration)
 {
-    ObjectInstance2d* registeredInstance = nullptr;
-    ObjectInstance2d obj(
-        [&registeredInstance](ObjectInstance2d* instance)
-        {
-            registeredInstance = instance;
-        },
-        [](ObjectInstance2d*)
-        {
-
-        });
-
-    EXPECT_EQ(registeredInstance, &obj);
-}
-
-TEST_F(ObjectInstance2dTests, Destructor_CallsDeregistrationFunction)
-{
-    ObjectInstance2d* deregisteredInstance = nullptr;
-    ObjectInstance2d* expectedDeregisteredInstance = nullptr;
-
     {
-        ObjectInstance2d obj(
-            [](ObjectInstance2d*)
-            {
-            },
-            [&deregisteredInstance](ObjectInstance2d* instance)
-            {
-                deregisteredInstance = instance;
-            });
-        expectedDeregisteredInstance = &obj;
+        ObjectInstance2d obj(&_instanceRegistry);
+
+        // exactly one instance should be registered (the one we just created)
+        int count = 0;
+        for(auto* instance : _instanceRegistry)
+        {
+            count++;
+            EXPECT_EQ(instance, &obj);
+        }
+        EXPECT_EQ(count, 1);
     }
 
-    EXPECT_EQ(deregisteredInstance, expectedDeregisteredInstance);
+    // After it is destroyed there should be no registered instances
+    EXPECT_EQ(_instanceRegistry.begin(), _instanceRegistry.end());
 }
 
 TEST_F(ObjectInstance2dTests, Constructor_ModelMatrixHasPositionAtOriginRotation0And1by1Size)

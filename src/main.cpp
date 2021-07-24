@@ -289,7 +289,6 @@ int main()
         cameraCenter.y += cameraDY * deltaTime;
         camera2d->Center(cameraCenter);
 
-        tileMap->DrawAllInstances();
         engine.Render();
     }
 

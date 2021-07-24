@@ -1,4 +1,5 @@
 #include "Engine.h"
+
 #include "Texture.h"
 #include "ViewportCapture.h"
 
@@ -9,7 +10,10 @@ Engine::Engine(int winWidth, int winHeight, const std::string& title)
       _window(&_glfw, winWidth, winHeight, title),
       _gl(&_window),
       _tileMapShaderProgram(&_gl),
-      _unitQuadVertexArray(&_gl)
+      _unitQuadVertexArray(&_gl),
+      _camera2d(),
+      _programShouldExit(),
+      _tileAtlasRegistry()
 {
 
 }
@@ -19,6 +23,7 @@ std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
     const glm::vec2& atlasSizeInTiles)
 {
     return std::make_unique<TileAtlas>(
+        &_tileAtlasRegistry,
         &_gl,
         &_tileMapShaderProgram,
         &_unitQuadVertexArray,
@@ -40,10 +45,16 @@ std::unique_ptr<Graphics::IScreenshot> Engine::TakeScreenshot()
 
 void Engine::Render()
 {
-    // TODO: Loop over everything and draw it
+    for(auto* tileAtlas : _tileAtlasRegistry)
+    {
+        tileAtlas->DrawAll();
+    }
 
     // TODO: Window should probably exist outside of Graphics namespace
-    // Because the program needing to exit is really an input concern
+    // Because the program needing to exit is really an input concern.
+    // (Update is still a graphics concern, but the return value from it
+    // indicating if the program should exit really should be a different
+    // function that is an input concern)
     if(!_window.Update())
     {
         _programShouldExit = true;

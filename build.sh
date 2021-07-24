@@ -11,7 +11,7 @@ conan install .. --build=missing
 cmake ..
 
 # build the project
-cmake --build . --config Release -j 6
+cmake --build . --config Debug -j 6
 
 cd bin
 

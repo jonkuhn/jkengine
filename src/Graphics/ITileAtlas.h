@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "IImage.h"
 #include "ITileMap.h"
 
 namespace Graphics
