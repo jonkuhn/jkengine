@@ -158,20 +158,6 @@ int main()
     const float WORLD_WIDTH_IN_TILES = 8;
     const float WORLD_HEIGHT_IN_TILES = 4; 
 
-    // Define a model matrix that scale's up from a unit quad
-    // to world width by world height
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(-2.0f, -2.0f, 0.8f));
-    model = glm::translate(model, glm::vec3(WORLD_WIDTH_IN_TILES / 2.0f, WORLD_HEIGHT_IN_TILES / 2.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(12.5f), glm::vec3(0.0f, 0.0f, -1.0f));
-    model = glm::translate(model, glm::vec3(-WORLD_WIDTH_IN_TILES / 2.0f, -WORLD_HEIGHT_IN_TILES / 2.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES, 0.0f));  
-
-    glm::mat4 model2 = glm::mat4(1.0f);
-    model2 = glm::translate(model2, glm::vec3(-2.0f, -2.0f, 0.5f));
-    //model2 = glm::rotate(model2, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-    model2 = glm::scale(model2, glm::vec3(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES, 0.0f));  
-
     // Generate a random tile map texture using a helper class
     //RandomTileMap randomTileMap(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES);
     TestTileMapImage randomTileMap;
@@ -196,7 +182,18 @@ int main()
         glm::vec2(TILE_ATLAS_WIDTH_IN_TILES, TILE_ATLAS_HEIGHT_IN_TILES)
     );
 
-    auto tileMap = tileAtlas->CreateTileMap( randomTileMap);
+    auto tileMap = tileAtlas->CreateTileMap(randomTileMap);
+
+    // Define a model matrix that scale's up from a unit quad
+    // to world width by world height
+    auto tileMapInstance1 = tileMap->CreateInstance();
+    tileMapInstance1->Position(glm::vec3(-2.0f, -2.0f, 0.8f));
+    tileMapInstance1->Rotation(12.5f);
+    tileMapInstance1->Size(glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES));
+
+    auto tileMapInstance2 = tileMap->CreateInstance();
+    tileMapInstance2->Position(glm::vec3(-2.0f, -2.0f, 0.5f));
+    tileMapInstance2->Size(glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES));
 
     const float MOVE_SPEED = 5.0f;
 
@@ -219,7 +216,7 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    while (window.Update())
+    while (!engine.ProgramShouldExit())
     {
         processInput(window);
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -292,8 +289,8 @@ int main()
         cameraCenter.y += cameraDY * deltaTime;
         camera2d->Center(cameraCenter);
 
-        tileMap->Draw(model);
-        tileMap->Draw(model2);
+        tileMap->DrawAllInstances();
+        engine.Render();
     }
 
     return 0;

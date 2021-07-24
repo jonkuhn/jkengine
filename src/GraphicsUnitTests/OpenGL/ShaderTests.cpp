@@ -36,6 +36,7 @@ protected:
         Sequence seq;
         EXPECT_CALL(_mockLib, CreateShader(_)).InSequence(seq).WillOnce(Return(handleA));
         EXPECT_CALL(_mockLib, CreateShader(_)).InSequence(seq).WillOnce(Return(handleB));
+        SetupMockCompileToAlwaysSucceed();
 
         auto shaderA = std::make_unique<Shader>(&_mockLib, Shader::Type::Vertex, _testSource);
         auto shaderB = std::make_unique<Shader>(&_mockLib, Shader::Type::Vertex, _testSource);
@@ -137,6 +138,7 @@ TEST_F(ShaderTests, Destructor_CallsDeleteShader)
     EXPECT_CALL(_mockLib, CreateShader(_))
         .WillOnce(Return(_testHandle));
     EXPECT_CALL(_mockLib, DeleteShader(_testHandle));
+    SetupMockCompileToAlwaysSucceed();
 
     {
         Shader shader(&_mockLib, Shader::Type::Vertex, _testSource);
@@ -146,6 +148,7 @@ TEST_F(ShaderTests, Destructor_CallsDeleteShader)
 TEST_F(ShaderTests, MoveConstruct_TargetCallsDeleteShader)
 {
     EXPECT_CALL(_mockLib, CreateShader(_)).WillOnce(Return(_testHandle));
+    SetupMockCompileToAlwaysSucceed();
 
     std::unique_ptr<Shader> target;
     {

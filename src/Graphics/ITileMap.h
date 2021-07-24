@@ -5,12 +5,15 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
+#include "IObjectInstance2d.h"
+
 namespace Graphics
 {
     class ITileMap
     {
     public:
         virtual ~ITileMap() = default;
-        virtual void Draw(const glm::mat4& model) = 0;
+        virtual std::unique_ptr<IObjectInstance2d> CreateInstance() = 0;
+        virtual void DrawAllInstances() = 0;
     };
 }

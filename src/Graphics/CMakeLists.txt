@@ -12,6 +12,7 @@ target_sources(Graphics
     ICamera2d.h
     IEngine.h
     IImage.h
+    IObjectInstance2d.h
     PngImage.h
     PngImage.cpp
     ILibPngWrapper.h
@@ -27,6 +28,7 @@ target_sources(Graphics
     OpenGL/IGlfwWrapper.h
     OpenGL/GlfwWrapper.h
     OpenGL/GlfwWrapper.cpp
+    OpenGL/ObjectInstance2d.h
     OpenGL/OpenGLHelpers.h
     OpenGL/OpenGLHelpers.cpp
     OpenGL/IOpenGLWindow.h

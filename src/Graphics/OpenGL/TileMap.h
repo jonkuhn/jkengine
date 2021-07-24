@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_set>
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
 #include <glm/glm.hpp>
@@ -7,6 +9,7 @@
 
 #include "../ITileMap.h"
 
+#include "ObjectInstance2d.h"
 #include "Texture.h"
 
 namespace Graphics::OpenGL
@@ -32,8 +35,10 @@ namespace Graphics::OpenGL
 
         TileMap(const TileMap& other) = delete;
         TileMap& operator=(const TileMap& other) = delete;
+
+        std::unique_ptr<IObjectInstance2d> CreateInstance() override;
         
-        void Draw(const glm::mat4& model) override;
+        void DrawAllInstances() override;
 
     private:
         TileMapShaderProgram* _tileMapShaderProgram;
@@ -42,5 +47,8 @@ namespace Graphics::OpenGL
         TileAtlas* _atlas;
         Texture _mapTexture;
         glm::vec2 _mapSizeInTiles;
+        std::unordered_set<ObjectInstance2d*> _instances;
+
+        void Draw(const glm::mat4& model);
     };
 }
