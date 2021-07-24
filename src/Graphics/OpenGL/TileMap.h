@@ -1,7 +1,5 @@
 #pragma once
 
-#include <unordered_set>
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
 #include <glm/glm.hpp>
@@ -10,6 +8,7 @@
 #include "../ITileMap.h"
 
 #include "ObjectInstance2d.h"
+#include "Registry.h"
 #include "Texture.h"
 
 namespace Graphics::OpenGL
@@ -23,6 +22,7 @@ namespace Graphics::OpenGL
     {
     public:
         TileMap(
+            Registry<TileMap>* tileMapRegistry,
             TileMapShaderProgram* tileMapShaderProgram,
             UnitQuadVertexArray* unitQuadVertexArray,
             Camera2d* camera2d,
@@ -30,15 +30,20 @@ namespace Graphics::OpenGL
             Texture mapTexture,
             glm::vec2 mapSizeInTiles);
 
-        TileMap(TileMap&& other) = default;
-        TileMap& operator=(TileMap&& other) = default;
 
+        // To not allow copy because of Registry and Registration
+        // not being copyable
         TileMap(const TileMap& other) = delete;
         TileMap& operator=(const TileMap& other) = delete;
 
+        // To not allow move because of Registry and Registration
+        // not being moveable
+        TileMap(TileMap&& other) = delete;
+        TileMap& operator=(TileMap&& other) = delete;
+
         std::unique_ptr<IObjectInstance2d> CreateInstance() override;
         
-        void DrawAllInstances() override;
+        void DrawAll();
 
     private:
         TileMapShaderProgram* _tileMapShaderProgram;
@@ -47,7 +52,8 @@ namespace Graphics::OpenGL
         TileAtlas* _atlas;
         Texture _mapTexture;
         glm::vec2 _mapSizeInTiles;
-        std::unordered_set<ObjectInstance2d*> _instances;
+        Registry<TileMap>::Registration _registration;
+        Registry<ObjectInstance2d> _instanceRegistry;
 
         void Draw(const glm::mat4& model);
     };

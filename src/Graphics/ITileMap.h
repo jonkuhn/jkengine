@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
 #include <glm/glm.hpp>
@@ -14,6 +16,5 @@ namespace Graphics
     public:
         virtual ~ITileMap() = default;
         virtual std::unique_ptr<IObjectInstance2d> CreateInstance() = 0;
-        virtual void DrawAllInstances() = 0;
     };
 }

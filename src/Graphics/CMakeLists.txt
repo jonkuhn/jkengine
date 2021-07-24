@@ -29,11 +29,13 @@ target_sources(Graphics
     OpenGL/GlfwWrapper.h
     OpenGL/GlfwWrapper.cpp
     OpenGL/ObjectInstance2d.h
+    OpenGL/ObjectInstance2d.cpp
     OpenGL/OpenGLHelpers.h
     OpenGL/OpenGLHelpers.cpp
     OpenGL/IOpenGLWindow.h
     OpenGL/IOpenGLWrapper.h
     OpenGL/OpenGLWrapper.h
+    OpenGL/Registry.h
     OpenGL/IShader.h
     OpenGL/Shader.h
     OpenGL/Shader.cpp
@@ -43,6 +45,7 @@ target_sources(Graphics
     OpenGL/Texture.h
     OpenGL/Texture.cpp
     OpenGL/TileAtlas.h
+    OpenGL/TileAtlas.cpp
     OpenGL/TileMap.h
     OpenGL/TileMap.cpp
     OpenGL/TileMapShaderProgram.h

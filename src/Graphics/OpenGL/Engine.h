@@ -55,5 +55,6 @@ namespace Graphics::OpenGL
         UnitQuadVertexArray _unitQuadVertexArray;
         class Camera2d _camera2d;
         bool _programShouldExit;
+        Registry<TileAtlas> _tileAtlasRegistry;
     };
 }

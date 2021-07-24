@@ -191,7 +191,6 @@ TEST_F(TileMapTests, GivenSolidColored4x4TileAtlas_AssignedInDifferentOrderIn16x
     {
         glClearColor(0.5f, 0.5f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        tileMap->DrawAllInstances();
         engine->Render();
     }
 
