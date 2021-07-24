@@ -41,7 +41,7 @@ ShaderProgram::ShaderProgram(IOpenGLWrapper* gl, std::initializer_list<IShader*>
     _gl->LinkProgram(_handle.get());
 
     // check for linking errors
-    GLint success;
+    GLint success = 0;
     _gl->GetProgramiv(_handle.get(), GL_LINK_STATUS, &success);
     if (!success) {
         GLint infoLogLength;

@@ -12,7 +12,6 @@
 #include "TileMapShaderProgram.h"
 #include "UnitQuadVertexArray.h"
 #include "VertexArray.h"
-#include "ViewportCapture.h"
 #include "Window.h"
 
 namespace Graphics::OpenGL
@@ -31,20 +30,22 @@ namespace Graphics::OpenGL
             const IImage& tileAtlas,
             const glm::vec2& atlasSizeInTiles) override;
 
-        bool Update() override
-        {
-            return _window.Update();
-        }
 
         ICamera2d* Camera2d() override
         {
             return &_camera2d;
         }
 
-        std::unique_ptr<IScreenshot> TakeScreenshot() override
+        std::unique_ptr<IScreenshot> TakeScreenshot() override;
+
+        // TODO: Window should probably exist outside of Graphics namespace
+        // Because this is really and input concern.
+        bool ProgramShouldExit() override
         {
-            return std::make_unique<ViewportCapture>(&_gl);
+            return _programShouldExit;
         }
+
+        void Render() override;
 
     private:
         GlfwWrapper _glfw;
@@ -53,5 +54,6 @@ namespace Graphics::OpenGL
         TileMapShaderProgram _tileMapShaderProgram;
         UnitQuadVertexArray _unitQuadVertexArray;
         class Camera2d _camera2d;
+        bool _programShouldExit;
     };
 }

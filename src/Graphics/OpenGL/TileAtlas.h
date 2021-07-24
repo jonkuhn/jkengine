@@ -58,7 +58,8 @@ namespace Graphics::OpenGL
                         .WrapModeT(Texture::WrapMode::ClampToBorder)
                         .MinFilter(Texture::MinFilterMode::Nearest)
                         .MagFilter(Texture::MagFilterMode::Nearest)),
-                glm::vec2(tileMapImage.Width(), tileMapImage.Height()));
+                glm::vec2(tileMapImage.Width(), tileMapImage.Height())
+            );
         }
 
         inline Texture& AtlasTexture()

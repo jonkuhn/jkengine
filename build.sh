@@ -15,5 +15,5 @@ cmake --build . --config Release -j 6
 
 cd bin
 
-./GraphicsUnitTests && ./GraphicsIntegrationTests
+./GraphicsUnitTests && ./GraphicsIntegrationTests && echo "All Tests Passed!"
 

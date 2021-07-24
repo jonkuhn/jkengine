@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "Texture.h"
+#include "ViewportCapture.h"
 
 using namespace Graphics::OpenGL;
 
@@ -30,4 +31,21 @@ std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
                 .MinFilter(Texture::MinFilterMode::Nearest)
                 .MagFilter(Texture::MagFilterMode::Nearest)),
         atlasSizeInTiles);
+}
+
+std::unique_ptr<Graphics::IScreenshot> Engine::TakeScreenshot()
+{
+    return std::make_unique<ViewportCapture>(&_gl);
+}
+
+void Engine::Render()
+{
+    // TODO: Loop over everything and draw it
+
+    // TODO: Window should probably exist outside of Graphics namespace
+    // Because the program needing to exit is really an input concern
+    if(!_window.Update())
+    {
+        _programShouldExit = true;
+    }
 }

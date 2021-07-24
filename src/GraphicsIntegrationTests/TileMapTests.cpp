@@ -172,10 +172,10 @@ TEST_F(TileMapTests, GivenSolidColored4x4TileAtlas_AssignedInDifferentOrderIn16x
     TestTileMapImage testTileMapImage;
     auto tileMap = atlas->CreateTileMap(testTileMapImage);
     
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-    model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, -1.0f));
-    model = glm::scale(model, glm::vec3(static_cast<float>(testTileMapImage.Width()), static_cast<float>(testTileMapImage.Height()), 0.0f));  
+    auto tileMapInstance = tileMap->CreateInstance();
+    tileMapInstance->Position(glm::vec3(0.0f, 0.0f, 0.0f));
+    tileMapInstance->Rotation(0.0f);
+    tileMapInstance->Size(glm::vec2(static_cast<float>(testTileMapImage.Width()), static_cast<float>(testTileMapImage.Height())));
 
     auto camera = engine->Camera2d();
     camera->Center(glm::vec2(4.0f, 2.0f));
@@ -187,11 +187,12 @@ TEST_F(TileMapTests, GivenSolidColored4x4TileAtlas_AssignedInDifferentOrderIn16x
         1.0f,
         -1.0f));
 
-    while(engine->Update())
+    while(!engine->ProgramShouldExit())
     {
         glClearColor(0.5f, 0.5f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        tileMap->Draw(model);
+        tileMap->DrawAllInstances();
+        engine->Render();
     }
 
     auto scr = engine->TakeScreenshot();

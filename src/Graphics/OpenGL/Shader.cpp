@@ -59,7 +59,7 @@ Shader::Shader(IOpenGLWrapper* gl, Type type, const std::string& source)
     _gl->ShaderSource(_handle.get(), 1, &sourceCstr, nullptr);
     _gl->CompileShader(_handle.get());
 
-    int success;
+    int success = 0;
     _gl->GetShaderiv(_handle.get(), GL_COMPILE_STATUS, &success);
     if (!success)
     {
