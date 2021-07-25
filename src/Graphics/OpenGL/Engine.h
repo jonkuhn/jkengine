@@ -26,6 +26,16 @@ namespace Graphics::OpenGL
             return _window;
         }
 
+        void ClearColor(const Color &color) override
+        {
+            _gl.ClearColor(
+                static_cast<float>(color.r) / 255.0f,
+                static_cast<float>(color.g) / 255.0f,
+                static_cast<float>(color.b) / 255.0f,
+                static_cast<float>(color.a) / 255.0f
+            );
+        }
+
         std::unique_ptr<Graphics::ITileAtlas> CreateTileAtlas(
             const IImage& tileAtlas,
             const glm::vec2& atlasSizeInTiles) override;

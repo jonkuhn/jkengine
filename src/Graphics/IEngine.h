@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
+#include "Color.h"
 #include "ICamera2d.h"
 #include "IImage.h"
 #include "IScreenshot.h"
@@ -18,6 +19,8 @@ namespace Graphics
     {
     public:
         virtual ~IEngine() = default;
+
+        virtual void ClearColor(const Color &color) = 0;
 
         virtual std::unique_ptr<ITileAtlas> CreateTileAtlas(
             const IImage& tileAtlas,

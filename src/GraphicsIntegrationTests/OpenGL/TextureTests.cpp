@@ -178,6 +178,7 @@ TEST_F(TextureTests, DrawTexturedRectangle_ReadAndVerifyPixels)
     ClearViewportToPink();
     _shaderProgram->Use();
     vertexArray.Draw();
+    _window.Update();
 
     ViewportCapture capture(&_gl);
 

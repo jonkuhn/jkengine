@@ -12,7 +12,7 @@ Engine::Engine(int winWidth, int winHeight, const std::string& title)
       _tileMapShaderProgram(&_gl),
       _unitQuadVertexArray(&_gl),
       _camera2d(),
-      _programShouldExit(),
+      _programShouldExit(false),
       _tileAtlasRegistry()
 {
 
@@ -45,6 +45,8 @@ std::unique_ptr<Graphics::IScreenshot> Engine::TakeScreenshot()
 
 void Engine::Render()
 {
+    _gl.Clear(GL_COLOR_BUFFER_BIT);
+
     for(auto* tileAtlas : _tileAtlasRegistry)
     {
         tileAtlas->DrawAll();
