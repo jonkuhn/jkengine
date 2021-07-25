@@ -134,6 +134,7 @@ TEST_F(VertexArrayTests, DrawRectangle_ReadAndVerifyPixels)
     ClearViewportToBlack();
     _shaderProgram->Use();
     vertexArray.Draw();
+    _window.Update();
 
     ViewportCapture capture(&_gl);
 
@@ -174,6 +175,7 @@ TEST_F(VertexArrayTests, DrawTriangle_ReadAndVerifyPixels)
     ClearViewportToBlack();
     _shaderProgram->Use();
     vertexArray.Draw();
+    _window.Update();
 
     ViewportCapture capture(&_gl);
     capture.SaveToFileAsRaw("DrawTriangle_ReadAndVerifyPixels.data");

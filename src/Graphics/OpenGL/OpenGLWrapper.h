@@ -224,6 +224,11 @@ namespace Graphics::OpenGL
             glClear(mask);
         }
 
+        void ReadBuffer(GLenum mode) override
+        {
+            glReadBuffer(mode);
+        }
+
         void ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* data) override
         {
             glReadPixels(x, y, width, height, format, type, data);

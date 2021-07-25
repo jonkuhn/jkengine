@@ -75,6 +75,7 @@ ViewportCapture::ViewportCapture(IOpenGLWrapper* gl)
     : _dimensions(GetDimensions(gl)),
       _pixelData(_dimensions.width * _dimensions.height)
 {
+    gl->ReadBuffer(GL_FRONT);
     gl->ReadPixels(0, 0, _dimensions.width, _dimensions.height, GL_RGBA, GL_UNSIGNED_BYTE, _pixelData.data());
 }
 

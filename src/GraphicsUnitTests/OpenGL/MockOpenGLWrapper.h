@@ -48,6 +48,7 @@ public:
     MOCK_METHOD(void, GenerateMipmap, (GLenum target), (override));
     MOCK_METHOD(void, ClearColor, (GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha), (override));
     MOCK_METHOD(void, Clear, (GLbitfield mask), (override));
+    MOCK_METHOD(void, ReadBuffer, (GLenum mode), (override));
     MOCK_METHOD(void, ReadPixels, (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* data), (override));
     MOCK_METHOD(void, GetIntegerv, (GLenum pname, GLint* data), (override));
 };

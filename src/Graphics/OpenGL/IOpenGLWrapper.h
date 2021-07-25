@@ -56,6 +56,7 @@ namespace Graphics::OpenGL
         virtual void ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha) = 0;
         virtual void Clear(GLbitfield mask) = 0;
 
+        virtual void ReadBuffer(GLenum mode) = 0;
         virtual void ReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* data) = 0;
 
         virtual void GetIntegerv(GLenum pname, GLint* data) = 0;

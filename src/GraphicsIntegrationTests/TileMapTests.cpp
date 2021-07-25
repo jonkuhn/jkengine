@@ -163,8 +163,8 @@ public:
 
 TEST_F(TileMapTests, GivenSolidColored4x4TileAtlas_AssignedInDifferentOrderIn16x16TileMap_ColorSamplesMatchExpectations)
 {
-    auto engine = std::make_unique<OpenGL::Engine>(
-       WindowWidth, WindowHeight, "TileMapTests");
+    auto engine = std::make_unique<OpenGL::Engine>(WindowWidth, WindowHeight, "TileMapTests");
+    engine->ClearColor(ColorBackgroundUglyYellow);
 
     LibPngWrapper libPng;
     PngImage colorTiles4x4(&libPng, "TestFiles/colortiles4x4.png");
@@ -187,10 +187,9 @@ TEST_F(TileMapTests, GivenSolidColored4x4TileAtlas_AssignedInDifferentOrderIn16x
         1.0f,
         -1.0f));
 
-    while(!engine->ProgramShouldExit())
+    // uncomment to pause to see the window
+    //while(!engine->ProgramShouldExit())
     {
-        glClearColor(0.5f, 0.5f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
         engine->Render();
     }
 

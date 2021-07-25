@@ -213,13 +213,17 @@ int main()
 
     auto& window = engine.GetWindow();
 
+    // TODO: move into engine
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
+
+    engine.ClearColor(Color(51, 77, 77, 255));
 
     while (!engine.ProgramShouldExit())
     {
         processInput(window);
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+        //TODO: remove once GL_DEPTH_BUFFER_BIT is in engine
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //tileMapShaderProgram.Use();
