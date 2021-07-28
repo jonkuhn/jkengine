@@ -53,6 +53,8 @@ namespace Graphics::OpenGL
             GLsizei height, GLint border, GLenum format, GLenum type, const void * data) = 0;
         virtual void GenerateMipmap(GLenum target) = 0;
 
+        virtual void Enable(GLenum cap) = 0;
+        virtual void BlendFunc(GLenum sfactor, GLenum dfactor) = 0;
         virtual void ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha) = 0;
         virtual void Clear(GLbitfield mask) = 0;
 

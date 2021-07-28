@@ -46,6 +46,8 @@ public:
     MOCK_METHOD(void, TexImage2D, (GLenum target, GLint level, GLint internalformat, GLsizei width,
             GLsizei height, GLint border, GLenum format, GLenum type, const void * data), (override));
     MOCK_METHOD(void, GenerateMipmap, (GLenum target), (override));
+    MOCK_METHOD(void, Enable, (GLenum cap), (override));
+    MOCK_METHOD(void, BlendFunc, (GLenum sfactor, GLenum dfactor), (override));
     MOCK_METHOD(void, ClearColor, (GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha), (override));
     MOCK_METHOD(void, Clear, (GLbitfield mask), (override));
     MOCK_METHOD(void, ReadBuffer, (GLenum mode), (override));
