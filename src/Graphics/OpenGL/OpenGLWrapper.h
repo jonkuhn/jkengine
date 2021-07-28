@@ -214,6 +214,16 @@ namespace Graphics::OpenGL
             glGenerateMipmap(target);
         }
 
+        void Enable(GLenum cap) override
+        {
+            glEnable(cap);
+        }
+
+        void BlendFunc(GLenum sfactor, GLenum dfactor) override
+        {
+            glBlendFunc(sfactor, dfactor);
+        }
+
         void ClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha) override
         {
             glClearColor(red, green, blue, alpha);
