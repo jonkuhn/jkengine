@@ -15,7 +15,8 @@ Engine::Engine(int winWidth, int winHeight, const std::string& title)
       _programShouldExit(false),
       _tileAtlasRegistry()
 {
-
+    _gl.Enable(GL_BLEND);
+    _gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(

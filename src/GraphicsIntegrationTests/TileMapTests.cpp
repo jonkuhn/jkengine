@@ -128,28 +128,36 @@ public:
         _engine(std::make_unique<OpenGL::Engine>(WindowWidth, WindowHeight, "TileMapTests")),
         _camera(_engine->Camera2d()),
         _atlasColorTiles4x4(),
+        _atlasColorTilesEmptyCenters4x4(),
         _tileMapImage8x4(),
-        _colorTilesMap8x4()
+        _colorTilesMap8x4(),
+        _colorTilesMapEmptyCenters8x4()
     {
         _engine->ClearColor(ColorBackgroundUglyYellow);
         PngImage colorTiles4x4(&_libPng, "TestFiles/colortiles4x4.png");
         _atlasColorTiles4x4 = _engine->CreateTileAtlas(colorTiles4x4, glm::vec2(4.0f, 4.0f));
         _colorTilesMap8x4 = _atlasColorTiles4x4->CreateTileMap(_tileMapImage8x4);
+
+        PngImage colorTiles4x4EmptyCenters(&_libPng, "TestFiles/colortiles4x4emptycenters.png");
+        _atlasColorTilesEmptyCenters4x4 = _engine->CreateTileAtlas(colorTiles4x4EmptyCenters, glm::vec2(4.0f, 4.0f));
+        _colorTilesMapEmptyCenters8x4 = _atlasColorTilesEmptyCenters4x4->CreateTileMap(_tileMapImage8x4);
     }
 protected:
     LibPngWrapper _libPng;
     std::unique_ptr<IEngine> _engine;
     ICamera2d* _camera;
     std::unique_ptr<ITileAtlas> _atlasColorTiles4x4;
+     std::unique_ptr<ITileAtlas> _atlasColorTilesEmptyCenters4x4;
     TileMapImage8x4 _tileMapImage8x4;
     std::unique_ptr<ITileMap> _colorTilesMap8x4;
+    std::unique_ptr<ITileMap> _colorTilesMapEmptyCenters8x4;
     
-    std::unique_ptr<IObjectInstance2d> SetupColorTilesMap8x4InstanceInCenterOfCamera8x6Fov()
+    std::unique_ptr<IObjectInstance2d> SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(ITileMap& tileMap)
     {
         // Create instance of 8x4 tile map with lower left at origin
         // with no rotation and size in world coordinates set to
         // the width and height of the tile map (8x4)
-        auto tileMapInstance = _colorTilesMap8x4->CreateInstance();
+        auto tileMapInstance = tileMap.CreateInstance();
         tileMapInstance->Position(glm::vec3(0.0f, 0.0f, 0.0f));
         tileMapInstance->Rotation(0.0f);
         tileMapInstance->Size(glm::vec2(
@@ -172,9 +180,54 @@ protected:
         return tileMapInstance;
     }
 
+    class CenterSampleExpectation
+    {
+    public:
+        static CenterSampleExpectation SameAsTile()
+        {
+            return CenterSampleExpectation();
+        }
+
+        static CenterSampleExpectation AlwaysColor(Color color)
+        {
+            return CenterSampleExpectation(color);
+        }
+            
+        bool IsSameAsTile()
+        {
+            return _sameAsTile;
+        }
+
+        Color ExpectedColor()
+        {
+            if (_sameAsTile)
+            {
+                throw std::logic_error("ExpectedColor should not be called because IsSameAsTile is true");
+            }
+            return _color;
+        }
+
+    private:
+            bool _sameAsTile;
+            Color _color;
+
+            CenterSampleExpectation()
+              : _sameAsTile(true),
+                _color(0, 0, 0, 0)
+            {
+            }
+
+            CenterSampleExpectation(Color color)
+              : _sameAsTile(false),
+                _color(color)
+            {
+            }
+    };
+
     template<unsigned int ColumnCount, unsigned int RowCount>
     void ExpectTileColorGridOnScreen(
-        std::array<std::array<Color, ColumnCount>, RowCount> expectedTileColors)
+        std::array<std::array<Color, ColumnCount>, RowCount> expectedTileColors,
+        CenterSampleExpectation centerSampleExpectation)
     {
         auto screenshot = _engine->TakeScreenshot();
         auto columnWidth = screenshot->Width() / ColumnCount;
@@ -201,8 +254,17 @@ protected:
                     << "(upper left) row = " << row << " column = " << column;
                 EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleRightX, y + sampleUpperY))
                     << "(upper right) row = " << row << " column = " << column;
-                EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleCenterX, y + sampleCenterY))
-                    << "(center) row = " << row << " column = " << column;
+
+                if(centerSampleExpectation.IsSameAsTile())
+                {
+                    EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleCenterX, y + sampleCenterY))
+                        << "(center) row = " << row << " column = " << column;
+                }
+                else
+                {
+                    EXPECT_EQ(centerSampleExpectation.ExpectedColor(), screenshot->GetPixel(x + sampleCenterX, y + sampleCenterY))
+                        << "(center) row = " << row << " column = " << column;
+                }
                 EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleLeftX, y + sampleLowerY))
                     << "(lower left) row = " << row << " column = " << column;
                 EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleRightX, y + sampleLowerY))
@@ -282,7 +344,7 @@ protected:
         }
     }
 
-    void Expect8x4ColorTilesMapCenteredOnScreen()
+    void Expect8x4ColorTilesMapCenteredOnScreen(CenterSampleExpectation centerSampleExpectation)
     {
         const unsigned int ColumnCount = 8;
         const unsigned int RowCount = 6;
@@ -303,7 +365,8 @@ protected:
                 // Last row is background color
                 { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
                 ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow }
-            } }));
+            } }),
+            centerSampleExpectation);
     }
 
     void ExpectAllBackgroundColorOnScreen()
@@ -330,20 +393,22 @@ protected:
 
                 { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
                 ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow }
-            } }));
+            } }),
+            CenterSampleExpectation::SameAsTile());
     }
 };
 
 TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisible)
 {
-    auto tileMapInstance = SetupColorTilesMap8x4InstanceInCenterOfCamera8x6Fov();
+    auto tileMapInstance = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMap8x4);
     _engine->Render();
-    Expect8x4ColorTilesMapCenteredOnScreen();
+    Expect8x4ColorTilesMapCenteredOnScreen(CenterSampleExpectation::SameAsTile());
 }
+
 
 TEST_F(TileMapTests, Given8x4TileMapOffCamera_Camera8x6FovCenteredAtCenterOfTileMap_EntireAllBackgroundColorOnScreen)
 {
-    auto tileMapInstance = SetupColorTilesMap8x4InstanceInCenterOfCamera8x6Fov();
+    auto tileMapInstance = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMap8x4);
 
     // Move tile map to an off camera location and expect all background color
     tileMapInstance->Position(glm::vec3(30.0f, 60.0f, 0.0f));
@@ -353,7 +418,7 @@ TEST_F(TileMapTests, Given8x4TileMapOffCamera_Camera8x6FovCenteredAtCenterOfTile
 
 TEST_F(TileMapTests, Given8x4TileMapAtX30Y60_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisible)
 {
-    auto tileMapInstance = SetupColorTilesMap8x4InstanceInCenterOfCamera8x6Fov();
+    auto tileMapInstance = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMap8x4);
 
     // Move tile map to an off camera location and expect all background color
     tileMapInstance->Position(glm::vec3(30.0f, 60.0f, 0.0f));
@@ -362,12 +427,12 @@ TEST_F(TileMapTests, Given8x4TileMapAtX30Y60_Camera8x6FovCenteredAtCenterOfTileM
     // to see the tile map as before
     _camera->Center(tileMapInstance->Position() + glm::vec3(tileMapInstance->Size() / 2.0f, 0.0f));
     _engine->Render();
-    Expect8x4ColorTilesMapCenteredOnScreen();
+    Expect8x4ColorTilesMapCenteredOnScreen(CenterSampleExpectation::SameAsTile());
 }
 
 TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtOrigin_Left4ColumnsAndBottom3RowsOfTileMapAreVisible)
 {
-    auto tileMapInstance = SetupColorTilesMap8x4InstanceInCenterOfCamera8x6Fov();
+    auto tileMapInstance = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMap8x4);
 
     // Center the camera at the origin
     _camera->Center(glm::vec2(0.0f, 0.0f));
@@ -401,12 +466,13 @@ TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtOrigin_Left4C
             // Sixth row is all background color
             { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
             ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow }
-        } }));
+        } }),
+        CenterSampleExpectation::SameAsTile());
 }
 
 TEST_F(TileMapTests, Given8x4TileMapAtOriginRotated45Degrees_Camera8x6FovCenteredAtCenterOfTileMap_TODO)
 {
-    auto tileMapInstance = SetupColorTilesMap8x4InstanceInCenterOfCamera8x6Fov();
+    auto tileMapInstance = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMap8x4);
 
     // Rotate the tile map 45 degrees
     tileMapInstance->Rotation(45.0f);
@@ -437,4 +503,11 @@ TEST_F(TileMapTests, Given8x4TileMapAtOriginRotated45Degrees_Camera8x6FovCentere
 
         } }));
 
+}
+
+TEST_F(TileMapTests, Given8x4TileMapEmptyCentersAtOrigin_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisibleAndCentersShowBackground)
+{
+    auto tileMapInstance = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMapEmptyCenters8x4);
+    _engine->Render();
+    Expect8x4ColorTilesMapCenteredOnScreen(CenterSampleExpectation::AlwaysColor(ColorBackgroundUglyYellow));
 }
