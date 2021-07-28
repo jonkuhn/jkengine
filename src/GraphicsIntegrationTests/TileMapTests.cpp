@@ -1,4 +1,5 @@
 #include <array>
+#include <cmath>
 #include <memory>
 
 #pragma clang diagnostic push
@@ -197,15 +198,86 @@ protected:
                 auto x = column * columnWidth;
                 auto y = row * rowHeight;
                 EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleLeftX, y + sampleUpperY))
-                    << "row = " << row << " column = " << column;
+                    << "(upper left) row = " << row << " column = " << column;
                 EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleRightX, y + sampleUpperY))
-                    << "row = " << row << " column = " << column;
+                    << "(upper right) row = " << row << " column = " << column;
                 EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleCenterX, y + sampleCenterY))
-                    << "row = " << row << " column = " << column;
+                    << "(center) row = " << row << " column = " << column;
                 EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleLeftX, y + sampleLowerY))
-                    << "row = " << row << " column = " << column;
+                    << "(lower left) row = " << row << " column = " << column;
                 EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleRightX, y + sampleLowerY))
-                    << "row = " << row << " column = " << column;
+                    << "(lower right) row = " << row << " column = " << column;
+            }
+        }
+    }
+
+    void ExpectColorAtScreenPositionIfOnScreen(
+        IScreenshot& screenshot,
+        std::string name,
+        Color expectedColor,
+        unsigned int x,
+        unsigned int y,
+        unsigned int row,
+        unsigned int column)
+    {
+        // only check points that are on screen
+        if(x > 0 && x < screenshot.Width() && y > 0 && y < screenshot.Height())
+        {
+            EXPECT_EQ(expectedColor, screenshot.GetPixel(x, y))
+                << "(" << name <<  ") row = " << row << " column = " << column;
+        }
+    }
+
+    template<unsigned int ColumnCount, unsigned int RowCount>
+    void ExpectRotatedTileColorGridOnScreen(
+        std::array<std::array<Color, ColumnCount>, RowCount> expectedTileColors)
+    {
+        auto screenshot = _engine->TakeScreenshot();
+
+        // Assume non-rotated tiles fit exactly 8 across for calculating
+        // tileDiagonal
+        auto tileDiagonal = static_cast<unsigned int>(
+            sqrt(2.0f) * static_cast<float>(screenshot->Width()) / 8.0f);
+
+        auto columnWidth = tileDiagonal;
+        auto rowHeight = tileDiagonal / 2;
+
+        auto firstCenterX = (screenshot->Width() / 2) - (5 * tileDiagonal / 2);
+        auto firstCenterY = (screenshot->Height() / 2) - (2 * tileDiagonal);
+        auto oddRowXOffset = tileDiagonal / 2;
+
+        // sample each tile near 4 corners plus center
+        auto sampleCenterXOffset = 0.0f;
+        auto sampleCenterYOffset = 0.0f;
+
+        auto sampleDistanceFromCorner = tileDiagonal / 16.0f;
+        auto sampleLeftXOffset = -0.5 * tileDiagonal + sampleDistanceFromCorner;
+        auto sampleRightXOffset = 0.5 * tileDiagonal - sampleDistanceFromCorner;
+        auto sampleTopYOffset = -0.5 * tileDiagonal + sampleDistanceFromCorner;
+        auto sampleBottomYOffset = 0.5 * tileDiagonal - sampleDistanceFromCorner;
+        
+        for(unsigned int row = 0; row < RowCount; row++)
+        {
+            for(unsigned int column = 0; column < ColumnCount; column++)
+            {
+                auto expectedColor = expectedTileColors[row][column];
+                auto x = firstCenterX + column * columnWidth + ((row % 2) * oddRowXOffset);
+                auto y = firstCenterY + row * rowHeight;
+
+                ExpectColorAtScreenPositionIfOnScreen(*screenshot, "center", expectedColor,
+                    x + sampleCenterXOffset, y + sampleCenterYOffset, row, column);
+
+                ExpectColorAtScreenPositionIfOnScreen(*screenshot, "left", expectedColor,
+                    x + sampleLeftXOffset, y + sampleCenterYOffset, row, column);
+
+                ExpectColorAtScreenPositionIfOnScreen(*screenshot, "right", expectedColor,
+                    x + sampleRightXOffset, y + sampleCenterYOffset, row, column);
+
+                ExpectColorAtScreenPositionIfOnScreen(*screenshot, "top", expectedColor,
+                    x + sampleCenterXOffset, y + sampleTopYOffset, row, column);
+
+                ExpectColorAtScreenPositionIfOnScreen(*screenshot, "bottom", expectedColor,
+                    x + sampleCenterXOffset, y + sampleBottomYOffset, row, column);
             }
         }
     }
@@ -330,4 +402,39 @@ TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtOrigin_Left4C
             { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
             ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow }
         } }));
+}
+
+TEST_F(TileMapTests, Given8x4TileMapAtOriginRotated45Degrees_Camera8x6FovCenteredAtCenterOfTileMap_TODO)
+{
+    auto tileMapInstance = SetupColorTilesMap8x4InstanceInCenterOfCamera8x6Fov();
+
+    // Rotate the tile map 45 degrees
+    tileMapInstance->Rotation(45.0f);
+    _engine->Render();
+
+    const unsigned int ColumnCount = 6;
+    const unsigned int RowCount = 9;
+    ExpectRotatedTileColorGridOnScreen<ColumnCount, RowCount>(
+        std::array<std::array<Color, ColumnCount>, RowCount>(
+        { {
+            { ColorBackgroundUglyYellow, ColorOrange, ColorGreen, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            { ColorWhite, ColorWhite, ColorCyan, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            { ColorGreen, ColorBlue, ColorBlue, ColorRed, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            { ColorCyan, ColorLightGray, ColorLightGray, ColorLightGreen, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            { ColorBackgroundUglyYellow, ColorRed, ColorLightPeach, ColorLightPeach, ColorPurple, ColorBackgroundUglyYellow },
+
+            { ColorBackgroundUglyYellow, ColorLightGreen, ColorBlack, ColorBlack, ColorLightPurple, ColorBackgroundUglyYellow },
+
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorPurple, ColorMagenta, ColorMagenta, ColorSkyBlue },
+
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorLightPurple, ColorDarkGray, ColorDarkGray, ColorBackgroundUglyYellow },
+
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorSkyBlue, ColorOrange, ColorBackgroundUglyYellow },
+
+        } }));
+
 }
