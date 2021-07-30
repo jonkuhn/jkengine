@@ -57,7 +57,7 @@ TEST_F(ObjectInstance2dTests, Constructor_ModelMatrixHasPositionAtOriginRotation
 
 TEST_F(ObjectInstance2dTests, Position_GivenPositionChangeAfterFetchingModelMatrix_ModelMatrixMatchesUpdatedPosition)
 {
-    glm::vec3 testPosition(128.5f, 64.125f, -0.25f);
+    glm::vec2 testPosition(128.5f, 64.125f);
     auto obj = CreateObjectInstance2d();
     // fetch to ensure model matrix would be cached with default values
     obj.ModelMatrix();
@@ -66,7 +66,7 @@ TEST_F(ObjectInstance2dTests, Position_GivenPositionChangeAfterFetchingModelMatr
 
     auto actual = obj.ModelMatrix();
     auto expected = glm::mat4(1.0f);
-    expected = glm::translate(expected, testPosition);
+    expected = glm::translate(expected, glm::vec3(testPosition, 0.0f));
     expected = glm::rotate(expected, glm::radians(0.0f), glm::vec3(0.0f, 0.0f, -1.0f));  
     expected = glm::scale(expected, glm::vec3(1.0f, 1.0f, 0.0f));  
 
@@ -115,7 +115,7 @@ TEST_F(ObjectInstance2dTests, Rotation_GivenRotationChangedAfterFetchingModelMat
 
 TEST_F(ObjectInstance2dTests, ModelMatrix_GivenNonZeroPositionScaleAndRotation_ModelMatrixIsCorrect)
 {
-    glm::vec3 testPosition(128.5f, 64.125f, -0.25f);
+    glm::vec2 testPosition(128.5f, 64.125f);
     glm::vec2 testSize(12.25, 6.5);
     float testRotationDegrees = 12.5;
     auto obj = CreateObjectInstance2d();
@@ -128,7 +128,7 @@ TEST_F(ObjectInstance2dTests, ModelMatrix_GivenNonZeroPositionScaleAndRotation_M
 
     auto actual = obj.ModelMatrix();
     auto expected = glm::mat4(1.0f);
-    expected = glm::translate(expected, testPosition);
+    expected = glm::translate(expected, glm::vec3(testPosition, 0.0f));
     expected = glm::translate(expected, glm::vec3(0.5 * testSize.x, 0.5 * testSize.y, 0.0f));  
     expected = glm::rotate(expected, glm::radians(testRotationDegrees), glm::vec3(0.0f, 0.0f, -1.0f));  
     expected = glm::translate(expected, glm::vec3(-0.5 * testSize.x, -0.5 * testSize.y, 0.0f));  

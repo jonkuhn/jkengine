@@ -147,7 +147,7 @@ public:
 int main()
 {
     LibPngWrapper libpng;
-    Engine engine(SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL");
+    Engine engine(SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL", 3);
 
     // Want:
     // - World to be 100 tiles by 100 tiles represented by one tile map
@@ -170,7 +170,7 @@ int main()
     // use a small 2x2 tile atlas for testing purposes
     const float TILE_ATLAS_WIDTH_IN_TILES = 4;
     const float TILE_ATLAS_HEIGHT_IN_TILES = 4;
-    PngImage tileAtlasImage(&libpng, "TestFiles/colortiles4x4.png");
+    PngImage tileAtlasImage(&libpng, "TestFiles/colortiles4x4emptycenters.png");
     //Texture tileAtlasTexture(&gl, Texture::Params(tileAtlasImage)
     //    .WrapModeS(Texture::WrapMode::ClampToBorder)
     //    .WrapModeT(Texture::WrapMode::ClampToBorder)
@@ -186,13 +186,13 @@ int main()
 
     // Define a model matrix that scale's up from a unit quad
     // to world width by world height
-    auto tileMapInstance1 = tileMap->CreateInstance();
-    tileMapInstance1->Position(glm::vec3(-2.0f, -2.0f, 0.8f));
+    auto tileMapInstance1 = tileMap->CreateInstance(1);
+    tileMapInstance1->Position(glm::vec2(-2.0f, -2.0f));
     tileMapInstance1->Rotation(12.5f);
     tileMapInstance1->Size(glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES));
 
-    auto tileMapInstance2 = tileMap->CreateInstance();
-    tileMapInstance2->Position(glm::vec3(-2.0f, -2.0f, 0.5f));
+    auto tileMapInstance2 = tileMap->CreateInstance(0);
+    tileMapInstance2->Position(glm::vec2(-2.0f, -2.0f));
     tileMapInstance2->Size(glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES));
 
     const float MOVE_SPEED = 5.0f;
@@ -200,22 +200,14 @@ int main()
     auto camera2d = engine.Camera2d();
     auto aspectRatio = (float)SCR_WIDTH / (float)SCR_HEIGHT;
     camera2d->FieldOfView(ICamera2d::Fov(
-            -2.5f * aspectRatio,
-            2.5f * aspectRatio,
-            -2.5f,
-            2.5f,
-            1.0f,
-            -1.0f));
+            -2.5f * aspectRatio, 2.5f * aspectRatio,
+            -2.5f, 2.5f));
     auto cameraDX = 0.0f;
     auto cameraDY = 0.0f;
 
     double previousTime = glfwGetTime();
 
     auto& window = engine.GetWindow();
-
-    // TODO: move into engine
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
 
     engine.ClearColor(Color(51, 77, 77, 255));
 

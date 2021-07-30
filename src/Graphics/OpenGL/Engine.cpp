@@ -5,7 +5,7 @@
 
 using namespace Graphics::OpenGL;
 
-Engine::Engine(int winWidth, int winHeight, const std::string& title)
+Engine::Engine(int winWidth, int winHeight, const std::string& title, unsigned int numberOfDrawingLayers)
     : _glfw(),
       _window(&_glfw, winWidth, winHeight, title),
       _gl(&_window),
@@ -13,8 +13,9 @@ Engine::Engine(int winWidth, int winHeight, const std::string& title)
       _unitQuadVertexArray(&_gl),
       _camera2d(),
       _tileMapDrawer(&_tileMapShaderProgram, &_unitQuadVertexArray, &_camera2d),
-      _programShouldExit(false),
-      _tileAtlasRegistry()
+      _tileAtlasRegistry(),
+      _numberOfDrawingLayers(numberOfDrawingLayers),
+      _programShouldExit(false)
 {
     _gl.Enable(GL_BLEND);
     _gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -27,6 +28,7 @@ std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
     return std::make_unique<TileAtlas>(
         &_tileAtlasRegistry,
         &_gl,
+        _numberOfDrawingLayers,
         &_tileMapDrawer,
         Texture(
             &_gl,
@@ -47,9 +49,12 @@ void Engine::Render()
 {
     _gl.Clear(GL_COLOR_BUFFER_BIT);
 
-    for(auto* tileAtlas : _tileAtlasRegistry)
+    for(unsigned int layer = 0; layer < _numberOfDrawingLayers; layer++)
     {
-        tileAtlas->DrawAll();
+        for(auto* tileAtlas : _tileAtlasRegistry)
+        {
+            tileAtlas->DrawAllOnLayer(layer);
+        }
     }
 
     // TODO: Window should probably exist outside of Graphics namespace

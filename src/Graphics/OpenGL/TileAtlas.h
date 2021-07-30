@@ -23,11 +23,13 @@ namespace Graphics::OpenGL
         TileAtlas(
             Registry<TileAtlas>* tileAtlasRegistry,
             IOpenGLWrapper* gl,
+            unsigned int numberOfDrawingLayers,
             TileMapDrawer* tileMapDrawer,
             Texture atlasTexture,
             glm::vec2 atlasSizeInTiles)
           : 
             _gl(gl),
+            _numberOfDrawingLayers(numberOfDrawingLayers),
             _tileMapDrawer(tileMapDrawer),
             _atlasTexture(std::move(atlasTexture)),
             _atlasSizeInTiles(std::move(atlasSizeInTiles)),
@@ -59,10 +61,11 @@ namespace Graphics::OpenGL
             return _atlasSizeInTiles;
         }
 
-        void DrawAll();
+        void DrawAllOnLayer(unsigned int layer);
 
     private:
         IOpenGLWrapper* _gl;
+        unsigned int _numberOfDrawingLayers;
         TileMapDrawer* _tileMapDrawer;
         Texture _atlasTexture;
         glm::vec2 _atlasSizeInTiles;

@@ -12,7 +12,7 @@ namespace Graphics
     public:
         virtual ~IObjectInstance2d() = default;
 
-        virtual void Position(glm::vec3 position) = 0;
+        virtual void Position(const glm::vec2& position) = 0;
         virtual const glm::vec3& Position() const = 0;
         virtual void Size(glm::vec2 size) = 0;
         virtual const glm::vec2& Size() const = 0;

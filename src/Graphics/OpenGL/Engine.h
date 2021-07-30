@@ -20,7 +20,7 @@ namespace Graphics::OpenGL
     class Engine : public IEngine
     {
     public:
-        Engine(int winWidth, int winHeight, const std::string& title);
+        Engine(int winWidth, int winHeight, const std::string& title, unsigned int numberOfDrawingLayers);
 
         GlfwWindow& GetWindow()
         {
@@ -66,7 +66,10 @@ namespace Graphics::OpenGL
         UnitQuadVertexArray _unitQuadVertexArray;
         class Camera2d _camera2d;
         TileMapDrawer _tileMapDrawer;
-        bool _programShouldExit;
         Registry<TileAtlas> _tileAtlasRegistry;
+
+        unsigned int _numberOfDrawingLayers;
+
+        bool _programShouldExit;
     };
 }
