@@ -8,7 +8,7 @@
 
 using namespace Graphics::OpenGL;
 
-void ObjectInstance2d::EnsureModelMatrixIsUpdated()
+void ObjectInstance2d::EnsureModelMatrixIsUpdated() const
 {
     if (!_modelNeedsUpdated)
     {

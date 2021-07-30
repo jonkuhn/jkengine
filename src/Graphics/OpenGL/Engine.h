@@ -9,6 +9,7 @@
 #include "ShaderProgram.h"
 #include "Texture.h"
 #include "TileAtlas.h"
+#include "TileMapDrawer.h"
 #include "TileMapShaderProgram.h"
 #include "UnitQuadVertexArray.h"
 #include "VertexArray.h"
@@ -64,6 +65,7 @@ namespace Graphics::OpenGL
         TileMapShaderProgram _tileMapShaderProgram;
         UnitQuadVertexArray _unitQuadVertexArray;
         class Camera2d _camera2d;
+        TileMapDrawer _tileMapDrawer;
         bool _programShouldExit;
         Registry<TileAtlas> _tileAtlasRegistry;
     };
