@@ -41,10 +41,11 @@ namespace Graphics::OpenGL
         ObjectInstance2d(ObjectInstance2d&&) = delete;
         ObjectInstance2d& operator=(ObjectInstance2d&&) = delete;
 
-        inline void Position(glm::vec3 position)
+        inline void Position(const glm::vec2& position)
         {
             _modelNeedsUpdated = true;
-            _position = std::move(position);
+            _position.x = position.x;
+            _position.y = position.y;
         }
         
         inline const glm::vec3& Position() const

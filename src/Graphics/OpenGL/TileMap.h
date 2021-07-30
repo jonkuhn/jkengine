@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
 #include <glm/glm.hpp>
@@ -21,6 +23,7 @@ namespace Graphics::OpenGL
     public:
         TileMap(
             Registry<TileMap>* tileMapRegistry,
+            unsigned int numberOfDrawingLayers,
             TileMapDrawer* tileMapDrawer,
             TileAtlas* atlas,
             Texture mapTexture,
@@ -37,7 +40,7 @@ namespace Graphics::OpenGL
         TileMap(TileMap&& other) = delete;
         TileMap& operator=(TileMap&& other) = delete;
 
-        std::unique_ptr<IObjectInstance2d> CreateInstance() override;
+        std::unique_ptr<IObjectInstance2d> CreateInstance(unsigned int layer) override;
 
         inline const Texture& MapTexture() const
         {
@@ -49,7 +52,7 @@ namespace Graphics::OpenGL
             return _mapSizeInTiles;
         }
         
-        void DrawAll();
+        void DrawAllOnLayer(unsigned int layer);
 
     private:
         TileMapDrawer* _tileMapDrawer;
@@ -57,7 +60,7 @@ namespace Graphics::OpenGL
         Texture _mapTexture;
         glm::vec2 _mapSizeInTiles;
         Registry<TileMap>::Registration _registration;
-        Registry<ObjectInstance2d> _instanceRegistry;
+        std::vector<Registry<ObjectInstance2d>> _perLayerInstanceRegistries;
 
         void Draw(const glm::mat4& model);
     };

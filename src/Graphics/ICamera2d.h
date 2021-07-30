@@ -21,20 +21,16 @@ namespace Graphics
               : left(-1.0f),
                 right(1.0f),
                 bottom(-1.0f),
-                top(1.0f),
-                near(1.0f),
-                far(-1.0f)
+                top(1.0f)
             {
 
             }
 
-            Fov(float left_, float right_, float bottom_, float top_, float near_, float far_)
+            Fov(float left_, float right_, float bottom_, float top_)
               : left(left_),
                 right(right_),
                 bottom(bottom_),
-                top(top_),
-                near(near_),
-                far(far_)
+                top(top_)
             {
 
             }
@@ -43,8 +39,6 @@ namespace Graphics
             float right;
             float bottom;
             float top;
-            float near;
-            float far;
         };
 
         virtual void FieldOfView(Fov fov) = 0;

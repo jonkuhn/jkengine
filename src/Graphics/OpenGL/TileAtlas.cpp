@@ -11,6 +11,7 @@ std::unique_ptr<Graphics::ITileMap> TileAtlas::CreateTileMap(
 {
     return std::make_unique<TileMap>(
         &_tileMapRegistry,
+        _numberOfDrawingLayers,
         _tileMapDrawer,
         this,
         Texture(
@@ -24,10 +25,10 @@ std::unique_ptr<Graphics::ITileMap> TileAtlas::CreateTileMap(
     );
 }
 
-void TileAtlas::DrawAll()
+void TileAtlas::DrawAllOnLayer(unsigned int layer)
 {
     for(auto& tileMap : _tileMapRegistry)
     {
-        tileMap->DrawAll();
+        tileMap->DrawAllOnLayer(layer);
     }
 }

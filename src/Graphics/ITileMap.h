@@ -15,6 +15,6 @@ namespace Graphics
     {
     public:
         virtual ~ITileMap() = default;
-        virtual std::unique_ptr<IObjectInstance2d> CreateInstance() = 0;
+        virtual std::unique_ptr<IObjectInstance2d> CreateInstance(unsigned int layer) = 0;
     };
 }
