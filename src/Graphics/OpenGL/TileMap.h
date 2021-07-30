@@ -13,19 +13,15 @@
 
 namespace Graphics::OpenGL
 {
-    class Camera2d;
     class TileAtlas;
-    class TileMapShaderProgram;
-    class UnitQuadVertexArray;
+    class TileMapDrawer;
 
     class TileMap final : public ITileMap
     {
     public:
         TileMap(
             Registry<TileMap>* tileMapRegistry,
-            TileMapShaderProgram* tileMapShaderProgram,
-            UnitQuadVertexArray* unitQuadVertexArray,
-            Camera2d* camera2d,
+            TileMapDrawer* tileMapDrawer,
             TileAtlas* atlas,
             Texture mapTexture,
             glm::vec2 mapSizeInTiles);
@@ -42,13 +38,21 @@ namespace Graphics::OpenGL
         TileMap& operator=(TileMap&& other) = delete;
 
         std::unique_ptr<IObjectInstance2d> CreateInstance() override;
+
+        inline const Texture& MapTexture() const
+        {
+            return _mapTexture;
+        }
+
+        inline const glm::vec2& SizeInTiles() const
+        {
+            return _mapSizeInTiles;
+        }
         
         void DrawAll();
 
     private:
-        TileMapShaderProgram* _tileMapShaderProgram;
-        UnitQuadVertexArray* _unitQuadVertexArray;
-        Camera2d* _camera2d;
+        TileMapDrawer* _tileMapDrawer;
         TileAtlas* _atlas;
         Texture _mapTexture;
         glm::vec2 _mapSizeInTiles;

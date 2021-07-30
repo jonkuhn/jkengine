@@ -12,6 +12,7 @@ Engine::Engine(int winWidth, int winHeight, const std::string& title)
       _tileMapShaderProgram(&_gl),
       _unitQuadVertexArray(&_gl),
       _camera2d(),
+      _tileMapDrawer(&_tileMapShaderProgram, &_unitQuadVertexArray, &_camera2d),
       _programShouldExit(false),
       _tileAtlasRegistry()
 {
@@ -26,9 +27,7 @@ std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
     return std::make_unique<TileAtlas>(
         &_tileAtlasRegistry,
         &_gl,
-        &_tileMapShaderProgram,
-        &_unitQuadVertexArray,
-        &_camera2d,
+        &_tileMapDrawer,
         Texture(
             &_gl,
             Texture::Params(tileAtlasImage)

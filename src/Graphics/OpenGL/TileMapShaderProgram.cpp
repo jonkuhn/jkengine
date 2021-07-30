@@ -1,6 +1,8 @@
 #include "TileMapShaderProgram.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
+#include "TileAtlas.h"
+#include "TileMap.h"
 
 using namespace Graphics::OpenGL;
 
@@ -94,18 +96,18 @@ void TileMapShaderProgram::ProjectionMatrix(const glm::mat4& projection)
     _shaderProgram.SetUniform("projection", projection);
 }
 
-void TileMapShaderProgram::Map(Texture& mapTexture, const glm::vec2& mapSizeInTiles)
+void TileMapShaderProgram::Map(const TileMap& map)
 {
     const int mapTextureIndex = 0;
-    mapTexture.Bind(mapTextureIndex);
+    map.MapTexture().Bind(mapTextureIndex);
     _shaderProgram.SetUniform("tileMap", mapTextureIndex);
-    _shaderProgram.SetUniform("tileMapSizeInTiles", mapSizeInTiles);
+    _shaderProgram.SetUniform("tileMapSizeInTiles", map.SizeInTiles());
 }
 
-void TileMapShaderProgram::Atlas(TileAtlas& atlas)
+void TileMapShaderProgram::Atlas(const TileAtlas& atlas)
 {
     const int atlasTextureIndex = 1;
     atlas.AtlasTexture().Bind(atlasTextureIndex);
     _shaderProgram.SetUniform("tileAtlas", atlasTextureIndex);
-    _shaderProgram.SetUniform("tileAtlasSizeInTiles", atlas.Size());
+    _shaderProgram.SetUniform("tileAtlasSizeInTiles", atlas.SizeInTiles());
 }

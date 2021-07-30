@@ -11,9 +11,7 @@ std::unique_ptr<Graphics::ITileMap> TileAtlas::CreateTileMap(
 {
     return std::make_unique<TileMap>(
         &_tileMapRegistry,
-        _tileMapShaderProgram,
-        _unitQuadVertexArray,
-        _camera2d,
+        _tileMapDrawer,
         this,
         Texture(
             _gl,

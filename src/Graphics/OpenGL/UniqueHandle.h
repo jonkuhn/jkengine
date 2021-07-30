@@ -48,7 +48,7 @@ namespace Graphics::OpenGL
             return *this;
         }
 
-        GLuint get()
+        GLuint get() const
         {
             return _handle;
         }

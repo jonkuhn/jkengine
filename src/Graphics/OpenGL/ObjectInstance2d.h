@@ -16,12 +16,12 @@ namespace Graphics::OpenGL
     {
     public:
         ObjectInstance2d(Registry<ObjectInstance2d>* registry)
-        : _position(0.0f, 0.0f, 0.0f),
+        : _registration(registry, this),
+          _position(0.0f, 0.0f, 0.0f),
           _size(1.0f, 1.0f),
           _rotationDegrees(0.0f),
           _model(),
-          _modelNeedsUpdated(true),
-          _registration(registry, this)
+          _modelNeedsUpdated(true)
         {
 
         }
@@ -47,7 +47,7 @@ namespace Graphics::OpenGL
             _position = std::move(position);
         }
         
-        inline const glm::vec3& Position()
+        inline const glm::vec3& Position() const
         {
             return _position;
         }
@@ -58,7 +58,7 @@ namespace Graphics::OpenGL
             _size = std::move(size);
         }
 
-        inline const glm::vec2& Size()
+        inline const glm::vec2& Size() const
         {
             return _size;
         }
@@ -69,25 +69,26 @@ namespace Graphics::OpenGL
             _rotationDegrees = rotationDegrees;
         }
 
-        inline float Rotation()
+        inline float Rotation() const
         {
             return _rotationDegrees;
         }
 
-        inline const glm::mat4& ModelMatrix()
+        inline const glm::mat4& ModelMatrix() const
         {
             EnsureModelMatrixIsUpdated();
             return _model;
         }
 
     private:
+        Registry<ObjectInstance2d>::Registration _registration;
         glm::vec3 _position;
         glm::vec2 _size;
         float _rotationDegrees;
-        glm::mat4 _model;  
-        bool _modelNeedsUpdated;
-        Registry<ObjectInstance2d>::Registration _registration;
 
-        void EnsureModelMatrixIsUpdated();
+        mutable glm::mat4 _model;  
+        mutable bool _modelNeedsUpdated;
+
+        void EnsureModelMatrixIsUpdated() const;
     };
 }

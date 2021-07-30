@@ -62,7 +62,7 @@ namespace Graphics::OpenGL
         Texture(Texture&&) = default;
         Texture& operator=(Texture&&) = default;
 
-        void Bind(int textureIndex);
+        void Bind(int textureIndex) const;
 
     private:
         IOpenGLWrapper* _gl;

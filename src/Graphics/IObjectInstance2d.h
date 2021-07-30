@@ -13,10 +13,10 @@ namespace Graphics
         virtual ~IObjectInstance2d() = default;
 
         virtual void Position(glm::vec3 position) = 0;
-        virtual const glm::vec3& Position() = 0;
+        virtual const glm::vec3& Position() const = 0;
         virtual void Size(glm::vec2 size) = 0;
-        virtual const glm::vec2& Size() = 0;
+        virtual const glm::vec2& Size() const = 0;
         virtual void Rotation(float rotationDegrees) = 0;
-        virtual float Rotation() = 0;
+        virtual float Rotation() const = 0;
     };
 }

@@ -161,7 +161,7 @@ Texture::Texture(IOpenGLWrapper* gl, const Texture::Params& params)
     _gl->BindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::Bind(int textureIndex)
+void Texture::Bind(int textureIndex) const
 {
     const auto MIN_INDEX = 0;
     const auto MAX_INDEX = GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS - 1;

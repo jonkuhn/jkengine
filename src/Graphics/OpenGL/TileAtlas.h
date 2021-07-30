@@ -13,10 +13,8 @@
 
 namespace Graphics::OpenGL
 {
-    class Camera2d;
     class IOpenGLWrapper;
-    class TileMapShaderProgram;
-    class UnitQuadVertexArray;
+    class TileMapDrawer;
     class TileMap;
 
     class TileAtlas final : public ITileAtlas
@@ -25,16 +23,12 @@ namespace Graphics::OpenGL
         TileAtlas(
             Registry<TileAtlas>* tileAtlasRegistry,
             IOpenGLWrapper* gl,
-            TileMapShaderProgram* tileMapShaderProgram,
-            UnitQuadVertexArray* unitQuadVertexArray,
-            Camera2d* camera2d,
+            TileMapDrawer* tileMapDrawer,
             Texture atlasTexture,
             glm::vec2 atlasSizeInTiles)
           : 
             _gl(gl),
-            _tileMapShaderProgram(tileMapShaderProgram),
-            _unitQuadVertexArray(unitQuadVertexArray),
-            _camera2d(camera2d),
+            _tileMapDrawer(tileMapDrawer),
             _atlasTexture(std::move(atlasTexture)),
             _atlasSizeInTiles(std::move(atlasSizeInTiles)),
             _registration(tileAtlasRegistry, this),
@@ -55,12 +49,12 @@ namespace Graphics::OpenGL
 
         std::unique_ptr<Graphics::ITileMap> CreateTileMap(const IImage& tileMapImage) override;
 
-        inline Texture& AtlasTexture()
+        inline const Texture& AtlasTexture() const
         {
             return _atlasTexture;
         }
 
-        inline const glm::vec2& Size()
+        inline const glm::vec2& SizeInTiles() const
         {
             return _atlasSizeInTiles;
         }
@@ -69,9 +63,7 @@ namespace Graphics::OpenGL
 
     private:
         IOpenGLWrapper* _gl;
-        TileMapShaderProgram* _tileMapShaderProgram;
-        UnitQuadVertexArray* _unitQuadVertexArray;
-        Camera2d* _camera2d;
+        TileMapDrawer* _tileMapDrawer;
         Texture _atlasTexture;
         glm::vec2 _atlasSizeInTiles;
         Registry<TileAtlas>::Registration _registration;
