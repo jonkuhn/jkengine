@@ -12,56 +12,14 @@
 
 #include "Graphics/Graphics.h"
 
+#include "ColorTiles4x4.h"
+#include "ScreenSampleHelpers.h"
+
 using namespace testing;
 using namespace Graphics;
 
 namespace
 {
-    static Color ColorBackgroundUglyYellow(0x80, 0x80, 0x00, 0xff);
-
-    // Colors used in "colortiles4x4.png"
-    static Color ColorWhite(0xff, 0xff, 0xff, 0xff);
-    static Color ColorRed(0xff, 0x00, 0x00, 0xff);
-    static Color ColorGreen(0x00, 0xff, 0x00, 0xff);
-    static Color ColorBlue(0x00, 0x00, 0xff, 0xff);
-
-    static Color ColorBlack(0x00, 0x00, 0x00, 0xff);
-    static Color ColorYellow(0xff, 0xff, 0x00, 0xff);
-    static Color ColorCyan(0x00, 0xff, 0xff, 0xff);
-    static Color ColorMagenta(0xff, 0x00, 0xff, 0xff);
-
-    static Color ColorDarkGray(0x44, 0x44, 0x44, 0xff);
-    static Color ColorLightPurple(0xcc, 0xcc, 0xff, 0xff);
-    static Color ColorLightGreen(0xcc, 0xff, 0xcc, 0xff);
-    static Color ColorLightPeach(0xff, 0xcc, 0xcc, 0xff);
-
-    static Color ColorLightGray(0xcc, 0xcc, 0xcc, 0xff);
-    static Color ColorPurple(0xaa, 0x00, 0xff, 0xff);
-    static Color ColorSkyBlue(0x00, 0xaa, 0xff, 0xff);
-    static Color ColorOrange(0xff, 0xaa, 0x00, 0xff);
-
-    // Positions of colors used in "colortiles4x4.png"
-    static constexpr std::array<uint8_t, 4> TileWhite = { 0, 0, 0, 0 };
-    static constexpr std::array<uint8_t, 4> TileRed   = { 1, 0, 0, 0 };
-    static constexpr std::array<uint8_t, 4> TileGreen = { 2, 0, 0, 0 };
-    static constexpr std::array<uint8_t, 4> TileBlue  = { 3, 0, 0, 0 };
-
-    static constexpr std::array<uint8_t, 4> TileBlack   = { 0, 1, 0, 0 };
-    static constexpr std::array<uint8_t, 4> TileYellow  = { 1, 1, 0, 0 };
-    static constexpr std::array<uint8_t, 4> TileCyan    = { 2, 1, 0, 0 };
-    static constexpr std::array<uint8_t, 4> TileMagenta = { 3, 1, 0, 0 };
-
-    static constexpr std::array<uint8_t, 4> TileDarkGray    = { 0, 2, 0, 0 };
-    static constexpr std::array<uint8_t, 4> TileLightPurple = { 1, 2, 0, 0 };
-    static constexpr std::array<uint8_t, 4> TileLightGreen  = { 2, 2, 0, 0 };
-    static constexpr std::array<uint8_t, 4> TileLightPeach  = { 3, 2, 0, 0 };
-
-    static constexpr std::array<uint8_t, 4> TileLightGray = { 0, 3, 0, 0 };
-    static constexpr std::array<uint8_t, 4> TilePurple    = { 1, 3, 0, 0 };
-    static constexpr std::array<uint8_t, 4> TileSkyBlue   = { 2, 3, 0, 0 };
-    static constexpr std::array<uint8_t, 4> TileOrange    = { 3, 3, 0, 0 };
-
-
     class TileMapImage8x4 : public IImage
     {
     public:
@@ -165,7 +123,7 @@ protected:
     std::unique_ptr<IEngine> _engine;
     ICamera2d* _camera;
     std::unique_ptr<ITileAtlas> _atlasColorTiles4x4;
-     std::unique_ptr<ITileAtlas> _atlasColorTilesEmptyCenters4x4;
+    std::unique_ptr<ITileAtlas> _atlasColorTilesEmptyCenters4x4;
     TileMapImage8x4 _tileMapImage8x4;
     TileMapImage8x4 _tileMapImage8x4FlippedTopToBottom;
     std::unique_ptr<ITileMap> _colorTilesMap8x4;
@@ -197,45 +155,6 @@ protected:
             -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
         return tileMapInstance;
-    }
-
-    template<unsigned int ColumnCount, unsigned int RowCount>
-    void ExpectTileColorGridOnScreen(
-        std::array<std::array<Color, ColumnCount>, RowCount> expectedTileColors)
-    {
-        auto screenshot = _engine->TakeScreenshot();
-        auto columnWidth = screenshot->Width() / ColumnCount;
-        auto rowHeight = screenshot->Height() / RowCount;
-        auto sampleDistanceFromEdgeX = columnWidth / 16;
-        auto sampleDistanceFromEdgeY = rowHeight / 16;
-
-        // sample each tile near 4 corners plus center
-        auto sampleLeftX = sampleDistanceFromEdgeX;
-        auto sampleUpperY = sampleDistanceFromEdgeY;
-        auto sampleRightX = columnWidth - sampleDistanceFromEdgeX;
-        auto sampleLowerY = rowHeight - sampleDistanceFromEdgeY;
-        auto sampleCenterX = columnWidth / 2;
-        auto sampleCenterY = rowHeight / 2;
-        
-        for(unsigned int row = 0; row < RowCount; row++)
-        {
-            for(unsigned int column = 0; column < ColumnCount; column++)
-            {
-                auto expectedColor = expectedTileColors[row][column];
-                auto x = column * columnWidth;
-                auto y = row * rowHeight;
-                EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleLeftX, y + sampleUpperY))
-                    << "(upper left) row = " << row << " column = " << column;
-                EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleRightX, y + sampleUpperY))
-                    << "(upper right) row = " << row << " column = " << column;
-                EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleCenterX, y + sampleCenterY))
-                    << "(center) row = " << row << " column = " << column;
-                EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleLeftX, y + sampleLowerY))
-                    << "(lower left) row = " << row << " column = " << column;
-                EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleRightX, y + sampleLowerY))
-                    << "(lower right) row = " << row << " column = " << column;
-            }
-        }
     }
 
     template<unsigned int ColumnCount, unsigned int RowCount>
@@ -357,6 +276,7 @@ protected:
         const unsigned int ColumnCount = 8;
         const unsigned int RowCount = 6;
         ExpectTileColorGridOnScreen<ColumnCount, RowCount>(
+            *(_engine->TakeScreenshot()),
             std::array<std::array<Color, ColumnCount>, RowCount>(
             { {
                 // First row is background color
@@ -382,6 +302,7 @@ protected:
         const unsigned int ColumnCount = 8;
         const unsigned int RowCount = 6;
         ExpectTileColorGridOnScreen<ColumnCount, RowCount>(
+            *(_engine->TakeScreenshot()),
             std::array<std::array<Color, ColumnCount>, RowCount>(
             { {
                 { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
@@ -449,6 +370,7 @@ TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtOrigin_Left4C
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;
     ExpectTileColorGridOnScreen<ColumnCount, RowCount>(
+        *(_engine->TakeScreenshot()),
         std::array<std::array<Color, ColumnCount>, RowCount>(
         { {
             // First row is background color and 1st half of 2nd row of tile map

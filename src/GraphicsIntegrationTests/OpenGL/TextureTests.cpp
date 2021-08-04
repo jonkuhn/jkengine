@@ -121,12 +121,12 @@ protected:
     std::vector<TestTexturedVertex> _testRectangleVertices;
     std::vector<GLuint> _testTriangleElementsOfRectangle;
 
-    const Color _blackColor;
-    const Color _redColor;
-    const Color _greenColor;
-    const Color _blueColor;
-    const Color _whiteColor;
-    const Color _pinkColor;
+    const Graphics::Color _blackColor;
+    const Graphics::Color _redColor;
+    const Graphics::Color _greenColor;
+    const Graphics::Color _blueColor;
+    const Graphics::Color _whiteColor;
+    const Graphics::Color _pinkColor;
 
     void ClearViewportToPink()
     {

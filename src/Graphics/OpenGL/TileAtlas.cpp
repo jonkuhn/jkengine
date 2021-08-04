@@ -3,6 +3,8 @@
 #include <memory>
 
 #include "TileMap.h"
+#include "SpriteDrawer.h"
+#include "SpriteInstance.h"
 
 using namespace Graphics::OpenGL;
 
@@ -25,10 +27,21 @@ std::unique_ptr<Graphics::ITileMap> TileAtlas::CreateTileMap(
     );
 }
 
+std::unique_ptr<Graphics::ISpriteInstance> TileAtlas::CreateSpriteInstance(unsigned int layer)
+{
+    return std::make_unique<SpriteInstance>(&_perLayerSpriteInstanceRegistries[layer]);
+}
+
 void TileAtlas::DrawAllOnLayer(unsigned int layer)
 {
     for(auto& tileMap : _tileMapRegistry)
     {
         tileMap->DrawAllOnLayer(layer);
+    }
+
+    _spriteDrawer->SetupForDrawingInstances(*this);
+    for(auto* spriteInstance : _perLayerSpriteInstanceRegistries[layer])
+    {
+        _spriteDrawer->DrawInstance(*spriteInstance);
     }
 }

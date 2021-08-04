@@ -7,7 +7,10 @@ endif()
 target_sources(GraphicsIntegrationTests
   PRIVATE
     main_test.cpp
+    ColorTiles4x4.h
     PngImageTests.cpp
+    ScreenSampleHelpers.h
+    SpriteTests.cpp
     TileMapTests.cpp
     OpenGL/TestHelpers.h
     OpenGL/TestHelpers.cpp

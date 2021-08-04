@@ -7,6 +7,8 @@
 #include "GlfwWrapper.h"
 #include "OpenGLWrapper.h"
 #include "ShaderProgram.h"
+#include "SpriteDrawer.h"
+#include "SpriteShaderProgram.h"
 #include "Texture.h"
 #include "TileAtlas.h"
 #include "TileMapDrawer.h"
@@ -63,9 +65,11 @@ namespace Graphics::OpenGL
         GlfwWindow _window;
         OpenGLWrapper _gl;
         TileMapShaderProgram _tileMapShaderProgram;
+        SpriteShaderProgram _spriteShaderProgram;
         UnitQuadVertexArray _unitQuadVertexArray;
         class Camera2d _camera2d;
         TileMapDrawer _tileMapDrawer;
+        SpriteDrawer _spriteDrawer;
         Registry<TileAtlas> _tileAtlasRegistry;
 
         unsigned int _numberOfDrawingLayers;

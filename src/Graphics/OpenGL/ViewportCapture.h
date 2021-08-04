@@ -13,10 +13,10 @@ namespace Graphics::OpenGL
     {
     public:
         ViewportCapture(Graphics::OpenGL::IOpenGLWrapper* gl);
-        unsigned int Width() override;
-        unsigned int Height() override;
-        Color GetPixel(unsigned int x, unsigned int y) override;
-        void SaveToFileAsRaw(const std::string& filename) override;
+        unsigned int Width() const override;
+        unsigned int Height() const override;
+        Color GetPixel(unsigned int x, unsigned int y) const override;
+        void SaveToFileAsRaw(const std::string& filename) const override;
 
     private:
         struct Dimensions
@@ -30,7 +30,7 @@ namespace Graphics::OpenGL
             unsigned int height;
         };
 
-        unsigned int GetPixelDataOffset(unsigned int x, unsigned int y);
+        unsigned int GetPixelDataOffset(unsigned int x, unsigned int y) const;
 
         Dimensions _dimensions;
         std::vector<Color> _pixelData;

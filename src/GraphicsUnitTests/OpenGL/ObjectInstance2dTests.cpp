@@ -55,6 +55,13 @@ TEST_F(ObjectInstance2dTests, Constructor_ModelMatrixHasPositionAtOriginRotation
     ExpectEqual(actual, expected);
 }
 
+TEST_F(ObjectInstance2dTests, ConstructorDestructor_NullRegistry)
+{
+    {
+        ObjectInstance2d obj(nullptr);
+    }
+}
+
 TEST_F(ObjectInstance2dTests, Position_GivenPositionChangeAfterFetchingModelMatrix_ModelMatrixMatchesUpdatedPosition)
 {
     glm::vec2 testPosition(128.5f, 64.125f);

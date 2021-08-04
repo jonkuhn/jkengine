@@ -10,9 +10,11 @@ Engine::Engine(int winWidth, int winHeight, const std::string& title, unsigned i
       _window(&_glfw, winWidth, winHeight, title),
       _gl(&_window),
       _tileMapShaderProgram(&_gl),
+      _spriteShaderProgram(&_gl),
       _unitQuadVertexArray(&_gl),
       _camera2d(),
       _tileMapDrawer(&_tileMapShaderProgram, &_unitQuadVertexArray, &_camera2d),
+      _spriteDrawer(&_spriteShaderProgram, &_unitQuadVertexArray, &_camera2d),
       _tileAtlasRegistry(),
       _numberOfDrawingLayers(numberOfDrawingLayers),
       _programShouldExit(false)
@@ -30,6 +32,7 @@ std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
         &_gl,
         _numberOfDrawingLayers,
         &_tileMapDrawer,
+        &_spriteDrawer,
         Texture(
             &_gl,
             Texture::Params(tileAtlasImage)
