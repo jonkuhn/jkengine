@@ -8,9 +8,9 @@ namespace Graphics
     {
     public:
         virtual ~IScreenshot() = default;
-        virtual unsigned int Width() = 0;
-        virtual unsigned int Height() = 0;
-        virtual Color GetPixel(unsigned int x, unsigned int y) = 0;
-        virtual void SaveToFileAsRaw(const std::string& filename) = 0;
+        virtual unsigned int Width() const = 0;
+        virtual unsigned int Height() const = 0;
+        virtual Color GetPixel(unsigned int x, unsigned int y) const = 0;
+        virtual void SaveToFileAsRaw(const std::string& filename) const = 0;
     };
 }

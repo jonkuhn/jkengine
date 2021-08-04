@@ -18,6 +18,7 @@ target_sources(Graphics
     ILibPngWrapper.h
     LibPngWrapper.h
     IScreenshot.h
+    ISpriteInstance.h
     ITileAtlas.h
     ITileMap.h
     OpenGL/Camera2d.h
@@ -42,6 +43,9 @@ target_sources(Graphics
     OpenGL/ShaderProgram.h
     OpenGL/ShaderProgram.cpp
     OpenGL/Simple3dVertex.h
+    OpenGL/SpriteDrawer.h
+    OpenGL/SpriteShaderProgram.h
+    OpenGL/SpriteShaderProgram.cpp
     OpenGL/Texture.h
     OpenGL/Texture.cpp
     OpenGL/TileAtlas.h

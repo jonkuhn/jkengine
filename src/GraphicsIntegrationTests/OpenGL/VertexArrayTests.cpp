@@ -94,8 +94,8 @@ protected:
     std::vector<TestSimpleVertex> _testRectangleVertices;
     std::vector<GLuint> _testTriangleElementsOfRectangle;
 
-    const Color _shapeColor;
-    const Color _blackColor;
+    const Graphics::Color _shapeColor;
+    const Graphics::Color _blackColor;
 
     void ClearViewportToBlack()
     {

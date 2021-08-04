@@ -79,17 +79,17 @@ ViewportCapture::ViewportCapture(IOpenGLWrapper* gl)
     gl->ReadPixels(0, 0, _dimensions.width, _dimensions.height, GL_RGBA, GL_UNSIGNED_BYTE, _pixelData.data());
 }
 
-unsigned int ViewportCapture::Width()
+unsigned int ViewportCapture::Width() const
 {
     return _dimensions.width;
 }
 
-unsigned int ViewportCapture::Height()
+unsigned int ViewportCapture::Height() const
 {
     return _dimensions.height;
 }
 
-Color ViewportCapture::GetPixel(unsigned int x, unsigned int y)
+Graphics::Color ViewportCapture::GetPixel(unsigned int x, unsigned int y) const
 {
     if (x < 0 || x >= _dimensions.width)
     {
@@ -108,7 +108,7 @@ Color ViewportCapture::GetPixel(unsigned int x, unsigned int y)
     return _pixelData[GetPixelDataOffset(x, y)];
 }
 
-void ViewportCapture::SaveToFileAsRaw(const std::string& filename)
+void ViewportCapture::SaveToFileAsRaw(const std::string& filename) const
 {
     // Because of OpenGL's coordinate system this will be flipped vertically
 
@@ -121,12 +121,12 @@ void ViewportCapture::SaveToFileAsRaw(const std::string& filename)
         auto offset = GetPixelDataOffset(x, y);
         file.write(
             reinterpret_cast<const char *>(&_pixelData[offset]),
-            _dimensions.width * sizeof(Color));
+            _dimensions.width * sizeof(Graphics::Color));
     }
     file.close();
 }
 
-unsigned int ViewportCapture::GetPixelDataOffset(unsigned int x, unsigned int y)
+unsigned int ViewportCapture::GetPixelDataOffset(unsigned int x, unsigned int y) const
 {
     // GetPixel (and this function) take coordinates in a conventional
     // image/window coordinate system with the y-axis going from top to

@@ -25,7 +25,7 @@ namespace
             // tileMapLocation must be multiplied up in the vertex shader and then
             // divided back down in the fragment shader in order for interpolation
             // and rounding to work right to pick the right indices from the tile
-            // map.  It cannot be calculated from tileMapLocationVec4 because
+            // map.  It cannot be calculated from tileMapLocationInWorld because
             // that is in world coordinates and we want the world coordinate
             // position of it to not affect the content of the tile mapped object.
             tileMapLocation.x = vertex.x * tileMapSizeInTiles.x;
@@ -34,8 +34,8 @@ namespace
             // the displayed tile map
             tileMapLocation.y = (1.0 - vertex.y) * tileMapSizeInTiles.y;
 
-            vec4 tileMapLocationVec4 = (model * vec4(vertex.xy, 1.0, 1.0));
-            gl_Position = projection * view * tileMapLocationVec4;
+            vec4 tileMapLocationInWorld = (model * vec4(vertex.xy, 1.0, 1.0));
+            gl_Position = projection * view * tileMapLocationInWorld;
         }
     )GLSL";
 

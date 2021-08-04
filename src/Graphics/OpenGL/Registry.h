@@ -16,12 +16,18 @@ namespace Graphics::OpenGL
               : _registry(registry),
                 _obj(obj)
             {
-                _registry->Register(obj);
+                if(_registry != nullptr)
+                {
+                    _registry->Register(obj);
+                }
             }
 
             ~Registration()
             {
-                _registry->Deregister(_obj);
+                if(_registry != nullptr)
+                {
+                    _registry->Deregister(_obj);
+                }
             }
 
             // Do not allow copy.  Allowing a default copy would mean
