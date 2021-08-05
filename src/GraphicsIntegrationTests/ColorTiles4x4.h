@@ -6,7 +6,8 @@
 
 static Graphics::Color ColorBackgroundUglyYellow(0x80, 0x80, 0x00, 0xff);
 
-// Colors used in "colortiles4x4.png"
+// Colors used in "colortiles4x4.png" and "colortiles4x4emptycenters.png"
+static Graphics::Color ColorOrientationBrown(0x6f, 0x4a, 0x00, 0xff);
 static Graphics::Color ColorWhite(0xff, 0xff, 0xff, 0xff);
 static Graphics::Color ColorRed(0xff, 0x00, 0x00, 0xff);
 static Graphics::Color ColorGreen(0x00, 0xff, 0x00, 0xff);

@@ -30,8 +30,21 @@ namespace
             // position of it to not affect the content of the tile mapped object.
             tileMapLocation.x = vertex.x * tileMapSizeInTiles.x;
 
-            // Invert Y so that top right of tile map image is top right of
-            // the displayed tile map
+            // Invert Y so that top left of the tile in the tile atlas image is
+            // in the top left of the displayed tile.  This is because the
+            // conventional y axis in an image goes from top to bottom, but
+            // the y axis of our unit quad runs from bottom to top (as does our
+            // world coordinate system)  OpenGL's texture y axis also runs from
+            // bottom to top, but since the engine represents images in memory
+            // in the conventional way such that the first pixel in the buffer
+            // corresponds to the upper left of the image at coordinates (0, 0),
+            // this effectively means that OpenGL texture coordinates match actual
+            // image coordinates.  Since the lower left of our unit quad is (0, 0)
+            // and the upper right is (1, 1), it means that to display tiles from
+            // an image right-side-up we need to make y=0 of our unit quad correspond
+            // to the bottom of a tile in the image and y=1 of our unit quad correspond
+            // to the top of the tile in the image.  And in the image (and texture)
+            // "top" has lower y values than "bottom"
             tileMapLocation.y = (1.0 - vertex.y) * tileMapSizeInTiles.y;
 
             vec4 tileMapLocationInWorld = (model * vec4(vertex.xy, 1.0, 1.0));
@@ -52,6 +65,9 @@ namespace
 
         void main()
         {
+            // Note that the y axis of the atlas location does not need inverted
+            // because it is intended to represent the tile's x and y offset from
+            // the upper left of the tile atlas image.
             vec2 tileAtlasLocation = texture(tileMap, tileMapLocation / tileMapSizeInTiles).xy * 255;
             FragColor = texture(tileAtlas, (tileAtlasLocation + fract(tileMapLocation)) / tileAtlasSizeInTiles);
         }

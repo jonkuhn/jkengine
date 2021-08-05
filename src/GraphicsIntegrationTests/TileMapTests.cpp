@@ -158,7 +158,7 @@ protected:
     }
 
     template<unsigned int ColumnCount, unsigned int RowCount>
-    void ExpectTileColorGridOnScreenWithSeparateCenterColors(
+    void ExpectTileColorGridOnScreenWithOrientationBrownAndSeparateCenterColors(
         std::array<std::array<Color, ColumnCount>, RowCount> expectedTileColors,
         std::array<std::array<Color, ColumnCount>, RowCount> expectedCenterColors)
     {
@@ -183,7 +183,17 @@ protected:
                 auto expectedColor = expectedTileColors[row][column];
                 auto x = column * columnWidth;
                 auto y = row * rowHeight;
-                EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleLeftX, y + sampleUpperY))
+
+                // Expect upper left to be orientation brown if it is "part
+                // of a tile", but otherwise expect it to be the background
+                // color.  If the expected color for the tile is not equal
+                // to the background color it is considered to be "part of a tile"
+                auto expectedUpperLeftColor = 
+                    (expectedColor != ColorBackgroundUglyYellow)
+                    ? ColorOrientationBrown
+                    : ColorBackgroundUglyYellow;
+
+                EXPECT_EQ(expectedUpperLeftColor, screenshot->GetPixel(x + sampleLeftX, y + sampleUpperY))
                     << "(upper left) row = " << row << " column = " << column;
                 EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleRightX, y + sampleUpperY))
                     << "(upper right) row = " << row << " column = " << column;
@@ -442,7 +452,7 @@ TEST_F(TileMapTests, Given8x4TileMapEmptyCentersAtOrigin_Camera8x6FovCenteredAtC
 
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;
-    ExpectTileColorGridOnScreenWithSeparateCenterColors<ColumnCount, RowCount>(
+    ExpectTileColorGridOnScreenWithOrientationBrownAndSeparateCenterColors<ColumnCount, RowCount>(
         std::array<std::array<Color, ColumnCount>, RowCount>(
         { {
             // First row is background color
@@ -488,7 +498,7 @@ TEST_F(TileMapTests, Given8x4TileMapEmptyCentersOnLayer1AndSolidTileMapFlippedTo
 
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;
-    ExpectTileColorGridOnScreenWithSeparateCenterColors<ColumnCount, RowCount>(
+    ExpectTileColorGridOnScreenWithOrientationBrownAndSeparateCenterColors<ColumnCount, RowCount>(
         std::array<std::array<Color, ColumnCount>, RowCount>(
         { {
             // First row is background color
