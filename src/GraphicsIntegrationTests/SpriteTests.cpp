@@ -34,12 +34,13 @@ protected:
     std::unique_ptr<ITileAtlas> _atlasColorTilesEmptyCenters4x4;
 };
 
-TEST_F(SpriteTests, Given3x3SpriteAtOrigin_Camera8x6FovCenteredAtOrigin_EntireSpriteIsVisible)
+TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCenteredAtOrigin_EntireSpriteIsVisible)
 {
     auto spriteInstance = _atlasColorTilesEmptyCenters4x4->CreateSpriteInstance(0);
     spriteInstance->Position(glm::vec2(0.0f, 0.0f));
     spriteInstance->Rotation(0.0f);
     spriteInstance->Size(glm::vec2(3.0f, 3.0f));
+    spriteInstance->AtlasLocation(glm::vec2(0.0f, 0.0f));
 
     _camera->Center(glm::vec2(0.0f, 0.0f));
 
@@ -58,8 +59,10 @@ TEST_F(SpriteTests, Given3x3SpriteAtOrigin_Camera8x6FovCenteredAtOrigin_EntireSp
         std::array<std::array<Color, ColumnCount>, RowCount>(
         { {
             // 1st row is all background color except for 3 cells right of center
+            // The first of these three should be brown which is the orientation mark
+            // on the tiles and the other two should be white
             { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
-            ColorWhite, ColorWhite, ColorWhite, ColorBackgroundUglyYellow },
+            ColorOrientationBrown, ColorWhite, ColorWhite, ColorBackgroundUglyYellow },
 
             // 2nd row is all background color except for 2 of the 3 cells right of center
             // but the middle of the 3 cells right of center is actually be background color
@@ -70,6 +73,57 @@ TEST_F(SpriteTests, Given3x3SpriteAtOrigin_Camera8x6FovCenteredAtOrigin_EntireSp
             // 2rd row is all background color except for 3 cells right of center
             { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
             ColorWhite, ColorWhite, ColorWhite, ColorBackgroundUglyYellow },
+
+            // 4th through 6th rows are all background color
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow }
+        } })
+    );
+}
+
+TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX2Y1_Camera8x6FovCenteredAtOrigin_EntireSpriteIsVisible)
+{
+    auto spriteInstance = _atlasColorTilesEmptyCenters4x4->CreateSpriteInstance(0);
+    spriteInstance->Position(glm::vec2(0.0f, 0.0f));
+    spriteInstance->Rotation(0.0f);
+    spriteInstance->Size(glm::vec2(3.0f, 3.0f));
+    spriteInstance->AtlasLocation(glm::vec2(2.0f, 1.0f));
+
+    _camera->Center(glm::vec2(0.0f, 0.0f));
+
+    // Set FoV so that 8 units are visible horizontally and due
+    // to the aspect ration 6 units will be visible vertically
+    _camera->FieldOfView(ICamera2d::Fov(
+        -4.0f, 4.0f,
+        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+
+    _engine->Render();
+
+    const unsigned int ColumnCount = 8;
+    const unsigned int RowCount = 6;
+    ExpectTileColorGridOnScreen<ColumnCount, RowCount>(
+        *(_engine->TakeScreenshot()),
+        std::array<std::array<Color, ColumnCount>, RowCount>(
+        { {
+            // 1st row is all background color except for 3 cells right of center
+            // The first of these three should be brown which is the orientation mark
+            // on the tiles and the other two should be cyan
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorOrientationBrown, ColorCyan, ColorCyan, ColorBackgroundUglyYellow },
+
+            // 2nd row is all background color except for 2 of the 3 cells right of center
+            // but the middle of the 3 cells right of center is actually be background color
+            // because it is transparent in the sprite
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorCyan, ColorBackgroundUglyYellow, ColorCyan, ColorBackgroundUglyYellow },
+
+            // 2rd row is all background color except for 3 cells right of center
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorCyan, ColorCyan, ColorCyan, ColorBackgroundUglyYellow },
 
             // 4th through 6th rows are all background color
             { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
