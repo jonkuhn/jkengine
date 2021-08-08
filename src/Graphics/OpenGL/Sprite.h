@@ -10,7 +10,7 @@ namespace Graphics::OpenGL
     {
     public:
         Sprite(Registry<Sprite>* registry)
-          : _object2d(nullptr),
+          : _object2d(),
             _registration(registry, this)
         {
 

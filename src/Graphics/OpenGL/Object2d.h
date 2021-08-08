@@ -15,13 +15,12 @@ namespace Graphics::OpenGL
 
     {
     public:
-        Object2d(Registry<Object2d>* registry)
+        Object2d()
         : _position(0.0f, 0.0f, 0.0f),
           _size(1.0f, 1.0f),
           _rotationDegrees(0.0f),
           _model(),
-          _modelNeedsUpdated(true),
-          _registration(registry, this)
+          _modelNeedsUpdated(true)
         {
 
         }
@@ -87,7 +86,6 @@ namespace Graphics::OpenGL
         float _rotationDegrees;
         mutable glm::mat4 _model;  
         mutable bool _modelNeedsUpdated;
-        Registry<Object2d>::Registration _registration;
 
         void EnsureModelMatrixIsUpdated() const;
     };
