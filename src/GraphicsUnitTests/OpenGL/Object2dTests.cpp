@@ -14,37 +14,12 @@ using namespace Graphics::OpenGL;
 
 class Object2dTests : public Test
 {
-protected:
-    Registry<Object2d> _instanceRegistry;
 
-    Object2d CreateObject2d()
-    {
-        return Object2d(&_instanceRegistry);
-    }
 };
-
-TEST_F(Object2dTests, ConstructorDestructor_VerifyRegistration)
-{
-    {
-        Object2d obj(&_instanceRegistry);
-
-        // exactly one instance should be registered (the one we just created)
-        int count = 0;
-        for(auto* instance : _instanceRegistry)
-        {
-            count++;
-            EXPECT_EQ(instance, &obj);
-        }
-        EXPECT_EQ(count, 1);
-    }
-
-    // After it is destroyed there should be no registered instances
-    EXPECT_EQ(_instanceRegistry.begin(), _instanceRegistry.end());
-}
 
 TEST_F(Object2dTests, Constructor_ModelMatrixHasPositionAtOriginRotation0And1by1Size)
 {
-    auto obj = CreateObject2d();
+    Object2d obj;
 
     auto actual = obj.ModelMatrix();
 
@@ -55,17 +30,10 @@ TEST_F(Object2dTests, Constructor_ModelMatrixHasPositionAtOriginRotation0And1by1
     ExpectEqual(actual, expected);
 }
 
-TEST_F(Object2dTests, ConstructorDestructor_NullRegistry)
-{
-    {
-        Object2d obj(nullptr);
-    }
-}
-
 TEST_F(Object2dTests, Position_GivenPositionChangeAfterFetchingModelMatrix_ModelMatrixMatchesUpdatedPosition)
 {
     glm::vec2 testPosition(128.5f, 64.125f);
-    auto obj = CreateObject2d();
+    Object2d obj;
     // fetch to ensure model matrix would be cached with default values
     obj.ModelMatrix();
 
@@ -83,7 +51,7 @@ TEST_F(Object2dTests, Position_GivenPositionChangeAfterFetchingModelMatrix_Model
 TEST_F(Object2dTests, Size_GivenSizeChangedAfterFetchingModelMatrix_ModelMatrixMatchesUpdatedSize)
 {
     glm::vec2 testSize(12.25, 6.5);
-    auto obj = CreateObject2d();
+    Object2d obj;
     // fetch to ensure model matrix would be cached with default values
     obj.ModelMatrix();
 
@@ -101,7 +69,7 @@ TEST_F(Object2dTests, Size_GivenSizeChangedAfterFetchingModelMatrix_ModelMatrixM
 TEST_F(Object2dTests, Rotation_GivenRotationChangedAfterFetchingModelMatrix_ModelMatrixMatchesUpdatedRotation)
 {
     float testRotationDegrees = 12.5;
-    auto obj = CreateObject2d();
+    Object2d obj;
     // fetch to ensure model matrix would be cached with default values
     obj.ModelMatrix();
 
@@ -125,7 +93,7 @@ TEST_F(Object2dTests, ModelMatrix_GivenNonZeroPositionScaleAndRotation_ModelMatr
     glm::vec2 testPosition(128.5f, 64.125f);
     glm::vec2 testSize(12.25, 6.5);
     float testRotationDegrees = 12.5;
-    auto obj = CreateObject2d();
+    Object2d obj;
     // fetch to ensure model matrix would be cached with default values
     obj.ModelMatrix();
 

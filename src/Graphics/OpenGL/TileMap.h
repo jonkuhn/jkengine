@@ -25,7 +25,7 @@ namespace Graphics::OpenGL
             Registry<TileMap>* tileMapRegistry,
             Texture mapTexture,
             glm::vec2 mapSizeInTiles)
-          : _object2d(nullptr),
+          : _object2d(),
             _mapTexture(std::move(mapTexture)),
             _mapSizeInTiles(std::move(mapSizeInTiles)),
             _registration(tileMapRegistry, this)
