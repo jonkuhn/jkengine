@@ -22,13 +22,13 @@ namespace Graphics::OpenGL
     {
     public:
         TileMap(
-            Registry<TileMap>* tileMapRegistry,
+            Registry<TileMap>& tileMapRegistry,
             Texture mapTexture,
             glm::vec2 mapSizeInTiles)
           : _object2d(),
             _mapTexture(std::move(mapTexture)),
             _mapSizeInTiles(std::move(mapSizeInTiles)),
-            _registration(tileMapRegistry, this)
+            _registration(tileMapRegistry, *this)
         {
 
         }
