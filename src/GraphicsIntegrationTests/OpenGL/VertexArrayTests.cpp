@@ -80,7 +80,7 @@ public:
 
         Shader vertexShader(_gl, Shader::Type::Vertex, vertexShaderSource);
         Shader fragmentShader(_gl, Shader::Type::Fragment, fragmentShaderSource);
-        _shaderProgram.reset(new ShaderProgram(_gl, {&vertexShader, &fragmentShader}));
+        _shaderProgram.reset(new ShaderProgram(_gl, vertexShader, fragmentShader));
     }
 
 protected:

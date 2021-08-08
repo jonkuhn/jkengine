@@ -46,7 +46,7 @@ TEST_F(ShaderProgramTests, CreateShaderProgramSuccess)
     Shader vertexShader(gl, Shader::Type::Vertex, GetValidVertexShaderCode());
     Shader fragmentShader(gl, Shader::Type::Fragment, GetValidFragmentShaderCode());
     EXPECT_NO_THROW(
-        ShaderProgram shaderProgram(gl, {&vertexShader, &fragmentShader});
+        ShaderProgram shaderProgram(gl, vertexShader, fragmentShader);
         shaderProgram.Use();
     );
 }
@@ -57,7 +57,7 @@ TEST_F(ShaderProgramTests, SetVertexShaderUniforms)
 
     Shader vertexShader(gl, Shader::Type::Vertex, GetVertexShaderCodeWithUniforms());
     Shader fragmentShader(gl, Shader::Type::Fragment, GetValidFragmentShaderCode());
-    ShaderProgram shaderProgram(gl, {&vertexShader, &fragmentShader});
+    ShaderProgram shaderProgram(gl, vertexShader, fragmentShader);
 
     AssertNoOpenGLErrors(gl);
 
@@ -77,7 +77,7 @@ TEST_F(ShaderProgramTests, SetFragmentShaderUniforms)
 
     Shader vertexShader(gl, Shader::Type::Vertex, GetValidVertexShaderCode());
     Shader fragmentShader(gl, Shader::Type::Fragment, GetFragmentShaderCodeWithUniforms());
-    ShaderProgram shaderProgram(gl, {&vertexShader, &fragmentShader});
+    ShaderProgram shaderProgram(gl, vertexShader, fragmentShader);
 
     AssertNoOpenGLErrors(gl);
 

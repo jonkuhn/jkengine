@@ -1,6 +1,5 @@
 #pragma once
 
-#include <initializer_list>
 #include <string>
 
 #pragma clang diagnostic push
@@ -18,7 +17,7 @@ namespace Graphics::OpenGL
     class ShaderProgram final
     {
     public:
-        ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*> shaders);
+        ShaderProgram(IOpenGLWrapper& gl, const IShader& vertexShader, const IShader& fragmentShader);
 
         ShaderProgram(const ShaderProgram&) = delete;
         ShaderProgram& operator=(const ShaderProgram&) = delete;

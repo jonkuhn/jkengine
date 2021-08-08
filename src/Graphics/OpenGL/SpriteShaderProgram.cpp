@@ -87,7 +87,7 @@ namespace
         // Note that the vertex and fragment shader instances can be destroyed
         // after the shader program has been constructed.
 
-        ShaderProgram shaderProgram(gl, {&vertexShader, &fragmentShader});
+        ShaderProgram shaderProgram(gl, vertexShader, fragmentShader);
         return shaderProgram;
     }
 }

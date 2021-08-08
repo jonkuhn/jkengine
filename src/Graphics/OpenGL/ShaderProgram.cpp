@@ -14,18 +14,13 @@
 
 using namespace Graphics::OpenGL;
 
-ShaderProgram::ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*> shaders)
+ShaderProgram::ShaderProgram(IOpenGLWrapper& gl, const IShader& vertexShader, const IShader& fragmentShader)
     : _gl(&gl),
       _handle(
           *_gl,
           _gl->CreateProgram(),
           [](IOpenGLWrapper& gl, GLuint h) {gl.DeleteProgram(h); })
 {
-    if (shaders.size() == 0)
-    {
-        throw std::invalid_argument("No shaders passed to ShaderProgram.");
-    }
-
     if (!_handle.get())
     {
         std::stringstream ss;
@@ -33,10 +28,8 @@ ShaderProgram::ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*>
         throw std::runtime_error(ss.str().c_str());
     }
 
-    for(auto shader : shaders)
-    {
-        _gl->AttachShader(_handle.get(), shader->Handle());
-    }
+    _gl->AttachShader(_handle.get(), vertexShader.Handle());
+    _gl->AttachShader(_handle.get(), fragmentShader.Handle());
 
     _gl->LinkProgram(_handle.get());
 
@@ -53,10 +46,8 @@ ShaderProgram::ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*>
         throw std::runtime_error(ss.str().c_str());
     }
 
-    for(auto shader : shaders)
-    {
-        _gl->DetachShader(_handle.get(), shader->Handle());
-    }
+    _gl->DetachShader(_handle.get(), vertexShader.Handle());
+    _gl->DetachShader(_handle.get(), fragmentShader.Handle());
 }
 
 void ShaderProgram::Use()

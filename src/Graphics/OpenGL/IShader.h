@@ -6,7 +6,7 @@ namespace Graphics::OpenGL
     class IShader
     {
     public:
-        virtual GLuint Handle() = 0;
+        virtual GLuint Handle() const = 0;
 
     protected:
         // This interface is not intended to expose ownership of the
