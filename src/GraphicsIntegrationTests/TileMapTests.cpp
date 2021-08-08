@@ -103,20 +103,14 @@ public:
                 { ColorOrange, ColorWhite, ColorBlue, ColorLightGray, ColorLightPeach, ColorBlack, ColorMagenta, ColorDarkGray },
                 { ColorYellow, ColorGreen, ColorCyan, ColorRed, ColorLightGreen, ColorPurple, ColorLightPurple, ColorSkyBlue }
             } })
-        ),
-        _colorTilesMap8x4(),
-        _colorTilesMap8x4FlippedTopToBottom(),
-        _colorTilesMapEmptyCenters8x4()
+        )
     {
         _engine->ClearColor(ColorBackgroundUglyYellow);
         PngImage colorTiles4x4(&_libPng, "TestFiles/colortiles4x4.png");
         _atlasColorTiles4x4 = _engine->CreateTileAtlas(colorTiles4x4, glm::vec2(4.0f, 4.0f));
-        _colorTilesMap8x4 = _atlasColorTiles4x4->CreateTileMap(_tileMapImage8x4);
-        _colorTilesMap8x4FlippedTopToBottom = _atlasColorTiles4x4->CreateTileMap(_tileMapImage8x4FlippedTopToBottom);
 
         PngImage colorTiles4x4EmptyCenters(&_libPng, "TestFiles/colortiles4x4emptycenters.png");
         _atlasColorTilesEmptyCenters4x4 = _engine->CreateTileAtlas(colorTiles4x4EmptyCenters, glm::vec2(4.0f, 4.0f));
-        _colorTilesMapEmptyCenters8x4 = _atlasColorTilesEmptyCenters4x4->CreateTileMap(_tileMapImage8x4);
     }
 protected:
     LibPngWrapper _libPng;
@@ -126,19 +120,16 @@ protected:
     std::unique_ptr<ITileAtlas> _atlasColorTilesEmptyCenters4x4;
     TileMapImage8x4 _tileMapImage8x4;
     TileMapImage8x4 _tileMapImage8x4FlippedTopToBottom;
-    std::unique_ptr<ITileMap> _colorTilesMap8x4;
-    std::unique_ptr<ITileMap> _colorTilesMap8x4FlippedTopToBottom;
-    std::unique_ptr<ITileMap> _colorTilesMapEmptyCenters8x4;
     
-    std::unique_ptr<IObjectInstance2d> SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(ITileMap& tileMap, unsigned int layer)
+    std::unique_ptr<IObject2d> SetupTileMap8x4InCenterOfCamera8x6Fov(ITileAtlas& tileAtlas, const IImage& tileMapImage, unsigned int layer)
     {
         // Create instance of 8x4 tile map with lower left at origin
         // with no rotation and size in world coordinates set to
         // the width and height of the tile map (8x4)
-        auto tileMapInstance = tileMap.CreateInstance(layer);
-        tileMapInstance->Position(glm::vec2(0.0f, 0.0f));
-        tileMapInstance->Rotation(0.0f);
-        tileMapInstance->Size(glm::vec2(
+        auto tileMap = tileAtlas.CreateTileMap(layer, tileMapImage);
+        tileMap->Position(glm::vec2(0.0f, 0.0f));
+        tileMap->Rotation(0.0f);
+        tileMap->Size(glm::vec2(
             static_cast<float>(_tileMapImage8x4.Width()),
             static_cast<float>(_tileMapImage8x4.Height())));
 
@@ -146,7 +137,7 @@ protected:
         // (since lower left of tile map is at origin, taking half
         // of the width and height of the tile map will give the
         // center point)
-        _camera->Center(tileMapInstance->Size() / 2.0f);
+        _camera->Center(tileMap->Size() / 2.0f);
 
         // Set FoV so that 8 tiles are visible horizontally and due
         // to the aspect ration 6 tiles will be visible vertically
@@ -154,7 +145,7 @@ protected:
             -4.0f, 4.0f,
             -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-        return tileMapInstance;
+        return tileMap;
     }
 
     template<unsigned int ColumnCount, unsigned int RowCount>
@@ -324,7 +315,7 @@ protected:
 
 TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisible)
 {
-    auto tileMapInstance = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMap8x4, 0);
+    auto tileMap = SetupTileMap8x4InCenterOfCamera8x6Fov(*_atlasColorTiles4x4, _tileMapImage8x4, 0);
     _engine->Render();
     Expect8x4ColorTilesMapCenteredOnScreen();
 }
@@ -332,31 +323,31 @@ TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtCenterOfTileM
 
 TEST_F(TileMapTests, Given8x4TileMapOffCamera_Camera8x6FovCenteredAtCenterOfTileMap_EntireAllBackgroundColorOnScreen)
 {
-    auto tileMapInstance = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMap8x4, 0);
+    auto tileMap = SetupTileMap8x4InCenterOfCamera8x6Fov(*_atlasColorTiles4x4, _tileMapImage8x4, 0);
 
     // Move tile map to an off camera location and expect all background color
-    tileMapInstance->Position(glm::vec2(30.0f, 60.0f));
+    tileMap->Position(glm::vec2(30.0f, 60.0f));
     _engine->Render();
     ExpectAllBackgroundColorOnScreen();
 }
 
 TEST_F(TileMapTests, Given8x4TileMapAtX30Y60_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisible)
 {
-    auto tileMapInstance = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMap8x4, 0);
+    auto tileMap = SetupTileMap8x4InCenterOfCamera8x6Fov(*_atlasColorTiles4x4, _tileMapImage8x4, 0);
 
     // Move tile map to an off camera location and expect all background color
-    tileMapInstance->Position(glm::vec2(30.0f, 60.0f));
+    tileMap->Position(glm::vec2(30.0f, 60.0f));
 
     // Move the camera to re-center the tile map in the view and expect
     // to see the tile map as before
-    _camera->Center(tileMapInstance->Position() + glm::vec3(tileMapInstance->Size() / 2.0f, 0.0f));
+    _camera->Center(tileMap->Position() + glm::vec3(tileMap->Size() / 2.0f, 0.0f));
     _engine->Render();
     Expect8x4ColorTilesMapCenteredOnScreen();
 }
 
 TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtOrigin_Left4ColumnsAndBottom3RowsOfTileMapAreVisible)
 {
-    auto tileMapInstance = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMap8x4, 0);
+    auto tileMap = SetupTileMap8x4InCenterOfCamera8x6Fov(*_atlasColorTiles4x4, _tileMapImage8x4, 0);
 
     // Center the camera at the origin
     _camera->Center(glm::vec2(0.0f, 0.0f));
@@ -397,10 +388,10 @@ TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtOrigin_Left4C
 
 TEST_F(TileMapTests, Given8x4TileMapAtOriginRotated45Degrees_Camera8x6FovCenteredAtCenterOfTileMap_TODO)
 {
-    auto tileMapInstance = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMap8x4, 0);
+    auto tileMap = SetupTileMap8x4InCenterOfCamera8x6Fov(*_atlasColorTiles4x4, _tileMapImage8x4, 0);
 
     // Rotate the tile map 45 degrees
-    tileMapInstance->Rotation(45.0f);
+    tileMap->Rotation(45.0f);
     _engine->Render();
 
     const unsigned int ColumnCount = 6;
@@ -432,7 +423,7 @@ TEST_F(TileMapTests, Given8x4TileMapAtOriginRotated45Degrees_Camera8x6FovCentere
 
 TEST_F(TileMapTests, Given8x4TileMapEmptyCentersAtOrigin_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisibleAndCentersShowBackground)
 {
-    auto tileMapInstance = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMapEmptyCenters8x4, 0);
+    auto tileMap = SetupTileMap8x4InCenterOfCamera8x6Fov(*_atlasColorTilesEmptyCenters4x4, _tileMapImage8x4, 0);
     _engine->Render();
 
     const unsigned int ColumnCount = 8;
@@ -476,8 +467,8 @@ TEST_F(TileMapTests, Given8x4TileMapEmptyCentersAtOrigin_Camera8x6FovCenteredAtC
 
 TEST_F(TileMapTests, Given8x4TileMapEmptyCentersOnLayer1AndSolidTileMapFlippedTopToBottomOnLayer0_EntireLayer1TileMapIsVisibleAndCentersShowTileMapFromLayer0)
 {
-    auto tileMapInstanceLayer1 = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMapEmptyCenters8x4, 1);
-    auto tileMapInstanceLayer0 = SetupTileMap8x4InstanceInCenterOfCamera8x6Fov(*_colorTilesMap8x4FlippedTopToBottom, 0);
+    auto tileMapLayer1 = SetupTileMap8x4InCenterOfCamera8x6Fov(*_atlasColorTilesEmptyCenters4x4, _tileMapImage8x4, 1);
+    auto tileMapLayer0 = SetupTileMap8x4InCenterOfCamera8x6Fov(*_atlasColorTiles4x4, _tileMapImage8x4FlippedTopToBottom, 0);
 
     _engine->Render();
 

@@ -2,20 +2,17 @@
 
 #include <memory>
 
+#include "TileMapDrawer.h"
 #include "TileMap.h"
 #include "SpriteDrawer.h"
-#include "SpriteInstance.h"
+#include "Sprite.h"
 
 using namespace Graphics::OpenGL;
 
-std::unique_ptr<Graphics::ITileMap> TileAtlas::CreateTileMap(
-    const IImage& tileMapImage)
+std::unique_ptr<Graphics::ITileMap> TileAtlas::CreateTileMap(unsigned int layer, const Graphics::IImage& tileMapImage)
 {
     return std::make_unique<TileMap>(
-        &_tileMapRegistry,
-        _numberOfDrawingLayers,
-        _tileMapDrawer,
-        this,
+        &_perLayerTileMapRegistries[layer],
         Texture(
             _gl,
             Texture::Params(tileMapImage)
@@ -23,25 +20,26 @@ std::unique_ptr<Graphics::ITileMap> TileAtlas::CreateTileMap(
                 .WrapModeT(Texture::WrapMode::ClampToBorder)
                 .MinFilter(Texture::MinFilterMode::Nearest)
                 .MagFilter(Texture::MagFilterMode::Nearest)),
-        glm::vec2(tileMapImage.Width(), tileMapImage.Height())
-    );
+        glm::vec2(tileMapImage.Width(), tileMapImage.Height()));
 }
 
-std::unique_ptr<Graphics::ISpriteInstance> TileAtlas::CreateSpriteInstance(unsigned int layer)
+std::unique_ptr<Graphics::ISprite> TileAtlas::CreateSprite(unsigned int layer)
 {
-    return std::make_unique<SpriteInstance>(&_perLayerSpriteInstanceRegistries[layer]);
+    return std::make_unique<Sprite>(&_perLayerSpriteRegistries[layer]);
 }
 
 void TileAtlas::DrawAllOnLayer(unsigned int layer)
 {
-    for(auto& tileMap : _tileMapRegistry)
+    _tileMapDrawer->SetupForDrawingFromAtlas(*this);
+
+    for(auto* tileMap : _perLayerTileMapRegistries[layer])
     {
-        tileMap->DrawAllOnLayer(layer);
+        _tileMapDrawer->Draw(*tileMap);
     }
 
-    _spriteDrawer->SetupForDrawingInstances(*this);
-    for(auto* spriteInstance : _perLayerSpriteInstanceRegistries[layer])
+    _spriteDrawer->SetupForDrawingFromAtlas(*this);
+    for(auto* sprite : _perLayerSpriteRegistries[layer])
     {
-        _spriteDrawer->DrawInstance(*spriteInstance);
+        _spriteDrawer->Draw(*sprite);
     }
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Camera2d.h"
-#include "ObjectInstance2d.h"
+#include "Object2d.h"
 #include "TileAtlas.h"
 #include "TileMap.h"
 #include "TileMapShaderProgram.h"
@@ -24,18 +24,18 @@ namespace Graphics::OpenGL
 
         }
 
-        inline void SetupForDrawingInstances(const TileAtlas& atlas, const TileMap& map)
+        inline void SetupForDrawingFromAtlas(const TileAtlas& atlas)
         {
             _tileMapShaderProgram->Use();
             _tileMapShaderProgram->Atlas(atlas);
-            _tileMapShaderProgram->Map(map);
             _tileMapShaderProgram->ViewMatrix(_camera2d->ViewMatrix());
             _tileMapShaderProgram->ProjectionMatrix(_camera2d->ProjectionMatrix());
         }
 
-        inline void DrawInstance(const ObjectInstance2d& instance)
+        inline void Draw(const TileMap& map)
         {
-            _tileMapShaderProgram->ModelMatrix(instance.ModelMatrix());
+            _tileMapShaderProgram->Map(map);
+            _tileMapShaderProgram->ModelMatrix(map.ModelMatrix());
             _unitQuadVertexArray->Draw();
         }
 

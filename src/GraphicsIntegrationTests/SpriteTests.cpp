@@ -36,11 +36,11 @@ protected:
 
 TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCenteredAtOrigin_EntireSpriteIsVisible)
 {
-    auto spriteInstance = _atlasColorTilesEmptyCenters4x4->CreateSpriteInstance(0);
-    spriteInstance->Position(glm::vec2(0.0f, 0.0f));
-    spriteInstance->Rotation(0.0f);
-    spriteInstance->Size(glm::vec2(3.0f, 3.0f));
-    spriteInstance->AtlasLocation(glm::vec2(0.0f, 0.0f));
+    auto sprite = _atlasColorTilesEmptyCenters4x4->CreateSprite(0);
+    sprite->Position(glm::vec2(0.0f, 0.0f));
+    sprite->Rotation(0.0f);
+    sprite->Size(glm::vec2(3.0f, 3.0f));
+    sprite->AtlasLocation(glm::vec2(0.0f, 0.0f));
 
     _camera->Center(glm::vec2(0.0f, 0.0f));
 
@@ -87,11 +87,11 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCent
 
 TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX2Y1_Camera8x6FovCenteredAtOrigin_EntireSpriteIsVisible)
 {
-    auto spriteInstance = _atlasColorTilesEmptyCenters4x4->CreateSpriteInstance(0);
-    spriteInstance->Position(glm::vec2(0.0f, 0.0f));
-    spriteInstance->Rotation(0.0f);
-    spriteInstance->Size(glm::vec2(3.0f, 3.0f));
-    spriteInstance->AtlasLocation(glm::vec2(2.0f, 1.0f));
+    auto sprite = _atlasColorTilesEmptyCenters4x4->CreateSprite(0);
+    sprite->Position(glm::vec2(0.0f, 0.0f));
+    sprite->Rotation(0.0f);
+    sprite->Size(glm::vec2(3.0f, 3.0f));
+    sprite->AtlasLocation(glm::vec2(2.0f, 1.0f));
 
     _camera->Center(glm::vec2(0.0f, 0.0f));
 
@@ -138,11 +138,11 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX2Y1_Camera8x6FovCent
 
 TEST_F(SpriteTests, Given6x6SpriteAtX30Y60_Camera8x6FovCenteredAtCenterOfSprite_EntireSpriteIsVisible)
 {
-    auto spriteInstance = _atlasColorTilesEmptyCenters4x4->CreateSpriteInstance(0);
-    spriteInstance->Position(glm::vec2(30.0f, 60.0f));
-    spriteInstance->Rotation(0.0f);
-    spriteInstance->Size(glm::vec2(6.0f, 6.0f));
-    spriteInstance->AtlasLocation(glm::vec2(2.0f, 1.0f));
+    auto sprite = _atlasColorTilesEmptyCenters4x4->CreateSprite(0);
+    sprite->Position(glm::vec2(30.0f, 60.0f));
+    sprite->Rotation(0.0f);
+    sprite->Size(glm::vec2(6.0f, 6.0f));
+    sprite->AtlasLocation(glm::vec2(2.0f, 1.0f));
 
     _camera->Center(glm::vec2(33.0f, 63.0f));
 
@@ -197,11 +197,11 @@ TEST_F(SpriteTests, Given6x6SpriteAtX30Y60_Camera8x6FovCenteredAtCenterOfSprite_
 
 TEST_F(SpriteTests, Given6x6Sprite_GivenOffCameraAtX4Y0_SpriteIsNotVisible)
 {
-    auto spriteInstance = _atlasColorTilesEmptyCenters4x4->CreateSpriteInstance(0);
-    spriteInstance->Position(glm::vec2(30.0f, 60.0f));
-    spriteInstance->Rotation(0.0f);
-    spriteInstance->Size(glm::vec2(6.0f, 6.0f));
-    spriteInstance->AtlasLocation(glm::vec2(2.0f, 1.0f));
+    auto sprite = _atlasColorTilesEmptyCenters4x4->CreateSprite(0);
+    sprite->Position(glm::vec2(30.0f, 60.0f));
+    sprite->Rotation(0.0f);
+    sprite->Size(glm::vec2(6.0f, 6.0f));
+    sprite->AtlasLocation(glm::vec2(2.0f, 1.0f));
 
     _camera->Center(glm::vec2(0.0f, 0.0f));
 
@@ -240,11 +240,11 @@ TEST_F(SpriteTests, Given6x6Sprite_GivenOffCameraAtX4Y0_SpriteIsNotVisible)
 
 TEST_F(SpriteTests, Given3x3SpriteAtOriginRotated45Degrees_Camera8x6FovCenteredOnSprite_EntireSpriteIsVisible)
 {
-    auto spriteInstance = _atlasColorTilesEmptyCenters4x4->CreateSpriteInstance(0);
-    spriteInstance->Position(glm::vec2(0.0f, 0.0f));
-    spriteInstance->Rotation(45.0f);
-    spriteInstance->Size(glm::vec2(3.0f, 3.0f));
-    spriteInstance->AtlasLocation(glm::vec2(0.0f, 0.0f));
+    auto sprite = _atlasColorTilesEmptyCenters4x4->CreateSprite(0);
+    sprite->Position(glm::vec2(0.0f, 0.0f));
+    sprite->Rotation(45.0f);
+    sprite->Size(glm::vec2(3.0f, 3.0f));
+    sprite->AtlasLocation(glm::vec2(0.0f, 0.0f));
 
     _camera->Center(glm::vec2(1.5f, 1.5f));
 

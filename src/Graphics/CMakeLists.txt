@@ -12,13 +12,13 @@ target_sources(Graphics
     ICamera2d.h
     IEngine.h
     IImage.h
-    IObjectInstance2d.h
+    IObject2d.h
     PngImage.h
     PngImage.cpp
     ILibPngWrapper.h
     LibPngWrapper.h
     IScreenshot.h
-    ISpriteInstance.h
+    ISprite.h
     ITileAtlas.h
     ITileMap.h
     OpenGL/Camera2d.h
@@ -29,8 +29,8 @@ target_sources(Graphics
     OpenGL/IGlfwWrapper.h
     OpenGL/GlfwWrapper.h
     OpenGL/GlfwWrapper.cpp
-    OpenGL/ObjectInstance2d.h
-    OpenGL/ObjectInstance2d.cpp
+    OpenGL/Object2d.h
+    OpenGL/Object2d.cpp
     OpenGL/OpenGLHelpers.h
     OpenGL/OpenGLHelpers.cpp
     OpenGL/IOpenGLWindow.h
@@ -52,7 +52,6 @@ target_sources(Graphics
     OpenGL/TileAtlas.cpp
     OpenGL/TileMapDrawer.h
     OpenGL/TileMap.h
-    OpenGL/TileMap.cpp
     OpenGL/TileMapShaderProgram.h
     OpenGL/TileMapShaderProgram.cpp
     OpenGL/UnitQuadVertexArray.h

@@ -6,27 +6,27 @@
 #include <glm/gtc/matrix_transform.hpp>
 #pragma clang diagnostic pop
 
-#include "Graphics/OpenGL/ObjectInstance2d.h"
+#include "Graphics/OpenGL/Object2d.h"
 #include "../TestHelpers.h"
 
 using namespace testing;
 using namespace Graphics::OpenGL;
 
-class ObjectInstance2dTests : public Test
+class Object2dTests : public Test
 {
 protected:
-    Registry<ObjectInstance2d> _instanceRegistry;
+    Registry<Object2d> _instanceRegistry;
 
-    ObjectInstance2d CreateObjectInstance2d()
+    Object2d CreateObject2d()
     {
-        return ObjectInstance2d(&_instanceRegistry);
+        return Object2d(&_instanceRegistry);
     }
 };
 
-TEST_F(ObjectInstance2dTests, ConstructorDestructor_VerifyRegistration)
+TEST_F(Object2dTests, ConstructorDestructor_VerifyRegistration)
 {
     {
-        ObjectInstance2d obj(&_instanceRegistry);
+        Object2d obj(&_instanceRegistry);
 
         // exactly one instance should be registered (the one we just created)
         int count = 0;
@@ -42,9 +42,9 @@ TEST_F(ObjectInstance2dTests, ConstructorDestructor_VerifyRegistration)
     EXPECT_EQ(_instanceRegistry.begin(), _instanceRegistry.end());
 }
 
-TEST_F(ObjectInstance2dTests, Constructor_ModelMatrixHasPositionAtOriginRotation0And1by1Size)
+TEST_F(Object2dTests, Constructor_ModelMatrixHasPositionAtOriginRotation0And1by1Size)
 {
-    auto obj = CreateObjectInstance2d();
+    auto obj = CreateObject2d();
 
     auto actual = obj.ModelMatrix();
 
@@ -55,17 +55,17 @@ TEST_F(ObjectInstance2dTests, Constructor_ModelMatrixHasPositionAtOriginRotation
     ExpectEqual(actual, expected);
 }
 
-TEST_F(ObjectInstance2dTests, ConstructorDestructor_NullRegistry)
+TEST_F(Object2dTests, ConstructorDestructor_NullRegistry)
 {
     {
-        ObjectInstance2d obj(nullptr);
+        Object2d obj(nullptr);
     }
 }
 
-TEST_F(ObjectInstance2dTests, Position_GivenPositionChangeAfterFetchingModelMatrix_ModelMatrixMatchesUpdatedPosition)
+TEST_F(Object2dTests, Position_GivenPositionChangeAfterFetchingModelMatrix_ModelMatrixMatchesUpdatedPosition)
 {
     glm::vec2 testPosition(128.5f, 64.125f);
-    auto obj = CreateObjectInstance2d();
+    auto obj = CreateObject2d();
     // fetch to ensure model matrix would be cached with default values
     obj.ModelMatrix();
 
@@ -80,10 +80,10 @@ TEST_F(ObjectInstance2dTests, Position_GivenPositionChangeAfterFetchingModelMatr
     ExpectEqual(actual, expected);
 }
 
-TEST_F(ObjectInstance2dTests, Size_GivenSizeChangedAfterFetchingModelMatrix_ModelMatrixMatchesUpdatedSize)
+TEST_F(Object2dTests, Size_GivenSizeChangedAfterFetchingModelMatrix_ModelMatrixMatchesUpdatedSize)
 {
     glm::vec2 testSize(12.25, 6.5);
-    auto obj = CreateObjectInstance2d();
+    auto obj = CreateObject2d();
     // fetch to ensure model matrix would be cached with default values
     obj.ModelMatrix();
 
@@ -98,10 +98,10 @@ TEST_F(ObjectInstance2dTests, Size_GivenSizeChangedAfterFetchingModelMatrix_Mode
     ExpectEqual(actual, expected);
 }
 
-TEST_F(ObjectInstance2dTests, Rotation_GivenRotationChangedAfterFetchingModelMatrix_ModelMatrixMatchesUpdatedRotation)
+TEST_F(Object2dTests, Rotation_GivenRotationChangedAfterFetchingModelMatrix_ModelMatrixMatchesUpdatedRotation)
 {
     float testRotationDegrees = 12.5;
-    auto obj = CreateObjectInstance2d();
+    auto obj = CreateObject2d();
     // fetch to ensure model matrix would be cached with default values
     obj.ModelMatrix();
 
@@ -120,12 +120,12 @@ TEST_F(ObjectInstance2dTests, Rotation_GivenRotationChangedAfterFetchingModelMat
     ExpectEqual(actual, expected);
 }
 
-TEST_F(ObjectInstance2dTests, ModelMatrix_GivenNonZeroPositionScaleAndRotation_ModelMatrixIsCorrect)
+TEST_F(Object2dTests, ModelMatrix_GivenNonZeroPositionScaleAndRotation_ModelMatrixIsCorrect)
 {
     glm::vec2 testPosition(128.5f, 64.125f);
     glm::vec2 testSize(12.25, 6.5);
     float testRotationDegrees = 12.5;
-    auto obj = CreateObjectInstance2d();
+    auto obj = CreateObject2d();
     // fetch to ensure model matrix would be cached with default values
     obj.ModelMatrix();
 

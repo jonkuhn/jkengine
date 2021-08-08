@@ -1,4 +1,4 @@
-#include "ObjectInstance2d.h"
+#include "Object2d.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
@@ -8,7 +8,7 @@
 
 using namespace Graphics::OpenGL;
 
-void ObjectInstance2d::EnsureModelMatrixIsUpdated() const
+void Object2d::EnsureModelMatrixIsUpdated() const
 {
     if (!_modelNeedsUpdated)
     {
