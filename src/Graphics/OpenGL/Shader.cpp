@@ -75,7 +75,7 @@ Shader::Shader(IOpenGLWrapper& gl, Type type, const std::string& source)
     }
 }
 
-GLuint Shader::Handle()
+GLuint Shader::Handle() const
 {
     return _handle.get();
 }

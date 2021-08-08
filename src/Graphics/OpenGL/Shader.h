@@ -26,7 +26,7 @@ namespace Graphics::OpenGL
         Shader(Shader&&) = default;
         Shader& operator=(Shader&&) = default;
 
-        GLuint Handle() override;
+        GLuint Handle() const override;
 
     private:
         IOpenGLWrapper* _gl;
