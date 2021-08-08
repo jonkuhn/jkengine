@@ -13,8 +13,8 @@ Engine::Engine(int winWidth, int winHeight, const std::string& title, unsigned i
       _spriteShaderProgram(_gl),
       _unitQuadVertexArray(_gl),
       _camera2d(),
-      _tileMapDrawer(&_tileMapShaderProgram, &_unitQuadVertexArray, &_camera2d),
-      _spriteDrawer(&_spriteShaderProgram, &_unitQuadVertexArray, &_camera2d),
+      _tileMapDrawer(_tileMapShaderProgram, _unitQuadVertexArray, _camera2d),
+      _spriteDrawer(_spriteShaderProgram, _unitQuadVertexArray, _camera2d),
       _tileAtlasRegistry(),
       _numberOfDrawingLayers(numberOfDrawingLayers),
       _programShouldExit(false)
