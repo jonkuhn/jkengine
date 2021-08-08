@@ -23,7 +23,7 @@ namespace Graphics::OpenGL
     {
     public:
         TileAtlas(
-            Registry<TileAtlas>* tileAtlasRegistry,
+            Registry<TileAtlas>& tileAtlasRegistry,
             IOpenGLWrapper* gl,
             unsigned int numberOfDrawingLayers,
             TileMapDrawer* tileMapDrawer,
@@ -36,7 +36,7 @@ namespace Graphics::OpenGL
             _spriteDrawer(spriteDrawer),
             _atlasTexture(std::move(atlasTexture)),
             _atlasSizeInTiles(std::move(atlasSizeInTiles)),
-            _registration(tileAtlasRegistry, this),
+            _registration(tileAtlasRegistry, *this),
             _perLayerTileMapRegistries(numberOfDrawingLayers),
             _perLayerSpriteRegistries(numberOfDrawingLayers)
         {

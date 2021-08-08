@@ -12,22 +12,16 @@ namespace Graphics::OpenGL
         class Registration
         {
         public:
-            Registration(Registry<T>* registry, T* obj)
+            Registration(Registry<T>& registry, T& obj)
               : _registry(registry),
                 _obj(obj)
             {
-                if(_registry != nullptr)
-                {
-                    _registry->Register(obj);
-                }
+                _registry.Register(_obj);
             }
 
             ~Registration()
             {
-                if(_registry != nullptr)
-                {
-                    _registry->Deregister(_obj);
-                }
+                _registry.Deregister(_obj);
             }
 
             // Do not allow copy.  Allowing a default copy would mean
@@ -46,8 +40,8 @@ namespace Graphics::OpenGL
             Registration& operator=(Registration&&) = delete;
 
         private:
-            Registry<T>* _registry;
-            T* _obj;
+            Registry<T>& _registry;
+            T& _obj;
         };
 
         Registry()
@@ -67,19 +61,19 @@ namespace Graphics::OpenGL
         Registry& operator=(const Registry&) = delete;
 
         // Do not allow move.  If it were moveable then the registrations
-        // would need to somehow web updated to point at the destination
+        // would need to somehow be updated to point at the destination
         // registry rather than the source.
-        Registry(Registry&&) = default;
-        Registry& operator=(Registry&&) = default;
+        Registry(Registry&&) = delete;
+        Registry& operator=(Registry&&) = delete;
 
-        inline void Register(T* obj)
+        inline void Register(T& obj)
         {
-            _objects.insert(obj);
+            _objects.insert(&obj);
         }
 
-        inline void Deregister(T* obj)
+        inline void Deregister(T& obj)
         {
-            _objects.erase(obj);
+            _objects.erase(&obj);
         }
 
         inline typename std::unordered_set<T*>::iterator begin()

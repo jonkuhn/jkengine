@@ -28,7 +28,7 @@ std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
     const glm::vec2& atlasSizeInTiles)
 {
     return std::make_unique<TileAtlas>(
-        &_tileAtlasRegistry,
+        _tileAtlasRegistry,
         &_gl,
         _numberOfDrawingLayers,
         &_tileMapDrawer,

@@ -9,9 +9,9 @@ namespace Graphics::OpenGL
     class Sprite final : public ISprite
     {
     public:
-        Sprite(Registry<Sprite>* registry)
+        Sprite(Registry<Sprite>& registry)
           : _object2d(),
-            _registration(registry, this)
+            _registration(registry, *this)
         {
 
         }
