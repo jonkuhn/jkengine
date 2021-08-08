@@ -163,10 +163,10 @@ protected:
         std::array<std::array<Color, ColumnCount>, RowCount> expectedCenterColors)
     {
         auto screenshot = _engine->TakeScreenshot();
-        auto columnWidth = screenshot->Width() / ColumnCount;
-        auto rowHeight = screenshot->Height() / RowCount;
-        auto sampleDistanceFromEdgeX = columnWidth / 16;
-        auto sampleDistanceFromEdgeY = rowHeight / 16;
+        auto columnWidth = static_cast<float>(screenshot->Width()) / static_cast<float>(ColumnCount);
+        auto rowHeight = static_cast<float>(screenshot->Height()) / static_cast<float>(RowCount);
+        auto sampleDistanceFromEdgeX = columnWidth / 8.0f;
+        auto sampleDistanceFromEdgeY = rowHeight / 8.0f;
 
         // sample each tile near 4 corners plus center
         auto sampleLeftX = sampleDistanceFromEdgeX;
@@ -193,37 +193,23 @@ protected:
                     ? ColorOrientationBrown
                     : ColorBackgroundUglyYellow;
 
-                EXPECT_EQ(expectedUpperLeftColor, screenshot->GetPixel(x + sampleLeftX, y + sampleUpperY))
-                    << "(upper left) row = " << row << " column = " << column;
-                EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleRightX, y + sampleUpperY))
-                    << "(upper right) row = " << row << " column = " << column;
+                ExpectColorAtScreenPosition(*screenshot, "upper left",
+                    expectedUpperLeftColor, x + sampleLeftX, y + sampleUpperY, row, column);
+
+                ExpectColorAtScreenPosition(*screenshot, "upper right",
+                    expectedColor, x + sampleRightX, y + sampleUpperY, row, column);
 
                 auto expectedCenterColor = expectedCenterColors[row][column];
-                EXPECT_EQ(expectedCenterColor, screenshot->GetPixel(x + sampleCenterX, y + sampleCenterY))
-                    << "(center) row = " << row << " column = " << column;
+                ExpectColorAtScreenPosition(*screenshot, "center",
+                    expectedCenterColor, x + sampleCenterX, y + sampleCenterY, row, column);
 
-                EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleLeftX, y + sampleLowerY))
-                    << "(lower left) row = " << row << " column = " << column;
-                EXPECT_EQ(expectedColor, screenshot->GetPixel(x + sampleRightX, y + sampleLowerY))
-                    << "(lower right) row = " << row << " column = " << column;
+                ExpectColorAtScreenPosition(*screenshot, "lower left",
+                    expectedColor, x + sampleLeftX, y + sampleLowerY, row, column);
+
+                ExpectColorAtScreenPosition(*screenshot, "lower right",
+                    expectedColor, x + sampleRightX, y + sampleLowerY, row, column);
+
             }
-        }
-    }
-
-    void ExpectColorAtScreenPositionIfOnScreen(
-        IScreenshot& screenshot,
-        std::string name,
-        Color expectedColor,
-        unsigned int x,
-        unsigned int y,
-        unsigned int row,
-        unsigned int column)
-    {
-        // only check points that are on screen
-        if(x > 0 && x < screenshot.Width() && y > 0 && y < screenshot.Height())
-        {
-            EXPECT_EQ(expectedColor, screenshot.GetPixel(x, y))
-                << "(" << name <<  ") row = " << row << " column = " << column;
         }
     }
 
@@ -235,8 +221,7 @@ protected:
 
         // Assume non-rotated tiles fit exactly 8 across for calculating
         // tileDiagonal
-        auto tileDiagonal = static_cast<unsigned int>(
-            sqrt(2.0f) * static_cast<float>(screenshot->Width()) / 8.0f);
+        auto tileDiagonal = sqrt(2.0f) * static_cast<float>(screenshot->Width()) / 8.0f;
 
         auto columnWidth = tileDiagonal;
         auto rowHeight = tileDiagonal / 2;
@@ -246,14 +231,14 @@ protected:
         auto oddRowXOffset = tileDiagonal / 2;
 
         // sample each tile near 4 corners plus center
-        auto sampleCenterXOffset = 0.0f;
-        auto sampleCenterYOffset = 0.0f;
+        auto sampleCenterX = 0.0f;
+        auto sampleCenterY = 0.0f;
 
         auto sampleDistanceFromCorner = tileDiagonal / 16.0f;
-        auto sampleLeftXOffset = -0.5 * tileDiagonal + sampleDistanceFromCorner;
-        auto sampleRightXOffset = 0.5 * tileDiagonal - sampleDistanceFromCorner;
-        auto sampleTopYOffset = -0.5 * tileDiagonal + sampleDistanceFromCorner;
-        auto sampleBottomYOffset = 0.5 * tileDiagonal - sampleDistanceFromCorner;
+        auto sampleLeftX = -0.5 * tileDiagonal + sampleDistanceFromCorner;
+        auto sampleRightX = 0.5 * tileDiagonal - sampleDistanceFromCorner;
+        auto sampleTopY = -0.5 * tileDiagonal + sampleDistanceFromCorner;
+        auto sampleBottomY = 0.5 * tileDiagonal - sampleDistanceFromCorner;
         
         for(unsigned int row = 0; row < RowCount; row++)
         {
@@ -264,19 +249,19 @@ protected:
                 auto y = firstCenterY + row * rowHeight;
 
                 ExpectColorAtScreenPositionIfOnScreen(*screenshot, "center", expectedColor,
-                    x + sampleCenterXOffset, y + sampleCenterYOffset, row, column);
+                    x + sampleCenterX, y + sampleCenterY, row, column);
 
                 ExpectColorAtScreenPositionIfOnScreen(*screenshot, "left", expectedColor,
-                    x + sampleLeftXOffset, y + sampleCenterYOffset, row, column);
+                    x + sampleLeftX, y + sampleCenterY, row, column);
 
                 ExpectColorAtScreenPositionIfOnScreen(*screenshot, "right", expectedColor,
-                    x + sampleRightXOffset, y + sampleCenterYOffset, row, column);
+                    x + sampleRightX, y + sampleCenterY, row, column);
 
                 ExpectColorAtScreenPositionIfOnScreen(*screenshot, "top", expectedColor,
-                    x + sampleCenterXOffset, y + sampleTopYOffset, row, column);
+                    x + sampleCenterX, y + sampleTopY, row, column);
 
                 ExpectColorAtScreenPositionIfOnScreen(*screenshot, "bottom", expectedColor,
-                    x + sampleCenterXOffset, y + sampleBottomYOffset, row, column);
+                    x + sampleCenterX, y + sampleBottomY, row, column);
             }
         }
     }
