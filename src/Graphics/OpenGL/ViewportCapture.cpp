@@ -75,6 +75,10 @@ ViewportCapture::ViewportCapture(IOpenGLWrapper& gl)
     : _dimensions(GetDimensions(gl)),
       _pixelData(_dimensions.width * _dimensions.height)
 {
+    // Read the front buffer so that what is captured is fully drawn
+    // and represents what the user is seeing.  This also makes integration
+    // testing easier because Engine::Render only needs to be called once
+    // before taking a screenshot to test the result.
     gl.ReadBuffer(GL_FRONT);
     gl.ReadPixels(0, 0, _dimensions.width, _dimensions.height, GL_RGBA, GL_UNSIGNED_BYTE, _pixelData.data());
 }
