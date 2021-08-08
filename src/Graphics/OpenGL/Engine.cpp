@@ -44,8 +44,8 @@ std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
         _tileAtlasRegistry,
         _gl,
         _numberOfDrawingLayers,
-        &_tileMapDrawer,
-        &_spriteDrawer,
+        _tileMapDrawer,
+        _spriteDrawer,
         Texture(
             _gl,
             Texture::Params(tileAtlasImage)
