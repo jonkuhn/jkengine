@@ -2,14 +2,17 @@
 
 #include <memory>
 
-#include "IObjectInstance2d.h"
+#include "IObject2d.h"
 
 namespace Graphics
 {
-    class ITileMap
+    class ITileMap : public IObject2d
     {
     public:
         virtual ~ITileMap() = default;
-        virtual std::unique_ptr<IObjectInstance2d> CreateInstance(unsigned int layer) = 0;
+
+        // In the future, methods specific to tile maps will go here
+        // For example: a method to dynamically update what
+        // atlas location a tile in the map points to.
     };
 }

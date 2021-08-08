@@ -7,10 +7,10 @@
 
 namespace Graphics
 {
-    class IObjectInstance2d
+    class IObject2d
     {
     public:
-        virtual ~IObjectInstance2d() = default;
+        virtual ~IObject2d() = default;
 
         virtual void Position(const glm::vec2& position) = 0;
         virtual const glm::vec3& Position() const = 0;

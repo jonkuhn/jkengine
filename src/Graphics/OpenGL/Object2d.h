@@ -5,17 +5,17 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
-#include "../IObjectInstance2d.h"
+#include "../IObject2d.h"
 
 #include "Registry.h"
 
 namespace Graphics::OpenGL
 {
-    class ObjectInstance2d : public IObjectInstance2d
+    class Object2d : public IObject2d
 
     {
     public:
-        ObjectInstance2d(Registry<ObjectInstance2d>* registry)
+        Object2d(Registry<Object2d>* registry)
         : _position(0.0f, 0.0f, 0.0f),
           _size(1.0f, 1.0f),
           _rotationDegrees(0.0f),
@@ -26,20 +26,20 @@ namespace Graphics::OpenGL
 
         }
 
-        ~ObjectInstance2d()
+        ~Object2d()
         {
 
         }
 
         // To not allow copy because of Registry and Registration
         // not being copyable
-        ObjectInstance2d(const ObjectInstance2d&) = delete;
-        ObjectInstance2d& operator=(const ObjectInstance2d&) = delete;
+        Object2d(const Object2d&) = delete;
+        Object2d& operator=(const Object2d&) = delete;
 
         // To not allow move because of Registry and Registration
         // not being moveable
-        ObjectInstance2d(ObjectInstance2d&&) = delete;
-        ObjectInstance2d& operator=(ObjectInstance2d&&) = delete;
+        Object2d(Object2d&&) = delete;
+        Object2d& operator=(Object2d&&) = delete;
 
         inline void Position(const glm::vec2& position)
         {
@@ -87,7 +87,7 @@ namespace Graphics::OpenGL
         float _rotationDegrees;
         mutable glm::mat4 _model;  
         mutable bool _modelNeedsUpdated;
-        Registry<ObjectInstance2d>::Registration _registration;
+        Registry<Object2d>::Registration _registration;
 
         void EnsureModelMatrixIsUpdated() const;
     };

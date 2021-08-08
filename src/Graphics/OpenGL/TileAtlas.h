@@ -17,7 +17,7 @@ namespace Graphics::OpenGL
     class TileMapDrawer;
     class TileMap;
     class SpriteDrawer;
-    class SpriteInstance;
+    class Sprite;
 
     class TileAtlas final : public ITileAtlas
     {
@@ -32,14 +32,13 @@ namespace Graphics::OpenGL
             glm::vec2 atlasSizeInTiles)
           : 
             _gl(gl),
-            _numberOfDrawingLayers(numberOfDrawingLayers),
             _tileMapDrawer(tileMapDrawer),
             _spriteDrawer(spriteDrawer),
             _atlasTexture(std::move(atlasTexture)),
             _atlasSizeInTiles(std::move(atlasSizeInTiles)),
             _registration(tileAtlasRegistry, this),
-            _tileMapRegistry(),
-            _perLayerSpriteInstanceRegistries(numberOfDrawingLayers)
+            _perLayerTileMapRegistries(numberOfDrawingLayers),
+            _perLayerSpriteRegistries(numberOfDrawingLayers)
         {
 
         }
@@ -54,8 +53,8 @@ namespace Graphics::OpenGL
         TileAtlas(TileAtlas&& other) = delete;
         TileAtlas& operator=(TileAtlas&& other) = delete;
 
-        std::unique_ptr<Graphics::ITileMap> CreateTileMap(const IImage& tileMapImage) override;
-        std::unique_ptr<Graphics::ISpriteInstance> CreateSpriteInstance(unsigned int layer) override;
+        std::unique_ptr<Graphics::ITileMap> CreateTileMap(unsigned int layer, const IImage& tileMapImage) override;
+        std::unique_ptr<Graphics::ISprite> CreateSprite(unsigned int layer) override;
 
         inline const Texture& AtlasTexture() const
         {
@@ -71,13 +70,12 @@ namespace Graphics::OpenGL
 
     private:
         IOpenGLWrapper* _gl;
-        unsigned int _numberOfDrawingLayers;
         TileMapDrawer* _tileMapDrawer;
         SpriteDrawer* _spriteDrawer;
         Texture _atlasTexture;
         glm::vec2 _atlasSizeInTiles;
         Registry<TileAtlas>::Registration _registration;
-        Registry<TileMap> _tileMapRegistry;
-        std::vector<Registry<SpriteInstance>> _perLayerSpriteInstanceRegistries;
+        std::vector<Registry<TileMap>> _perLayerTileMapRegistries;
+        std::vector<Registry<Sprite>> _perLayerSpriteRegistries;
     };
 }

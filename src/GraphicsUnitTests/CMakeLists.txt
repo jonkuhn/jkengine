@@ -13,7 +13,7 @@ target_sources(GraphicsUnitTests
     OpenGL/MockGlfwWrapper.h
     OpenGL/MockOpenGLWrapper.h
     OpenGL/MockShader.h
-    OpenGL/ObjectInstance2dTests.cpp
+    OpenGL/Object2dTests.cpp
     OpenGL/ShaderProgramTests.cpp
     OpenGL/ShaderTests.cpp
     OpenGL/TextureTests.cpp

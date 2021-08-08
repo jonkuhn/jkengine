@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Camera2d.h"
-#include "SpriteInstance.h"
+#include "Sprite.h"
 #include "TileAtlas.h"
 #include "SpriteShaderProgram.h"
 #include "UnitQuadVertexArray.h"
@@ -23,7 +23,7 @@ namespace Graphics::OpenGL
 
         }
 
-        inline void SetupForDrawingInstances(const TileAtlas& atlas)
+        inline void SetupForDrawingFromAtlas(const TileAtlas& atlas)
         {
             _spriteShaderProgram->Use();
             _spriteShaderProgram->Atlas(atlas);
@@ -31,10 +31,10 @@ namespace Graphics::OpenGL
             _spriteShaderProgram->ProjectionMatrix(_camera2d->ProjectionMatrix());
         }
 
-        inline void DrawInstance(const SpriteInstance& instance)
+        inline void Draw(const Sprite& sprite)
         {
-            _spriteShaderProgram->AtlasLocation(instance.AtlasLocation());
-            _spriteShaderProgram->ModelMatrix(instance.ModelMatrix());
+            _spriteShaderProgram->AtlasLocation(sprite.AtlasLocation());
+            _spriteShaderProgram->ModelMatrix(sprite.ModelMatrix());
             _unitQuadVertexArray->Draw();
         }
 

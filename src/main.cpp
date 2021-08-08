@@ -182,18 +182,17 @@ int main()
         glm::vec2(TILE_ATLAS_WIDTH_IN_TILES, TILE_ATLAS_HEIGHT_IN_TILES)
     );
 
-    auto tileMap = tileAtlas->CreateTileMap(randomTileMap);
 
     // Define a model matrix that scale's up from a unit quad
     // to world width by world height
-    auto tileMapInstance1 = tileMap->CreateInstance(1);
-    tileMapInstance1->Position(glm::vec2(-2.0f, -2.0f));
-    tileMapInstance1->Rotation(12.5f);
-    tileMapInstance1->Size(glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES));
+    auto tileMap1 = tileAtlas->CreateTileMap(1, randomTileMap);
+    tileMap1->Position(glm::vec2(-2.0f, -2.0f));
+    tileMap1->Rotation(12.5f);
+    tileMap1->Size(glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES));
 
-    auto tileMapInstance2 = tileMap->CreateInstance(0);
-    tileMapInstance2->Position(glm::vec2(-2.0f, -2.0f));
-    tileMapInstance2->Size(glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES));
+    auto tileMap2 = tileAtlas->CreateTileMap(0, randomTileMap);
+    tileMap2->Position(glm::vec2(-2.0f, -2.0f));
+    tileMap2->Size(glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES));
 
     const float MOVE_SPEED = 5.0f;
 
