@@ -116,9 +116,9 @@ Texture::Params& Texture::Params::MagFilter(MagFilterMode magFilter_)
 }
 
 
-Texture::Texture(IOpenGLWrapper* gl, const Texture::Params& params)
-    : _gl(gl),
-      _handle(_gl, 0, [](IOpenGLWrapper* gl, GLuint h) { gl->DeleteTextures(1, &h); })
+Texture::Texture(IOpenGLWrapper& gl, const Texture::Params& params)
+    : _gl(&gl),
+      _handle(*_gl, 0, [](IOpenGLWrapper& gl, GLuint h) { gl.DeleteTextures(1, &h); })
 {
     // clear errors so get GetError below will be accurate
     _gl->GetError();

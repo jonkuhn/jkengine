@@ -10,7 +10,7 @@ namespace Graphics::OpenGL
     class UnitQuadVertexArray final
     {
     public:
-        UnitQuadVertexArray(IOpenGLWrapper* gl);
+        UnitQuadVertexArray(IOpenGLWrapper& gl);
         void Draw();
 
     private:

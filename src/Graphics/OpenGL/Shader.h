@@ -18,8 +18,8 @@ namespace Graphics::OpenGL
             Fragment
         };
 
-        Shader(IOpenGLWrapper* gl, Type type, std::istream& sourceStream);
-        Shader(IOpenGLWrapper* gl, Type type, const std::string& source);
+        Shader(IOpenGLWrapper& gl, Type type, std::istream& sourceStream);
+        Shader(IOpenGLWrapper& gl, Type type, const std::string& source);
 
         Shader(const Shader&) = delete;
         Shader& operator=(const Shader&) = delete;
@@ -31,7 +31,7 @@ namespace Graphics::OpenGL
     private:
         IOpenGLWrapper* _gl;
 
-        typedef UniqueHandle<std::function<void (IOpenGLWrapper*, GLuint)>> UniqueShaderHandle;
+        typedef UniqueHandle<std::function<void (IOpenGLWrapper&, GLuint)>> UniqueShaderHandle;
         UniqueShaderHandle _handle;
     };
 }

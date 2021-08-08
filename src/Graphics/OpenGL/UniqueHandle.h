@@ -9,10 +9,10 @@ namespace Graphics::OpenGL
     class UniqueHandle
     {
     public:
-        typedef void (*Deleter)(IOpenGLWrapper*, GLuint);
+        typedef void (*Deleter)(IOpenGLWrapper&, GLuint);
 
-        UniqueHandle(IOpenGLWrapper* gl, GLuint handle, TDeleter deleter)
-          : _gl(gl), _handle(handle), _deleter(deleter)
+        UniqueHandle(IOpenGLWrapper& gl, GLuint handle, TDeleter deleter)
+          : _gl(&gl), _handle(handle), _deleter(deleter)
         {
 
         }
@@ -57,7 +57,7 @@ namespace Graphics::OpenGL
         {
             if (_gl != nullptr && _handle != 0 && _deleter != nullptr)
             {
-                _deleter(_gl, _handle);
+                _deleter(*_gl, _handle);
             }
             _handle = h;
         }

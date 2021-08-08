@@ -9,9 +9,9 @@ Engine::Engine(int winWidth, int winHeight, const std::string& title, unsigned i
     : _glfw(),
       _window(&_glfw, winWidth, winHeight, title),
       _gl(&_window),
-      _tileMapShaderProgram(&_gl),
-      _spriteShaderProgram(&_gl),
-      _unitQuadVertexArray(&_gl),
+      _tileMapShaderProgram(_gl),
+      _spriteShaderProgram(_gl),
+      _unitQuadVertexArray(_gl),
       _camera2d(),
       _tileMapDrawer(&_tileMapShaderProgram, &_unitQuadVertexArray, &_camera2d),
       _spriteDrawer(&_spriteShaderProgram, &_unitQuadVertexArray, &_camera2d),
@@ -29,12 +29,12 @@ std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
 {
     return std::make_unique<TileAtlas>(
         _tileAtlasRegistry,
-        &_gl,
+        _gl,
         _numberOfDrawingLayers,
         &_tileMapDrawer,
         &_spriteDrawer,
         Texture(
-            &_gl,
+            _gl,
             Texture::Params(tileAtlasImage)
                 .WrapModeS(Texture::WrapMode::ClampToBorder)
                 .WrapModeT(Texture::WrapMode::ClampToBorder)
@@ -45,7 +45,7 @@ std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
 
 std::unique_ptr<Graphics::IScreenshot> Engine::TakeScreenshot()
 {
-    return std::make_unique<ViewportCapture>(&_gl);
+    return std::make_unique<ViewportCapture>(_gl);
 }
 
 void Engine::Render()

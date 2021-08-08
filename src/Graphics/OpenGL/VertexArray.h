@@ -99,12 +99,12 @@ namespace Graphics::OpenGL
             GLenum _usage;
         };
 
-        VertexArray(IOpenGLWrapper* gl, const Params& params)
-            : _gl(gl),
+        VertexArray(IOpenGLWrapper& gl, const Params& params)
+            : _gl(&gl),
               _drawElements(false),
-              _vertexArray(_gl, 0, [](IOpenGLWrapper* gl, GLuint h) { gl->DeleteVertexArrays(1, &h); }),
-              _vertexBuffer(_gl, 0, [](IOpenGLWrapper* gl, GLuint h) { gl->DeleteBuffers(1, &h); }),
-              _elementBuffer(_gl, 0, [](IOpenGLWrapper* gl, GLuint h) { gl->DeleteBuffers(1, &h); })
+              _vertexArray(*_gl, 0, [](IOpenGLWrapper& gl, GLuint h) { gl.DeleteVertexArrays(1, &h); }),
+              _vertexBuffer(*_gl, 0, [](IOpenGLWrapper& gl, GLuint h) { gl.DeleteBuffers(1, &h); }),
+              _elementBuffer(*_gl, 0, [](IOpenGLWrapper& gl, GLuint h) { gl.DeleteBuffers(1, &h); })
         {
             // clear errors so get GetError below will be accurate
             _gl->GetError();
@@ -152,8 +152,8 @@ namespace Graphics::OpenGL
         bool _drawElements;
         GLsizei _drawCount;
 
-        typedef UniqueHandle<std::function<void (IOpenGLWrapper*, GLuint)>> UniqueVertexArrayHandle;
-        typedef UniqueHandle<std::function<void (IOpenGLWrapper*, GLuint)>> UniqueBufferHandle;
+        typedef UniqueHandle<std::function<void (IOpenGLWrapper&, GLuint)>> UniqueVertexArrayHandle;
+        typedef UniqueHandle<std::function<void (IOpenGLWrapper&, GLuint)>> UniqueBufferHandle;
 
         UniqueVertexArrayHandle _vertexArray;
         UniqueBufferHandle _vertexBuffer;

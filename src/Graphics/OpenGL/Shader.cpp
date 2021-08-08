@@ -34,18 +34,18 @@ namespace
     }
 }
 
-Shader::Shader(IOpenGLWrapper* gl, Type type, std::istream& sourceCodeStream)
+Shader::Shader(IOpenGLWrapper& gl, Type type, std::istream& sourceCodeStream)
     : Shader(gl, type, readAllToString(sourceCodeStream))
 {
 
 }
 
-Shader::Shader(IOpenGLWrapper* gl, Type type, const std::string& source)
-    : _gl(gl),
+Shader::Shader(IOpenGLWrapper& gl, Type type, const std::string& source)
+    : _gl(&gl),
       _handle(
-          _gl,
+          *_gl,
           _gl->CreateShader(typeToShaderEnum(type)),
-          [](IOpenGLWrapper* gl, GLuint h){ gl->DeleteShader(h); })
+          [](IOpenGLWrapper& gl, GLuint h){ gl.DeleteShader(h); })
 {
     const char* sourceCstr = source.c_str();
 

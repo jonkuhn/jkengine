@@ -60,10 +60,10 @@ namespace
     }
 }
 
-ViewportCapture::Dimensions ViewportCapture::GetDimensions(IOpenGLWrapper* gl)
+ViewportCapture::Dimensions ViewportCapture::GetDimensions(IOpenGLWrapper& gl)
 {
     GLViewportDimensions viewportDimensions;
-    gl->GetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewportDimensions));
+    gl.GetIntegerv(GL_VIEWPORT, reinterpret_cast<GLint*>(&viewportDimensions));
     ThrowIfGLViewportDimensionsViolatesExpectations(viewportDimensions);
 
     return ViewportCapture::Dimensions(
@@ -71,12 +71,12 @@ ViewportCapture::Dimensions ViewportCapture::GetDimensions(IOpenGLWrapper* gl)
         static_cast<unsigned int>(viewportDimensions.height));
 }
 
-ViewportCapture::ViewportCapture(IOpenGLWrapper* gl)
+ViewportCapture::ViewportCapture(IOpenGLWrapper& gl)
     : _dimensions(GetDimensions(gl)),
       _pixelData(_dimensions.width * _dimensions.height)
 {
-    gl->ReadBuffer(GL_FRONT);
-    gl->ReadPixels(0, 0, _dimensions.width, _dimensions.height, GL_RGBA, GL_UNSIGNED_BYTE, _pixelData.data());
+    gl.ReadBuffer(GL_FRONT);
+    gl.ReadPixels(0, 0, _dimensions.width, _dimensions.height, GL_RGBA, GL_UNSIGNED_BYTE, _pixelData.data());
 }
 
 unsigned int ViewportCapture::Width() const

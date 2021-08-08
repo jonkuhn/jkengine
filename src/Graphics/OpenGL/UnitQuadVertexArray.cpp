@@ -5,7 +5,7 @@ using namespace Graphics::OpenGL;
 
 namespace
 {
-    VertexArray<Simple3dVertex> createUnitQuadVertexArray(IOpenGLWrapper *gl)
+    VertexArray<Simple3dVertex> createUnitQuadVertexArray(IOpenGLWrapper &gl)
     {
         return VertexArray<Simple3dVertex>(
             gl,
@@ -27,7 +27,7 @@ namespace
 
 }
 
-UnitQuadVertexArray::UnitQuadVertexArray(IOpenGLWrapper* gl)
+UnitQuadVertexArray::UnitQuadVertexArray(IOpenGLWrapper& gl)
     : _vertexArray(createUnitQuadVertexArray(gl))
 {
 

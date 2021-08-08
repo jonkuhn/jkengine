@@ -13,7 +13,7 @@ namespace Graphics::OpenGL
     class TileMapShaderProgram final
     {
     public:
-        TileMapShaderProgram(IOpenGLWrapper* gl);
+        TileMapShaderProgram(IOpenGLWrapper& gl);
 
         TileMapShaderProgram(TileMapShaderProgram&& other) = default;
         TileMapShaderProgram& operator=(TileMapShaderProgram&& other) = default;

@@ -12,7 +12,7 @@ namespace Graphics::OpenGL
     class ViewportCapture : public IScreenshot
     {
     public:
-        ViewportCapture(Graphics::OpenGL::IOpenGLWrapper* gl);
+        ViewportCapture(Graphics::OpenGL::IOpenGLWrapper& gl);
         unsigned int Width() const override;
         unsigned int Height() const override;
         Color GetPixel(unsigned int x, unsigned int y) const override;
@@ -35,6 +35,6 @@ namespace Graphics::OpenGL
         Dimensions _dimensions;
         std::vector<Color> _pixelData;
 
-        static Dimensions GetDimensions(IOpenGLWrapper* _gl);
+        static Dimensions GetDimensions(IOpenGLWrapper& _gl);
     };
 }

@@ -73,7 +73,7 @@ namespace
         }
     )GLSL";
 
-    ShaderProgram createTileMapShaderProgram(IOpenGLWrapper* gl)
+    ShaderProgram createTileMapShaderProgram(IOpenGLWrapper& gl)
     {
         Shader vertexShader(gl, Shader::Type::Vertex, vertexShaderSource);
         Shader fragmentShader(gl, Shader::Type::Fragment, fragmentShaderSource);
@@ -86,7 +86,7 @@ namespace
     }
 }
 
-TileMapShaderProgram::TileMapShaderProgram(IOpenGLWrapper* gl)
+TileMapShaderProgram::TileMapShaderProgram(IOpenGLWrapper& gl)
     : _shaderProgram(createTileMapShaderProgram(gl))
 {
 

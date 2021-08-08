@@ -107,9 +107,9 @@ public:
         _testTriangleElementsOfRectangle.push_back(3);
         _testTriangleElementsOfRectangle.push_back(0);
 
-        Shader vertexShader(&_gl, Shader::Type::Vertex, vertexShaderSource);
-        Shader fragmentShader(&_gl, Shader::Type::Fragment, fragmentShaderSource);
-        _shaderProgram.reset(new ShaderProgram(&_gl, {&vertexShader, &fragmentShader}));
+        Shader vertexShader(_gl, Shader::Type::Vertex, vertexShaderSource);
+        Shader fragmentShader(_gl, Shader::Type::Fragment, fragmentShaderSource);
+        _shaderProgram.reset(new ShaderProgram(_gl, {&vertexShader, &fragmentShader}));
     }
 protected:
     LibPngWrapper _libpng;
@@ -144,7 +144,7 @@ TEST_F(TextureTests, CreateBindAndDestroyTexture_DoesNotThrow)
     EXPECT_NO_THROW(
         PngImage image(&_libpng, "TestFiles/test31x47.png");
         Texture texture(
-            &_gl,
+            _gl,
             Texture::Params(image)
                 .WrapModeS(Texture::WrapMode::Repeat)
                 .WrapModeT(Texture::WrapMode::ClampToBorder)
@@ -158,7 +158,7 @@ TEST_F(TextureTests, CreateBindAndDestroyTexture_DoesNotThrow)
 TEST_F(TextureTests, DrawTexturedRectangle_ReadAndVerifyPixels)
 {
     VertexArray<TestTexturedVertex> vertexArray(
-        &_gl,
+        _gl,
         VertexArray<TestTexturedVertex>::Params(_testRectangleVertices)
         .AddAttribute(3) // position x, y, z
         .AddAttribute(2) // texture s and t
@@ -166,7 +166,7 @@ TEST_F(TextureTests, DrawTexturedRectangle_ReadAndVerifyPixels)
     );
     PngImage image(&_libpng, "TestFiles/test31x47.png");
     Texture texture(
-        &_gl,
+        _gl,
         Texture::Params(image)
             .WrapModeS(Texture::WrapMode::ClampToBorder)
             .WrapModeT(Texture::WrapMode::ClampToBorder)
@@ -180,7 +180,7 @@ TEST_F(TextureTests, DrawTexturedRectangle_ReadAndVerifyPixels)
     vertexArray.Draw();
     _window.Update();
 
-    ViewportCapture capture(&_gl);
+    ViewportCapture capture(_gl);
 
     capture.SaveToFileAsRaw("testtexture.data");
 
