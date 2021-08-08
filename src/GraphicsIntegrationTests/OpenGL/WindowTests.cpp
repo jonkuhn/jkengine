@@ -23,7 +23,7 @@ TEST(WindowTests, CreateUpdateGetKey_DoesNotThrow)
     GlfwWrapper glfw;
 
     EXPECT_NO_THROW(
-        GlfwWindow window(&glfw, testWinWidth, testWinHeight, testWinTitle);
+        GlfwWindow window(glfw, testWinWidth, testWinHeight, testWinTitle);
         window.Update();
         window.GetKey(GLFW_KEY_ESCAPE);
         window.Update();
@@ -34,7 +34,7 @@ TEST(WindowTests, UpdateReturnsTrueUntilCloseIsCalledThenReturnsFalse)
 {
     GlfwWrapper glfw;
 
-    GlfwWindow window(&glfw, testWinWidth, testWinHeight, testWinTitle);
+    GlfwWindow window(glfw, testWinWidth, testWinHeight, testWinTitle);
     EXPECT_TRUE(window.Update());
     EXPECT_TRUE(window.Update());
     window.Close();
@@ -48,12 +48,12 @@ TEST(WindowTests, AllowsMultipleWindowsAndDifferentTimes)
 
     EXPECT_NO_THROW(
         {
-            GlfwWindow window1(&glfw, testWinWidth, testWinHeight, testWinTitle);
+            GlfwWindow window1(glfw, testWinWidth, testWinHeight, testWinTitle);
         });
 
     EXPECT_NO_THROW(
         {
-            GlfwWindow window2(&glfw, testWinWidth, testWinHeight, testWinTitle);
+            GlfwWindow window2(glfw, testWinWidth, testWinHeight, testWinTitle);
         });
 }
 
@@ -67,8 +67,8 @@ TEST(WindowTests, DisallowsMultipleWindowsAtTheSameTime)
 
     EXPECT_THROW(
         {
-            GlfwWindow window1(&glfw, testWinWidth, testWinHeight, testWinTitle);
-            GlfwWindow window2(&glfw, testWinWidth, testWinHeight, testWinTitle);
+            GlfwWindow window1(glfw, testWinWidth, testWinHeight, testWinTitle);
+            GlfwWindow window2(glfw, testWinWidth, testWinHeight, testWinTitle);
         },
         std::logic_error);
 }

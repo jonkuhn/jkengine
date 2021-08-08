@@ -81,8 +81,8 @@ public:
     TextureTests()
         : _libpng(),
           _glfw(),
-          _window(&_glfw, WINDOW_WIDTH, WINDOW_HEIGHT, "DummyIntegrationTestWindow"),
-          _gl(&_window),
+          _window(_glfw, WINDOW_WIDTH, WINDOW_HEIGHT, "DummyIntegrationTestWindow"),
+          _gl(_window),
           _blackColor(0, 0, 0, 255),
           _redColor(255, 0, 0, 255),
           _greenColor(0, 255, 0, 255),

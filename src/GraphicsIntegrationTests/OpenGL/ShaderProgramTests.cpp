@@ -19,8 +19,8 @@ class ShaderProgramTests : public Test
 public:
     ShaderProgramTests()
         : _glfw(),
-          _window(&_glfw, 800, 600, "DummyIntegrationTestWindow"),
-          _gl(&_window)
+          _window(_glfw, 800, 600, "DummyIntegrationTestWindow"),
+          _gl(_window)
     {
         // clear errors
         _gl.GetError();
@@ -41,7 +41,7 @@ namespace
 
 TEST_F(ShaderProgramTests, CreateShaderProgramSuccess)
 {
-    OpenGLWrapper gl(&_window);
+    OpenGLWrapper gl(_window);
 
     Shader vertexShader(gl, Shader::Type::Vertex, GetValidVertexShaderCode());
     Shader fragmentShader(gl, Shader::Type::Fragment, GetValidFragmentShaderCode());
@@ -53,7 +53,7 @@ TEST_F(ShaderProgramTests, CreateShaderProgramSuccess)
 
 TEST_F(ShaderProgramTests, SetVertexShaderUniforms)
 {
-    OpenGLWrapper gl(&_window);
+    OpenGLWrapper gl(_window);
 
     Shader vertexShader(gl, Shader::Type::Vertex, GetVertexShaderCodeWithUniforms());
     Shader fragmentShader(gl, Shader::Type::Fragment, GetValidFragmentShaderCode());
@@ -73,7 +73,7 @@ TEST_F(ShaderProgramTests, SetVertexShaderUniforms)
 
 TEST_F(ShaderProgramTests, SetFragmentShaderUniforms)
 {
-    OpenGLWrapper gl(&_window);
+    OpenGLWrapper gl(_window);
 
     Shader vertexShader(gl, Shader::Type::Vertex, GetValidVertexShaderCode());
     Shader fragmentShader(gl, Shader::Type::Fragment, GetFragmentShaderCodeWithUniforms());

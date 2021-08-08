@@ -5,7 +5,7 @@ using namespace Graphics::OpenGL;
 
 GlfwWindow* GlfwWindow::s_singleInstance = nullptr;
 
-GlfwWindow::GlfwWindow(IGlfwWrapper* glfw, int winWidth, int winHeight, const std::string& title)
+GlfwWindow::GlfwWindow(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::string& title)
     : _glfw(glfw)
 {
     // Many of the GLFW calls below must only be called from the main
@@ -21,25 +21,25 @@ GlfwWindow::GlfwWindow(IGlfwWrapper* glfw, int winWidth, int winHeight, const st
             "only supports one instance at a time.");
     }
 
-    _glfw->WindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    _glfw->WindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    _glfw->WindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    _glfw.WindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    _glfw.WindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    _glfw.WindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 #ifdef __APPLE__
-    _glfw->WindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    _glfw.WindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
     _handle = UniqueWindowHandle(
-        _glfw->CreateWindow(winWidth, winHeight, title.c_str(), nullptr, nullptr),
-        [this](GLFWwindow* h){ _glfw->DestroyWindow(h);});
+        _glfw.CreateWindow(winWidth, winHeight, title.c_str(), nullptr, nullptr),
+        [this](GLFWwindow* h){ _glfw.DestroyWindow(h);});
     if (_handle == nullptr)
     {
-        throw GlfwException(*_glfw, "Failed to create GLFW window.");
+        throw GlfwException(_glfw, "Failed to create GLFW window.");
     }
-    _glfw->MakeContextCurrent(_handle.get());
-    _glfw->SetFramebufferSizeCallback(_handle.get(), FrameBufferSizeCallbackDispatch);
+    _glfw.MakeContextCurrent(_handle.get());
+    _glfw.SetFramebufferSizeCallback(_handle.get(), FrameBufferSizeCallbackDispatch);
 
-    if (!_glfw->LoadGl())
+    if (!_glfw.LoadGl())
     {
         throw std::runtime_error("Failed to initialize OpenGL using GLFW and GLAD");
     } 
@@ -54,19 +54,19 @@ GlfwWindow::~GlfwWindow()
 
 void GlfwWindow::Close()
 {
-    _glfw->SetWindowShouldClose(_handle.get(), true);
+    _glfw.SetWindowShouldClose(_handle.get(), true);
 }
 
 int GlfwWindow::GetKey(int key)
 {
-    return _glfw->GetKey(_handle.get(), key);
+    return _glfw.GetKey(_handle.get(), key);
 }
 
 bool GlfwWindow::Update()
 {
-    _glfw->SwapBuffers(_handle.get());
-    _glfw->PollEvents();
-    return !_glfw->WindowShouldClose(_handle.get());
+    _glfw.SwapBuffers(_handle.get());
+    _glfw.PollEvents();
+    return !_glfw.WindowShouldClose(_handle.get());
 }
 
 void GlfwWindow::FrameBufferSizeCallbackDispatch(GLFWwindow* window, int width, int height)
@@ -84,8 +84,8 @@ void GlfwWindow::FrameBufferSizeCallback(GLFWwindow* window, int width, int heig
     // Make sure the right context is current, even though
     // currently this class is limited to one instance at a
     // time. (see comment in constructor)
-    _glfw->MakeContextCurrent(window);
+    _glfw.MakeContextCurrent(window);
 
     // Make sure the viewport matches the new window dimensions
-    _glfw->SetGlViewport(0, 0, width, height);
+    _glfw.SetGlViewport(0, 0, width, height);
 }
