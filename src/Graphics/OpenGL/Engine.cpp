@@ -7,8 +7,8 @@ using namespace Graphics::OpenGL;
 
 Engine::Engine(int winWidth, int winHeight, const std::string& title, unsigned int numberOfDrawingLayers)
     : _glfw(),
-      _window(&_glfw, winWidth, winHeight, title),
-      _gl(&_window),
+      _window(_glfw, winWidth, winHeight, title),
+      _gl(_window),
       _tileMapShaderProgram(_gl),
       _spriteShaderProgram(_gl),
       _unitQuadVertexArray(_gl),

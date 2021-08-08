@@ -17,8 +17,8 @@ class ShaderTests : public Test
 public:
     ShaderTests()
         : _glfw(),
-          _window(&_glfw, 800, 600, "DummyIntegrationTestWindow"),
-          _gl(&_window)
+          _window(_glfw, 800, 600, "DummyIntegrationTestWindow"),
+          _gl(_window)
     {
 
     }

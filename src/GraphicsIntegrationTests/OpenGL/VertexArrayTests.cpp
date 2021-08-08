@@ -54,8 +54,8 @@ class VertexArrayTests : public Test
 public:
     VertexArrayTests()
         : _glfw(),
-          _window(&_glfw, WINDOW_WIDTH, WINDOW_HEIGHT, "DummyIntegrationTestWindow"),
-          _gl(&_window),
+          _window(_glfw, WINDOW_WIDTH, WINDOW_HEIGHT, "DummyIntegrationTestWindow"),
+          _gl(_window),
           _shapeColor(255, 0, 0, 255), // matches hardcoded color in fragment shader
           _blackColor(0, 0, 0, 255)
     {
