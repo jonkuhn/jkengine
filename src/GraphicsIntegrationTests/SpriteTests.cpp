@@ -135,3 +135,178 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX2Y1_Camera8x6FovCent
         } })
     );
 }
+
+TEST_F(SpriteTests, Given6x6SpriteAtX30Y60_Camera8x6FovCenteredAtCenterOfSprite_EntireSpriteIsVisible)
+{
+    auto spriteInstance = _atlasColorTilesEmptyCenters4x4->CreateSpriteInstance(0);
+    spriteInstance->Position(glm::vec2(30.0f, 60.0f));
+    spriteInstance->Rotation(0.0f);
+    spriteInstance->Size(glm::vec2(6.0f, 6.0f));
+    spriteInstance->AtlasLocation(glm::vec2(2.0f, 1.0f));
+
+    _camera->Center(glm::vec2(33.0f, 63.0f));
+
+    // Set FoV so that 8 units are visible horizontally and due
+    // to the aspect ration 6 units will be visible vertically
+    _camera->FieldOfView(ICamera2d::Fov(
+        -4.0f, 4.0f,
+        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+
+    _engine->Render();
+
+    auto scr = _engine->TakeScreenshot();
+
+    const unsigned int ColumnCount = 8;
+    const unsigned int RowCount = 6;
+    ExpectTileColorGridOnScreen<ColumnCount, RowCount>(
+        *scr,
+        std::array<std::array<Color, ColumnCount>, RowCount>(
+        { {
+            // 1st and 2nd rows have background color on both sides with the sprite visible
+            // in the middle.  The part of the sprite in these rows is mostly cyan, except
+            // for the orientation block in the upper left
+            { ColorBackgroundUglyYellow, ColorOrientationBrown, ColorOrientationBrown, ColorCyan,
+            ColorCyan, ColorCyan, ColorCyan, ColorBackgroundUglyYellow },
+            { ColorBackgroundUglyYellow, ColorOrientationBrown, ColorOrientationBrown, ColorCyan,
+            ColorCyan, ColorCyan, ColorCyan, ColorBackgroundUglyYellow },
+
+            // 3rd and 4th rows have background color on both sides with the sprite visible
+            // in the middle.  The part of the sprite in these rows is mostly cyan, except
+            // for the center of the sprite which is in the center of both rows and is 
+            // transparent so shows background color.
+            //
+            // Note that the transparent block is slightly off center in image, the colored
+            // part to the left of it is 21 pixels, the transparent part is 21 pixels, but
+            // the colored part to the right is 22 pixels.  This caused me to need to change
+            // the sampleDistanceFromEdge in the verification function to be width/8 rather
+            // than width / 16
+            { ColorBackgroundUglyYellow, ColorCyan, ColorCyan, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorCyan, ColorCyan, ColorBackgroundUglyYellow },
+            { ColorBackgroundUglyYellow, ColorCyan, ColorCyan, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorCyan, ColorCyan, ColorBackgroundUglyYellow },
+
+            // 5th and 6th rows have background color on both sides with the sprite visible
+            // in the middle.  The part of the sprite in these rows is all cyan.
+            { ColorBackgroundUglyYellow, ColorCyan, ColorCyan, ColorCyan,
+            ColorCyan, ColorCyan, ColorCyan, ColorBackgroundUglyYellow },
+            { ColorBackgroundUglyYellow, ColorCyan, ColorCyan, ColorCyan,
+            ColorCyan, ColorCyan, ColorCyan, ColorBackgroundUglyYellow }
+        } })
+    );
+}
+
+TEST_F(SpriteTests, Given6x6Sprite_GivenOffCameraAtX4Y0_SpriteIsNotVisible)
+{
+    auto spriteInstance = _atlasColorTilesEmptyCenters4x4->CreateSpriteInstance(0);
+    spriteInstance->Position(glm::vec2(30.0f, 60.0f));
+    spriteInstance->Rotation(0.0f);
+    spriteInstance->Size(glm::vec2(6.0f, 6.0f));
+    spriteInstance->AtlasLocation(glm::vec2(2.0f, 1.0f));
+
+    _camera->Center(glm::vec2(0.0f, 0.0f));
+
+    // Set FoV so that 8 units are visible horizontally and due
+    // to the aspect ration 6 units will be visible vertically
+    _camera->FieldOfView(ICamera2d::Fov(
+        -4.0f, 4.0f,
+        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+
+    _engine->Render();
+
+    auto scr = _engine->TakeScreenshot();
+
+    const unsigned int ColumnCount = 8;
+    const unsigned int RowCount = 6;
+    ExpectTileColorGridOnScreen<ColumnCount, RowCount>(
+        *scr,
+        std::array<std::array<Color, ColumnCount>, RowCount>(
+        { {
+            // Expect all background color
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+        } })
+    );
+}
+
+TEST_F(SpriteTests, Given3x3SpriteAtOriginRotated45Degrees_Camera8x6FovCenteredOnSprite_EntireSpriteIsVisible)
+{
+    auto spriteInstance = _atlasColorTilesEmptyCenters4x4->CreateSpriteInstance(0);
+    spriteInstance->Position(glm::vec2(0.0f, 0.0f));
+    spriteInstance->Rotation(45.0f);
+    spriteInstance->Size(glm::vec2(3.0f, 3.0f));
+    spriteInstance->AtlasLocation(glm::vec2(0.0f, 0.0f));
+
+    _camera->Center(glm::vec2(1.5f, 1.5f));
+
+    // Set FoV so that 8 units are visible horizontally and due
+    // to the aspect ration 6 units will be visible vertically
+    _camera->FieldOfView(ICamera2d::Fov(
+        -4.0f, 4.0f,
+        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+
+    _engine->Render();
+
+    auto screenshot = _engine->TakeScreenshot();
+
+    auto width = static_cast<float>(screenshot->Width());
+    auto height = static_cast<float>(screenshot->Height());
+
+    // Calculate diagonal of "sub-squares" of the sprite based on the following
+    // information:
+    // - The sprite is 3 in world coordinates wide
+    // - The window is 8 in world coordinates wide
+    // - The sprite is square
+    // - The sprite is essentially split into 9 "sub-squares" and we want
+    //   to test a pixel at the center of each of these "sub-squares".
+    auto pixelsPerWorldUnit = width / 8.0f;
+    auto spriteEdge = 3.0f * pixelsPerWorldUnit;
+    auto spriteDiagonal = std::sqrt(2.0f) * spriteEdge;
+    auto subsquareDiagonal = spriteDiagonal / 3.0f;
+
+    auto centerSubsquareX = width / 2.0f;
+    auto centerSubsquareY = height / 2.0f;
+
+    // sample near the corners of the sprite to spot check its location
+
+    ExpectColorAtScreenPosition(*screenshot, "above sprite top",
+        ColorBackgroundUglyYellow, centerSubsquareX, centerSubsquareY - 2.0f * subsquareDiagonal, 0, 0);
+
+    ExpectColorAtScreenPosition(*screenshot, "left of sprite top",
+        ColorBackgroundUglyYellow, centerSubsquareX - 1.0f * subsquareDiagonal, centerSubsquareY - 1.0f * subsquareDiagonal, 0, 0);
+    ExpectColorAtScreenPosition(*screenshot, "top subsquare",
+        ColorOrientationBrown, centerSubsquareX, centerSubsquareY - 1.0f * subsquareDiagonal, 0, 0);
+    ExpectColorAtScreenPosition(*screenshot, "right of sprite top",
+        ColorBackgroundUglyYellow, centerSubsquareX + 1.0f * subsquareDiagonal, centerSubsquareY - 1.0f * subsquareDiagonal, 0, 0);
+
+    ExpectColorAtScreenPosition(*screenshot, "left of sprite corner",
+        ColorBackgroundUglyYellow, centerSubsquareX - 2.0f * subsquareDiagonal, centerSubsquareY, 0, 0);
+    ExpectColorAtScreenPosition(*screenshot, "left of center subsquare",
+        ColorWhite, centerSubsquareX - 1.0f * subsquareDiagonal, centerSubsquareY, 0, 0);
+    ExpectColorAtScreenPosition(*screenshot, "center subsquare",
+        ColorBackgroundUglyYellow, centerSubsquareX, centerSubsquareY, 0, 0);
+    ExpectColorAtScreenPosition(*screenshot, "right of center subsquare",
+        ColorWhite, centerSubsquareX + 1.0f * subsquareDiagonal, centerSubsquareY, 0, 0);
+    ExpectColorAtScreenPosition(*screenshot, "right of sprite corner",
+        ColorBackgroundUglyYellow, centerSubsquareX + 2.0f * subsquareDiagonal, centerSubsquareY, 0, 0);
+
+    ExpectColorAtScreenPosition(*screenshot, "left of sprite bottom",
+        ColorBackgroundUglyYellow, centerSubsquareX - 1.0f * subsquareDiagonal, centerSubsquareY + 1.0f * subsquareDiagonal, 0, 0);
+    ExpectColorAtScreenPosition(*screenshot, "bottom subsquare",
+        ColorWhite, centerSubsquareX, centerSubsquareY + 1.0f * subsquareDiagonal, 0, 0);
+    ExpectColorAtScreenPosition(*screenshot, "right of sprite bottom",
+        ColorBackgroundUglyYellow, centerSubsquareX + 1.0f * subsquareDiagonal, centerSubsquareY + 1.0f * subsquareDiagonal, 0, 0);
+
+    ExpectColorAtScreenPosition(*screenshot, "below sprite bottom",
+        ColorBackgroundUglyYellow, centerSubsquareX, centerSubsquareY + 2.0f * subsquareDiagonal, 0, 0);
+
+}
