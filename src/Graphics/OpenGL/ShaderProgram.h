@@ -18,7 +18,7 @@ namespace Graphics::OpenGL
     class ShaderProgram final
     {
     public:
-        ShaderProgram(IOpenGLWrapper* gl, std::initializer_list<IShader*> shaders);
+        ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*> shaders);
 
         ShaderProgram(const ShaderProgram&) = delete;
         ShaderProgram& operator=(const ShaderProgram&) = delete;
@@ -35,7 +35,7 @@ namespace Graphics::OpenGL
     private:
         IOpenGLWrapper* _gl;
 
-        typedef UniqueHandle<std::function<void (IOpenGLWrapper*, GLuint)>> UniqueProgramHandle;
+        typedef UniqueHandle<std::function<void (IOpenGLWrapper&, GLuint)>> UniqueProgramHandle;
         UniqueProgramHandle _handle;
     };
 }

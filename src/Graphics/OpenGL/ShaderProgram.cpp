@@ -14,12 +14,12 @@
 
 using namespace Graphics::OpenGL;
 
-ShaderProgram::ShaderProgram(IOpenGLWrapper* gl, std::initializer_list<IShader*> shaders)
-    : _gl(gl),
+ShaderProgram::ShaderProgram(IOpenGLWrapper& gl, std::initializer_list<IShader*> shaders)
+    : _gl(&gl),
       _handle(
-          _gl,
+          *_gl,
           _gl->CreateProgram(),
-          [](IOpenGLWrapper* gl, GLuint h) {gl->DeleteProgram(h); })
+          [](IOpenGLWrapper& gl, GLuint h) {gl.DeleteProgram(h); })
 {
     if (shaders.size() == 0)
     {

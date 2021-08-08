@@ -78,9 +78,9 @@ public:
         _testTriangleElementsOfRectangle.push_back(3);
         _testTriangleElementsOfRectangle.push_back(0);
 
-        Shader vertexShader(&_gl, Shader::Type::Vertex, vertexShaderSource);
-        Shader fragmentShader(&_gl, Shader::Type::Fragment, fragmentShaderSource);
-        _shaderProgram.reset(new ShaderProgram(&_gl, {&vertexShader, &fragmentShader}));
+        Shader vertexShader(_gl, Shader::Type::Vertex, vertexShaderSource);
+        Shader fragmentShader(_gl, Shader::Type::Fragment, fragmentShaderSource);
+        _shaderProgram.reset(new ShaderProgram(_gl, {&vertexShader, &fragmentShader}));
     }
 
 protected:
@@ -112,7 +112,7 @@ TEST_F(VertexArrayTests, CreateAndDrawVertexArray_DoesNotThrow)
     // assert that they are drawn correctly by reading a sampling of pixels.
     EXPECT_NO_THROW(
         VertexArray<TestSimpleVertex> vertexArray(
-            &_gl,
+            _gl,
             VertexArray<TestSimpleVertex>::Params(_testRectangleVertices)
             .AddAttribute(3)
             .TriangleElementIndices(_testTriangleElementsOfRectangle)
@@ -125,7 +125,7 @@ TEST_F(VertexArrayTests, CreateAndDrawVertexArray_DoesNotThrow)
 TEST_F(VertexArrayTests, DrawRectangle_ReadAndVerifyPixels)
 {
     VertexArray<TestSimpleVertex> vertexArray(
-        &_gl,
+        _gl,
         VertexArray<TestSimpleVertex>::Params(_testRectangleVertices)
         .AddAttribute(3)
         .TriangleElementIndices(_testTriangleElementsOfRectangle)
@@ -136,7 +136,7 @@ TEST_F(VertexArrayTests, DrawRectangle_ReadAndVerifyPixels)
     vertexArray.Draw();
     _window.Update();
 
-    ViewportCapture capture(&_gl);
+    ViewportCapture capture(_gl);
 
     // The 4 corners of the viewport should be the clearColor
     EXPECT_EQ(capture.GetPixel(0, 0), _blackColor);
@@ -167,7 +167,7 @@ TEST_F(VertexArrayTests, DrawRectangle_ReadAndVerifyPixels)
 TEST_F(VertexArrayTests, DrawTriangle_ReadAndVerifyPixels)
 {
     VertexArray<TestSimpleVertex> vertexArray(
-        &_gl,
+        _gl,
         VertexArray<TestSimpleVertex>::Params(_testTriangleVertices)
         .AddAttribute(3)
     );
@@ -177,7 +177,7 @@ TEST_F(VertexArrayTests, DrawTriangle_ReadAndVerifyPixels)
     vertexArray.Draw();
     _window.Update();
 
-    ViewportCapture capture(&_gl);
+    ViewportCapture capture(_gl);
     capture.SaveToFileAsRaw("DrawTriangle_ReadAndVerifyPixels.data");
 
     // The 4 corners of the viewport should be the black color used to clear the viewport

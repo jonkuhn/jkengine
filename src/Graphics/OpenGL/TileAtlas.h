@@ -24,14 +24,14 @@ namespace Graphics::OpenGL
     public:
         TileAtlas(
             Registry<TileAtlas>& tileAtlasRegistry,
-            IOpenGLWrapper* gl,
+            IOpenGLWrapper& gl,
             unsigned int numberOfDrawingLayers,
             TileMapDrawer* tileMapDrawer,
             SpriteDrawer* spriteDrawer,
             Texture atlasTexture,
             glm::vec2 atlasSizeInTiles)
           : 
-            _gl(gl),
+            _gl(&gl),
             _tileMapDrawer(tileMapDrawer),
             _spriteDrawer(spriteDrawer),
             _atlasTexture(std::move(atlasTexture)),

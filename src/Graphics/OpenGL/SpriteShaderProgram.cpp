@@ -79,7 +79,7 @@ namespace
         }
     )GLSL";
 
-    ShaderProgram createSpriteShaderProgram(IOpenGLWrapper* gl)
+    ShaderProgram createSpriteShaderProgram(IOpenGLWrapper& gl)
     {
         Shader vertexShader(gl, Shader::Type::Vertex, vertexShaderSource);
         Shader fragmentShader(gl, Shader::Type::Fragment, fragmentShaderSource);
@@ -92,7 +92,7 @@ namespace
     }
 }
 
-SpriteShaderProgram::SpriteShaderProgram(IOpenGLWrapper* gl)
+SpriteShaderProgram::SpriteShaderProgram(IOpenGLWrapper& gl)
     : _shaderProgram(createSpriteShaderProgram(gl))
 {
 

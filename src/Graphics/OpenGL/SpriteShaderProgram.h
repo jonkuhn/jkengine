@@ -12,7 +12,7 @@ namespace Graphics::OpenGL
     class SpriteShaderProgram final
     {
     public:
-        SpriteShaderProgram(IOpenGLWrapper* gl);
+        SpriteShaderProgram(IOpenGLWrapper& gl);
 
         SpriteShaderProgram(SpriteShaderProgram&& other) = default;
         SpriteShaderProgram& operator=(SpriteShaderProgram&& other) = default;

@@ -32,7 +32,7 @@ TEST_F(ShaderTests, CreateVertexShaderSuccess)
 {
     EXPECT_NO_THROW(
         Shader shader(
-            &_gl,
+            _gl,
             Shader::Type::Vertex,
             GetValidVertexShaderCode());
         EXPECT_NE(shader.Handle(), (GLuint)0);
@@ -43,7 +43,7 @@ TEST_F(ShaderTests, CreateFragmentShaderSuccess)
 {
     EXPECT_NO_THROW(
         Shader shader(
-            &_gl,
+            _gl,
             Shader::Type::Fragment,
             GetValidFragmentShaderCode());
         EXPECT_NE(shader.Handle(), (GLuint)0);
@@ -54,7 +54,7 @@ TEST_F(ShaderTests, CreateVertexShaderThrows)
 {
     EXPECT_THROW(
         Shader shader(
-            &_gl,
+            _gl,
             Shader::Type::Vertex,
             "this is not valid code"),
         std::runtime_error
@@ -65,7 +65,7 @@ TEST_F(ShaderTests, CreateFragmentShaderThrows)
 {
     EXPECT_THROW(
         Shader shader(
-            &_gl,
+            _gl,
             Shader::Type::Fragment,
             "this is not valid code"),
         std::runtime_error

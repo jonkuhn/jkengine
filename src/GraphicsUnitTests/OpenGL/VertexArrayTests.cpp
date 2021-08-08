@@ -75,7 +75,7 @@ protected:
             try
             {
                 VertexArray<TestSimpleVertex> vertexArray(
-                    &_mockLib, std::move(params));
+                    _mockLib, std::move(params));
             }
             catch(const std::runtime_error &e)
             {
@@ -102,13 +102,13 @@ protected:
         EXPECT_CALL(_mockLib, GenBuffers(_, _)).InSequence(seq).WillOnce(SetArgPointee<1>(eboB));
 
         auto vertexArrayA = std::make_unique<VertexArray<TestSimpleVertex>>(
-            &_mockLib,
+            _mockLib,
             VertexArray<TestSimpleVertex>::Params(_testFourSimpleVertices)
                 .AddAttribute(_testSimpleVertexSize)
                 .TriangleElementIndices(_testTriangleElementsOfFourSimpleVertices));
 
         auto vertexArrayB = std::make_unique<VertexArray<TestSimpleVertex>>(
-            &_mockLib,
+            _mockLib,
             VertexArray<TestSimpleVertex>::Params(_testFourSimpleVertices)
                 .AddAttribute(_testSimpleVertexSize)
                 .TriangleElementIndices(_testTriangleElementsOfFourSimpleVertices));
@@ -237,7 +237,7 @@ TEST_F(VertexArrayTests, Constructor_GivenVertices_GeneratesVertexArrayLoadsVert
         .Times(1).InSequence(s1, s2).WillOnce(Return(0));
 
     VertexArray<TestSimpleVertex> vertexArray(
-        &_mockLib,
+        _mockLib,
         VertexArray<TestSimpleVertex>::Params(std::move(testVertices))
             .AddAttribute(3));
 }
@@ -249,7 +249,7 @@ TEST_F(VertexArrayTests, Constructor_GivenVertexCountIsNotMultipleOf3AndNoElemen
 
     EXPECT_THROW(
         VertexArray<TestSimpleVertex> vertexArray(
-            &_mockLib,
+            _mockLib,
             std::vector<TestSimpleVertex>({{0.5f, 0.5f, 0.0f}})
         ),
         std::invalid_argument
@@ -263,7 +263,7 @@ TEST_F(VertexArrayTests, Constructor_GivenNoAttributes_ThrowsInvalidArgument)
 
     EXPECT_THROW(
         VertexArray<TestSimpleVertex> vertexArray(
-            &_mockLib,
+            _mockLib,
             VertexArray<TestSimpleVertex>::Params(_testThreeSimpleVertices)),
         std::invalid_argument);
 }
@@ -330,7 +330,7 @@ TEST_F(VertexArrayTests, Constructor_Given2Attributes_ConfiguresAndEnables2Attri
         .Times(1).InSequence(s1, s2, s3, s4).WillOnce(Return(0));
 
     VertexArray<TwoAttributeVertex> vertexArray(
-        &_mockLib,
+        _mockLib,
         VertexArray<TwoAttributeVertex>::Params(testVertices)
             .AddAttribute(attribute0Size)
             .AddAttribute(attribute1Size)
@@ -397,7 +397,7 @@ TEST_F(VertexArrayTests, Constructor_GivenTriangleElementIndices_SetsUpElementBu
         .Times(1).InSequence(s1, s2).WillOnce(Return(0));
 
     VertexArray<TestSimpleVertex> vertexArray(
-        &_mockLib,
+        _mockLib,
         VertexArray<TestSimpleVertex>::Params(_testFourSimpleVertices)
         .AddAttribute(_testSimpleVertexSize)
         .TriangleElementIndices(std::move(testElements)));
@@ -546,7 +546,7 @@ TEST_F(VertexArrayTests, Destructor_CleansUpVertexArrayAndBuffers)
     // Construct vertex array in a block to trigger destructor
     {
         VertexArray<TestSimpleVertex> vertexArray(
-            &_mockLib,
+            _mockLib,
             VertexArray<TestSimpleVertex>::Params(_testFourSimpleVertices)
                 .AddAttribute(_testSimpleVertexSize)
                 .TriangleElementIndices(_testTriangleElementsOfFourSimpleVertices));
@@ -568,7 +568,7 @@ TEST_F(VertexArrayTests, MoveConstruct_TargetCallsDeleteVertexArrayAndBuffers)
     std::unique_ptr<VertexArray<TestSimpleVertex>> target;
     {
         VertexArray<TestSimpleVertex> source(
-            &_mockLib,
+            _mockLib,
             VertexArray<TestSimpleVertex>::Params(_testFourSimpleVertices)
                 .AddAttribute(_testSimpleVertexSize)
                 .TriangleElementIndices(_testTriangleElementsOfFourSimpleVertices));
@@ -679,7 +679,7 @@ TEST_F(VertexArrayTests, Draw_GivenTriangleElementIndices_BindsVertexArrayAndDra
     SetupGenBuffersToAlwaysReturnDummyHandle();
 
     VertexArray<TestSimpleVertex> vertexArray(
-        &_mockLib,
+        _mockLib,
         VertexArray<TestSimpleVertex>::Params(_testFourSimpleVertices)
         .AddAttribute(_testSimpleVertexSize)
         .TriangleElementIndices(_testTriangleElementsOfFourSimpleVertices));
@@ -716,7 +716,7 @@ TEST_F(VertexArrayTests, Draw_GivenNoTriangleElementIndices_BindsVertexArrayAndD
     SetupGenBuffersToAlwaysReturnDummyHandle();
 
     VertexArray<TestSimpleVertex> vertexArray(
-        &_mockLib,
+        _mockLib,
         VertexArray<TestSimpleVertex>::Params(_testThreeSimpleVertices)
         .AddAttribute(_testSimpleVertexSize));
 

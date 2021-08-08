@@ -14,7 +14,7 @@ std::unique_ptr<Graphics::ITileMap> TileAtlas::CreateTileMap(unsigned int layer,
     return std::make_unique<TileMap>(
         _perLayerTileMapRegistries[layer],
         Texture(
-            _gl,
+            *_gl,
             Texture::Params(tileMapImage)
                 .WrapModeS(Texture::WrapMode::ClampToBorder)
                 .WrapModeT(Texture::WrapMode::ClampToBorder)
