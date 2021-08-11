@@ -24,16 +24,10 @@ target_sources(Graphics
     OpenGL/Camera2d.h
     OpenGL/Engine.h
     OpenGL/Engine.cpp
-    OpenGL/GlfwException.h
-    OpenGL/GlfwException.cpp
-    OpenGL/IGlfwWrapper.h
-    OpenGL/GlfwWrapper.h
-    OpenGL/GlfwWrapper.cpp
     OpenGL/Object2d.h
     OpenGL/Object2d.cpp
     OpenGL/OpenGLHelpers.h
     OpenGL/OpenGLHelpers.cpp
-    OpenGL/IOpenGLWindow.h
     OpenGL/IOpenGLWrapper.h
     OpenGL/OpenGLWrapper.h
     OpenGL/Registry.h
@@ -59,7 +53,5 @@ target_sources(Graphics
     OpenGL/VertexArray.h
     OpenGL/ViewportCapture.h
     OpenGL/ViewportCapture.cpp
-    OpenGL/Window.h
-    OpenGL/Window.cpp
 )
-target_link_libraries(Graphics ${CONAN_LIBS})
+target_link_libraries(Graphics Window ${CONAN_LIBS})

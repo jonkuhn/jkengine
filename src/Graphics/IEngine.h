@@ -28,10 +28,6 @@ namespace Graphics
 
         virtual ICamera2d* Camera2d() = 0;
 
-        // TODO: Window should probably exist outside of Graphics namespace
-        // Because this is really and input concern.
-        virtual bool ProgramShouldExit() = 0;
-
         virtual void Render() = 0;
 
         virtual std::unique_ptr<IScreenshot> TakeScreenshot() = 0;

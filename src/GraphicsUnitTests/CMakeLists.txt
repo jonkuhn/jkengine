@@ -10,7 +10,6 @@ target_sources(GraphicsUnitTests
     FakeImage.h
     PngImageTests.cpp
     TestHelpers.h
-    OpenGL/MockGlfwWrapper.h
     OpenGL/MockOpenGLWrapper.h
     OpenGL/MockShader.h
     OpenGL/Object2dTests.cpp
@@ -18,7 +17,8 @@ target_sources(GraphicsUnitTests
     OpenGL/ShaderTests.cpp
     OpenGL/TextureTests.cpp
     OpenGL/VertexArrayTests.cpp
-    OpenGL/WindowTests.cpp
+    Window/MockGlfwWrapper.h
+    Window/WindowTests.cpp
     MockLibPngWrapper.h
 )
 target_include_directories(GraphicsUnitTests PRIVATE

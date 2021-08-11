@@ -4,7 +4,7 @@
 
 #include "IGlfwWrapper.h"
 
-namespace Graphics::OpenGL
+namespace Window
 {
     class GlfwWrapper final : public IGlfwWrapper
     {

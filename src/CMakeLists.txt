@@ -3,6 +3,7 @@ if(BUILD_TESTING)
   add_subdirectory(GraphicsUnitTests)
   add_subdirectory(GraphicsIntegrationTests)
 endif()
+add_subdirectory(Window)
 add_executable(learn-opengl)
 target_sources(learn-opengl
   PRIVATE

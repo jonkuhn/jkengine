@@ -1,7 +1,7 @@
-#include "Window.h"
+#include "GlfwWindow.h"
 #include "GlfwException.h"
 
-using namespace Graphics::OpenGL;
+using namespace Window;
 
 GlfwWindow* GlfwWindow::s_singleInstance = nullptr;
 
@@ -62,11 +62,15 @@ int GlfwWindow::GetKey(int key)
     return _glfw.GetKey(_handle.get(), key);
 }
 
-bool GlfwWindow::Update()
+void GlfwWindow::Update()
 {
     _glfw.SwapBuffers(_handle.get());
     _glfw.PollEvents();
-    return !_glfw.WindowShouldClose(_handle.get());
+}
+
+bool GlfwWindow::WindowShouldClose()
+{
+    return _glfw.WindowShouldClose(_handle.get());
 }
 
 void GlfwWindow::FrameBufferSizeCallbackDispatch(GLFWwindow* window, int width, int height)

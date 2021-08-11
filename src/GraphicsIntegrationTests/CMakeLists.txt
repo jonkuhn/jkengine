@@ -18,7 +18,7 @@ target_sources(GraphicsIntegrationTests
     OpenGL/ShaderTests.cpp
     OpenGL/ShaderProgramTests.cpp
     OpenGL/VertexArrayTests.cpp
-    OpenGL/WindowTests.cpp
+    Window/WindowTests.cpp
 )
 target_include_directories(GraphicsIntegrationTests PRIVATE
   ../
