@@ -15,6 +15,9 @@
 #include "Graphics/PngImage.h"
 #include "Graphics/OpenGL/Engine.h"
 
+#include "Window/GlfwWindow.h"
+#include "Window/GlfwWrapper.h"
+
 using namespace Graphics;
 using namespace Graphics::OpenGL;
 
@@ -22,7 +25,7 @@ using namespace Graphics::OpenGL;
 constexpr unsigned int SCR_WIDTH = 800;
 constexpr unsigned int SCR_HEIGHT = 600;
 
-void processInput(GlfwWindow& window)
+void processInput(Window::GlfwWindow& window)
 {
     if(window.GetKey(GLFW_KEY_ESCAPE) == GLFW_PRESS)
         window.Close();
@@ -147,7 +150,9 @@ public:
 int main()
 {
     LibPngWrapper libpng;
-    Engine engine(SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL", 3);
+    Window::GlfwWrapper glfw;
+    Window::GlfwWindow window(glfw, SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL");
+    Engine engine(window, 3);
 
     // Want:
     // - World to be 100 tiles by 100 tiles represented by one tile map
@@ -206,13 +211,14 @@ int main()
 
     double previousTime = glfwGetTime();
 
-    auto& window = engine.GetWindow();
-
     engine.ClearColor(Color(51, 77, 77, 255));
 
-    while (!engine.ProgramShouldExit())
+    while (!window.WindowShouldClose())
     {
-        processInput(window);
+        if(window.GetKey(GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        {
+            window.Close();
+        }
 
         //TODO: remove once GL_DEPTH_BUFFER_BIT is in engine
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

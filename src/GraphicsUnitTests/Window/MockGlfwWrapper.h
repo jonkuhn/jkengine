@@ -1,11 +1,11 @@
 #pragma once
 #include <gmock/gmock.h>
 
-#include "Graphics/OpenGL/IGlfwWrapper.h"
+#include "Window/IGlfwWrapper.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
-class MockGlfwWrapper : public Graphics::OpenGL::IGlfwWrapper {
+class MockGlfwWrapper : public Window::IGlfwWrapper {
 public:
     MOCK_METHOD(void, WindowHint, (int hint, int value), (override));
     MOCK_METHOD(GLFWwindow*, CreateWindow, (int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share), (override));

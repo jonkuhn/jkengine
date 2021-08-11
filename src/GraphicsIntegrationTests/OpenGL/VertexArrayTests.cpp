@@ -7,13 +7,13 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "Graphics/OpenGL/GlfwWrapper.h"
-#include "Graphics/OpenGL/Window.h"
 #include "Graphics/OpenGL/OpenGLWrapper.h"
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/ShaderProgram.h"
 #include "Graphics/OpenGL/VertexArray.h"
 #include "Graphics/OpenGL/ViewportCapture.h"
+#include "Window/GlfwWindow.h"
+#include "Window/GlfwWrapper.h"
 
 using namespace testing;
 using namespace Graphics::OpenGL;
@@ -84,8 +84,8 @@ public:
     }
 
 protected:
-    GlfwWrapper _glfw;
-    GlfwWindow _window;
+    Window::GlfwWrapper _glfw;
+    Window::GlfwWindow _window;
     OpenGLWrapper _gl;
 
     std::unique_ptr<ShaderProgram> _shaderProgram;

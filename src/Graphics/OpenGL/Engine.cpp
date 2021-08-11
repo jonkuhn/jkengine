@@ -5,9 +5,8 @@
 
 using namespace Graphics::OpenGL;
 
-Engine::Engine(int winWidth, int winHeight, const std::string& title, unsigned int numberOfDrawingLayers)
-    : _glfw(),
-      _window(_glfw, winWidth, winHeight, title),
+Engine::Engine(Window::IOpenGLWindow& window, unsigned int numberOfDrawingLayers)
+    : _window(window),
       _gl(_window),
       _tileMapShaderProgram(_gl),
       _spriteShaderProgram(_gl),
@@ -16,8 +15,7 @@ Engine::Engine(int winWidth, int winHeight, const std::string& title, unsigned i
       _tileMapDrawer(_tileMapShaderProgram, _unitQuadVertexArray, _camera2d),
       _spriteDrawer(_spriteShaderProgram, _unitQuadVertexArray, _camera2d),
       _tileAtlasRegistry(),
-      _numberOfDrawingLayers(numberOfDrawingLayers),
-      _programShouldExit(false)
+      _numberOfDrawingLayers(numberOfDrawingLayers)
 {
     // Enable alpha blending so that sprites and tile maps can use
     // transparency.  Set the blend function to use the source alpha
@@ -73,13 +71,5 @@ void Engine::Render()
         }
     }
 
-    // TODO: Window should probably exist outside of Graphics namespace
-    // Because the program needing to exit is really an input concern.
-    // (Update is still a graphics concern, but the return value from it
-    // indicating if the program should exit really should be a different
-    // function that is an input concern)
-    if(!_window.Update())
-    {
-        _programShouldExit = true;
-    }
+    _window.Update();
 }

@@ -2,7 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-namespace Graphics::OpenGL
+namespace Window
 {
     class IGlfwWrapper
     {

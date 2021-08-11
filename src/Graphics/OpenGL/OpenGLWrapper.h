@@ -1,17 +1,17 @@
 #pragma once
 #include "IOpenGLWrapper.h"
 
+#include "../../Window/IOpenGLWindow.h"
+
 #include <mutex>
 #include <sstream>
 
 namespace Graphics::OpenGL
 {
-    class IOpenGLWindow;
-
     class OpenGLWrapper final : public IOpenGLWrapper
     {
     public:
-        OpenGLWrapper(IOpenGLWindow& window)
+        OpenGLWrapper(Window::IOpenGLWindow& window)
             : _window(window)
         {
 
@@ -254,7 +254,7 @@ namespace Graphics::OpenGL
         // Unused, but exists to document dependence on a window to draw in
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wunused-private-field"
-        IOpenGLWindow& _window;
+        Window::IOpenGLWindow& _window;
         #pragma clang diagnostic pop
     };
 }

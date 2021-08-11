@@ -5,7 +5,7 @@
 
 #include "IGlfwWrapper.h"
 
-namespace Graphics::OpenGL
+namespace Window 
 {
     class GlfwException final : public std::runtime_error
     {

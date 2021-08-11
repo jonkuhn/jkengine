@@ -3,8 +3,8 @@
 #include <memory>
 
 #include "../IEngine.h"
+#include "../../Window/IOpenGLWindow.h"
 #include "Camera2d.h"
-#include "GlfwWrapper.h"
 #include "OpenGLWrapper.h"
 #include "ShaderProgram.h"
 #include "SpriteDrawer.h"
@@ -15,19 +15,19 @@
 #include "TileMapShaderProgram.h"
 #include "UnitQuadVertexArray.h"
 #include "VertexArray.h"
-#include "Window.h"
 
 namespace Graphics::OpenGL
 {
     class Engine : public IEngine
     {
     public:
-        Engine(int winWidth, int winHeight, const std::string& title, unsigned int numberOfDrawingLayers);
+        Engine(Window::IOpenGLWindow& window, unsigned int numberOfDrawingLayers);
 
-        GlfwWindow& GetWindow()
-        {
-            return _window;
-        }
+        // There is need to copy or move this class.
+        Engine(const Engine&) = delete;
+        Engine& operator=(const Engine&) = delete;
+        Engine(Engine&&) = delete;
+        Engine& operator=(Engine&&) = delete;
 
         void ClearColor(const Color &color) override
         {
@@ -51,18 +51,10 @@ namespace Graphics::OpenGL
 
         std::unique_ptr<IScreenshot> TakeScreenshot() override;
 
-        // TODO: Window should probably exist outside of Graphics namespace
-        // Because this is really and input concern.
-        bool ProgramShouldExit() override
-        {
-            return _programShouldExit;
-        }
-
         void Render() override;
 
     private:
-        GlfwWrapper _glfw;
-        GlfwWindow _window;
+        Window::IOpenGLWindow& _window;
         OpenGLWrapper _gl;
         TileMapShaderProgram _tileMapShaderProgram;
         SpriteShaderProgram _spriteShaderProgram;
@@ -73,7 +65,5 @@ namespace Graphics::OpenGL
         Registry<TileAtlas> _tileAtlasRegistry;
 
         unsigned int _numberOfDrawingLayers;
-
-        bool _programShouldExit;
     };
 }

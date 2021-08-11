@@ -11,6 +11,8 @@
 #include <gtest/gtest.h>
 
 #include "Graphics/Graphics.h"
+#include "Window/GlfwWindow.h"
+#include "Window/GlfwWrapper.h"
 
 #include "ColorTiles4x4.h"
 #include "ScreenSampleHelpers.h"
@@ -72,7 +74,9 @@ public:
 
     TileMapTests()
       : _libPng(),
-        _engine(std::make_unique<OpenGL::Engine>(WindowWidth, WindowHeight, "TileMapTests", DrawingLayers)),
+        _glfw(),
+        _window(_glfw, WindowWidth, WindowHeight, "TileMapTests"),
+        _engine(std::make_unique<OpenGL::Engine>(_window, DrawingLayers)),
         _camera(_engine->Camera2d()),
         _atlasColorTiles4x4(),
         _atlasColorTilesEmptyCenters4x4(),
@@ -114,6 +118,8 @@ public:
     }
 protected:
     LibPngWrapper _libPng;
+    Window::GlfwWrapper _glfw;
+    Window::GlfwWindow _window;
     std::unique_ptr<IEngine> _engine;
     ICamera2d* _camera;
     std::unique_ptr<ITileAtlas> _atlasColorTiles4x4;

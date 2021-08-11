@@ -4,13 +4,13 @@
 
 #include <gtest/gtest.h>
 
-#include "Graphics/OpenGL/Window.h"
-#include "Graphics/OpenGL/GlfwException.h"
+#include "Window/GlfwWindow.h"
+#include "Window/GlfwException.h"
 #include "MockGlfwWrapper.h"
 #include "../TestHelpers.h"
 
 using namespace testing;
-using namespace Graphics::OpenGL;
+using namespace Window;
 
 class WindowTests : public Test
 {
@@ -146,28 +146,27 @@ TEST_F(WindowTests, Update_MakesExpectedCalls)
 
     EXPECT_CALL(_mockGlfw, SwapBuffers(_testHandle));
     EXPECT_CALL(_mockGlfw, PollEvents());
-    EXPECT_CALL(_mockGlfw, WindowShouldClose(_testHandle)).WillOnce(Return(false));
     window.Update();
 }
 
-TEST_F(WindowTests, Update_GivenWindowShouldNotClose_ReturnsTrue)
+TEST_F(WindowTests, WindowShouldClose_GivenWindowShouldNotClose_ReturnsFalse)
 {
     SetupMockCreateToAlwaysSucceed();
     SetupMockLoadGlToAlwaysSucceed();
     GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
 
     EXPECT_CALL(_mockGlfw, WindowShouldClose(_testHandle)).WillOnce(Return(false));
-    EXPECT_TRUE(window.Update());
+    EXPECT_FALSE(window.WindowShouldClose());
 }
 
-TEST_F(WindowTests, Update_GivenWindowShouldClose_ReturnsFalse)
+TEST_F(WindowTests, WindowShouldClose_GivenWindowShouldClose_ReturnsTrue)
 {
     SetupMockCreateToAlwaysSucceed();
     SetupMockLoadGlToAlwaysSucceed();
     GlfwWindow window(_mockGlfw, _testWinWidth, _testWinHeight, _testWinTitle);
 
     EXPECT_CALL(_mockGlfw, WindowShouldClose(_testHandle)).WillOnce(Return(true));
-    EXPECT_FALSE(window.Update());
+    EXPECT_TRUE(window.WindowShouldClose());
 }
 
 TEST_F(WindowTests, FramebufferCallback_MakesExpectedCalls)

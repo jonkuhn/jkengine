@@ -3,7 +3,7 @@
 
 #include "GlfwException.h"
 
-using namespace Graphics::OpenGL;
+using namespace Window;
 
 namespace
 {

@@ -4,12 +4,11 @@
 
 #include <gtest/gtest.h>
 
-#include "Graphics/OpenGL/Window.h"
-#include "Graphics/OpenGL/GlfwWrapper.h"
-#include "TestHelpers.h"
+#include "Window/GlfwWindow.h"
+#include "Window/GlfwWrapper.h"
 
 using namespace testing;
-using namespace Graphics::OpenGL;
+using namespace Window;
 
 namespace
 {
@@ -30,16 +29,16 @@ TEST(WindowTests, CreateUpdateGetKey_DoesNotThrow)
     );
 }
 
-TEST(WindowTests, UpdateReturnsTrueUntilCloseIsCalledThenReturnsFalse)
+TEST(WindowTests, WindowShouldCloseReturnsFalseUntilCloseIsCalledThenReturnsTrue)
 {
     GlfwWrapper glfw;
 
     GlfwWindow window(glfw, testWinWidth, testWinHeight, testWinTitle);
-    EXPECT_TRUE(window.Update());
-    EXPECT_TRUE(window.Update());
+    EXPECT_FALSE(window.WindowShouldClose());
+    EXPECT_FALSE(window.WindowShouldClose());
     window.Close();
-    EXPECT_FALSE(window.Update());
-    EXPECT_FALSE(window.Update());
+    EXPECT_TRUE(window.WindowShouldClose());
+    EXPECT_TRUE(window.WindowShouldClose());
 }
 
 TEST(WindowTests, AllowsMultipleWindowsAndDifferentTimes)

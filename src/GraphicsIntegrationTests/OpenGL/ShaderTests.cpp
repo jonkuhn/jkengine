@@ -4,9 +4,10 @@
 #include <gtest/gtest.h>
 
 #include "Graphics/OpenGL/Shader.h"
-#include "Graphics/OpenGL/GlfwWrapper.h"
-#include "Graphics/OpenGL/Window.h"
 #include "Graphics/OpenGL/OpenGLWrapper.h"
+#include "Window/GlfwWindow.h"
+#include "Window/GlfwWrapper.h"
+
 #include "TestHelpers.h"
 
 using namespace testing;
@@ -23,8 +24,8 @@ public:
 
     }
 protected:
-    GlfwWrapper _glfw;
-    GlfwWindow _window;
+    Window::GlfwWrapper _glfw;
+    Window::GlfwWindow _window;
     OpenGLWrapper _gl;
 };
 

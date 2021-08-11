@@ -2,7 +2,7 @@
 
 #include "GlfwWrapper.h"
 
-using namespace Graphics::OpenGL;
+using namespace Window;
 
 class GlfwWrapper::GlfwInit
 {

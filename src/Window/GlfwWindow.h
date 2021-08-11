@@ -6,7 +6,7 @@
 #include "IGlfwWrapper.h"
 #include "IOpenGLWindow.h"
 
-namespace Graphics::OpenGL
+namespace Window 
 {
     class GlfwWindow final : public IOpenGLWindow
     {
@@ -28,9 +28,8 @@ namespace Graphics::OpenGL
         // Currently just a pass-thru to glfwGetKey
         int GetKey(int key);
 
-        // Update returns true if the window can stay open and false
-        // if it needs to close.
-        bool Update();
+        void Update() override;
+        bool WindowShouldClose();
     private:
         static GlfwWindow* s_singleInstance;
         static void FrameBufferSizeCallbackDispatch(GLFWwindow* window, int width, int height);
