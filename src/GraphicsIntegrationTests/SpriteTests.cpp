@@ -317,3 +317,71 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginRotated45Degrees_Camera8x6FovCenteredO
         ColorBackgroundUglyYellow, centerSubsquareX, centerSubsquareY + 2.0f * subsquareDiagonal, 0, 0);
 
 }
+
+TEST_F(SpriteTests, GivenTwo3x3SpritesOnDifferentLayers_TransparentAreasOfHigherLayerSpriteShowLowerLayerSprite)
+{
+    auto spriteLayer1 = _atlasColorTilesEmptyCenters4x4->CreateSprite(1);
+    spriteLayer1->Position(glm::vec2(0.0f, 0.0f));
+    spriteLayer1->Rotation(0.0f);
+    spriteLayer1->Size(glm::vec2(3.0f, 3.0f));
+    spriteLayer1->AtlasLocation(glm::vec2(0.0f, 0.0f));
+
+    auto spriteLayer0 = _atlasColorTilesEmptyCenters4x4->CreateSprite(0);
+    spriteLayer0->Position(glm::vec2(-1.0f, 0.0f));
+    spriteLayer0->Rotation(0.0f);
+    spriteLayer0->Size(glm::vec2(3.0f, 3.0f));
+    spriteLayer0->AtlasLocation(glm::vec2(1.0f, 0.0f));
+
+    _camera->Center(glm::vec2(0.0f, 0.0f));
+
+    // Set FoV so that 8 units are visible horizontally and due
+    // to the aspect ration 6 units will be visible vertically
+    _camera->FieldOfView(ICamera2d::Fov(
+        -4.0f, 4.0f,
+        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+
+    // Note if you look at this manually, there is a narrow bit of the
+    // center "sub-tiles" from the layer0 sprite visible left of center.
+    // this is because the sizes of the tiles in the tile atlas are not
+    // evenly divisible into 3 "sub-tiles".  The first two rows and
+    // columns are 21 pixels and the last row and column is 22 pixels.
+    _engine->Render();
+
+    const unsigned int ColumnCount = 8;
+    const unsigned int RowCount = 6;
+    ExpectTileColorGridOnScreen<ColumnCount, RowCount>(
+        *(_engine->TakeScreenshot()),
+        std::array<std::array<Color, ColumnCount>, RowCount>(
+        { {
+            // 1st row is all background color except for 3 cells right of center from
+            // layer 1 sprite and one cell left of center from layer 0 sprite
+            // layer 0 sprite: visible cell in this row is the brown orientation mark
+            // layer 1 sprite: The first of these three should be brown which is the
+            // orientation mark on the tiles and the other two should be white
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorOrientationBrown,
+            ColorOrientationBrown, ColorWhite, ColorWhite, ColorBackgroundUglyYellow },
+
+            // 2nd row is all background color except for 2 of the 3 cells right of center
+            // from the layer 1 sprite and one cell left of center as well as one right of
+            // center (visible through transparent part of layer 1 sprite) from the layer 0 sprite
+            // layer 0 sprite: visible cells are red
+            // layer 1 sprite: the middle of the 3 cells right of center is actually be
+            // red because it is transparent and the layer 1 sprite is behind it the others will be white
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorRed,
+            ColorWhite, ColorRed, ColorWhite, ColorBackgroundUglyYellow },
+
+            // 2rd row is all background color except for 3 cells right of center for the layer 1
+            // sprite and one cell left of center from the layer 0 sprite
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorRed,
+            ColorWhite, ColorWhite, ColorWhite, ColorBackgroundUglyYellow },
+
+            // 4th through 6th rows are all background color
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+            ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow }
+        } })
+    );
+}
