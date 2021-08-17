@@ -9,6 +9,7 @@ target_sources(Graphics
     Color.h
     Color.cpp
     Graphics.h
+    GridLocation.h
     ICamera2d.h
     IEngine.h
     IImage.h

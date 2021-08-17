@@ -16,12 +16,12 @@ namespace Graphics::OpenGL
 
         }
 
-        inline void AtlasLocation(glm::vec2 atlasLocation) override
+        inline void AtlasLocation(GridLocation atlasLocation) override
         {
             _atlasLocation = std::move(atlasLocation);
         }
 
-        inline const glm::vec2& AtlasLocation() const override
+        inline const GridLocation& AtlasLocation() const override
         {
             return _atlasLocation;
         }
@@ -63,7 +63,7 @@ namespace Graphics::OpenGL
 
     private:
         Object2d _object2d;
-        glm::vec2 _atlasLocation;
+        GridLocation _atlasLocation;
         Registry<Sprite>::Registration _registration;
     };
 }

@@ -45,7 +45,12 @@ namespace Graphics::OpenGL
 
         inline void Draw(const Sprite& sprite)
         {
-            _spriteShaderProgram.AtlasLocation(sprite.AtlasLocation());
+            const auto& atlasLocation = sprite.AtlasLocation();
+            glm::vec2 atlasLocationVec2(
+                static_cast<float>(atlasLocation.x),
+                static_cast<float>(atlasLocation.y)
+            );
+            _spriteShaderProgram.AtlasLocation(atlasLocationVec2);
             _spriteShaderProgram.ModelMatrix(sprite.ModelMatrix());
             _unitQuadVertexArray.Draw();
         }
