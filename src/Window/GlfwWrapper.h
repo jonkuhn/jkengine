@@ -3,10 +3,11 @@
 #include <memory>
 
 #include "IGlfwWrapper.h"
+#include "IGlfwInputWrapper.h"
 
 namespace Window
 {
-    class GlfwWrapper final : public IGlfwWrapper
+    class GlfwWrapper final : public IGlfwWrapper, public IGlfwInputWrapper
     {
     public:
         GlfwWrapper();
@@ -85,6 +86,15 @@ namespace Window
             return glViewport(x, y, width, height);
         }
 
+        const char* GetJoystickName(int joystickId) override
+        {
+            return glfwGetJoystickName(joystickId);
+        }
+
+        int GetGamepadState(int joystickId, GLFWgamepadstate* state) override
+        {
+            return glfwGetGamepadState(joystickId, state);
+        }
 
     private:
         class GlfwInit;

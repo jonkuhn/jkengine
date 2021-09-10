@@ -8,6 +8,7 @@ target_sources(Window
   PRIVATE
     GlfwException.h
     GlfwException.cpp
+    IGlfwInputWindow.h
     IGlfwWrapper.h
     GlfwWrapper.h
     GlfwWrapper.cpp

@@ -11,9 +11,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #pragma clang diagnostic pop
 
-#include "Graphics/LibPngWrapper.h"
-#include "Graphics/PngImage.h"
-#include "Graphics/OpenGL/Engine.h"
+#include "Graphics/Graphics.h"
+#include "Input/Input.h"
 
 #include "Window/GlfwWindow.h"
 #include "Window/GlfwWrapper.h"
@@ -150,7 +149,12 @@ int main()
     Graphics::LibPngWrapper libpng;
     Window::GlfwWrapper glfw;
     Window::GlfwWindow window(glfw, SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL");
-    Graphics::OpenGL::Engine graphicsEngine(window, 3);
+
+    Graphics::OpenGL::Engine oglGfxEng(window, 3);
+    Graphics::IEngine& graphicsEngine = oglGfxEng;
+
+    Input::Glfw::Engine glfwInpEng(glfw, window);
+    Input::IEngine& inputEngine = glfwInpEng;
 
     // Want:
     // - World to be 100 tiles by 100 tiles represented by one tile map
@@ -211,11 +215,64 @@ int main()
 
     graphicsEngine.ClearColor(Graphics::Color(51, 77, 77, 255));
 
+    Input::IGamepad* playerGamepad = nullptr;
+
     while (!window.WindowShouldClose())
     {
-        if(window.GetKey(GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        inputEngine.Update();
+
+        // TODO: move keyboard input into Input library at some point
+        if (window.GetKey(GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
             window.Close();
+        }
+
+        if (playerGamepad == nullptr)
+        {
+            std::cout << "Looking for player gamepad" << std::endl;
+            for (auto& gamepad : inputEngine.EnumerateGamepads())
+            {
+                if (gamepad->IsConnected())
+                {
+                    std::cout << "Found Gamepad: " << gamepad->DisplayName() << std::endl;
+
+                    if (playerGamepad == nullptr)
+                    {
+                        playerGamepad = gamepad;
+                        std::cout << "Using " << gamepad->DisplayName() << " as player gamepad" << std::endl;
+                    }
+                }
+            }
+        }
+
+        if(playerGamepad == nullptr || !playerGamepad->IsConnected())
+        {
+            std::cout << "Player gamepad is not connected!" << std::endl;
+        }
+        else
+        {
+            std::cout << " FR:" << playerGamepad->RightFaceButton();
+            std::cout << " FL:" << playerGamepad->LeftFaceButton();
+            std::cout << " FT:" << playerGamepad->TopFaceButton();
+            std::cout << " FB:" << playerGamepad->BottomFaceButton();
+            std::cout << " DD:" << playerGamepad->DPadDown();
+            std::cout << " DU:" << playerGamepad->DPadUp();
+            std::cout << " DL:" << playerGamepad->DPadLeft();
+            std::cout << " DR:" << playerGamepad->DPadRight();
+            std::cout << " LB:" << playerGamepad->LeftBumperButton();
+            std::cout << " RB:" << playerGamepad->RightBumperButton();
+            std::cout << " TL: " << playerGamepad->LeftTriggerButton();
+            std::cout << " TR: " << playerGamepad->RightTriggerButton();
+            std::cout << " LSTK:" << playerGamepad->LeftStickButton();
+            std::cout << " RSTK:" << playerGamepad->RightStickButton();
+            std::cout << " SELECT:" << playerGamepad->SelectButton();
+            std::cout << " START:" << playerGamepad->StartButton();
+        
+            std::cout << " LX: " << playerGamepad->LeftStickX();
+            std::cout << " LY: " << playerGamepad->LeftStickY();
+            std::cout << " RX: " << playerGamepad->RightStickX();
+            std::cout << " RY: " << playerGamepad->RightStickY();
+            std::cout << std::endl;
         }
 
         double currentTime = glfwGetTime();
