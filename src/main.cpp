@@ -18,8 +18,6 @@
 #include "Window/GlfwWindow.h"
 #include "Window/GlfwWrapper.h"
 
-using namespace Graphics;
-using namespace Graphics::OpenGL;
 
 // settings
 constexpr unsigned int SCR_WIDTH = 800;
@@ -38,7 +36,7 @@ struct Vertex
     float z;
 };
 
-class RandomTileMap : public IImage
+class RandomTileMap : public Graphics::IImage
 {
 public:
     RandomTileMap(int width, int height)
@@ -84,7 +82,7 @@ private:
     std::vector<uint8_t> _data;
 };
 
-class TestTileMapImage : public IImage
+class TestTileMapImage : public Graphics::IImage
 {
 private:
     static constexpr int WIDTH = 8;
@@ -149,10 +147,10 @@ public:
 
 int main()
 {
-    LibPngWrapper libpng;
+    Graphics::LibPngWrapper libpng;
     Window::GlfwWrapper glfw;
     Window::GlfwWindow window(glfw, SCR_WIDTH, SCR_HEIGHT, "Learn OpenGL");
-    Engine engine(window, 3);
+    Graphics::OpenGL::Engine graphicsEngine(window, 3);
 
     // Want:
     // - World to be 100 tiles by 100 tiles represented by one tile map
@@ -175,14 +173,14 @@ int main()
     // use a small 2x2 tile atlas for testing purposes
     const float TILE_ATLAS_WIDTH_IN_TILES = 4;
     const float TILE_ATLAS_HEIGHT_IN_TILES = 4;
-    PngImage tileAtlasImage(&libpng, "TestFiles/colortiles4x4emptycenters.png");
+    Graphics::PngImage tileAtlasImage(&libpng, "TestFiles/colortiles4x4emptycenters.png");
     //Texture tileAtlasTexture(&gl, Texture::Params(tileAtlasImage)
     //    .WrapModeS(Texture::WrapMode::ClampToBorder)
     //    .WrapModeT(Texture::WrapMode::ClampToBorder)
     //    .MinFilter(Texture::MinFilterMode::Nearest)
     //    .MagFilter(Texture::MagFilterMode::Nearest));
 
-    auto tileAtlas = engine.CreateTileAtlas(
+    auto tileAtlas = graphicsEngine.CreateTileAtlas(
         tileAtlasImage,
         glm::vec2(TILE_ATLAS_WIDTH_IN_TILES, TILE_ATLAS_HEIGHT_IN_TILES)
     );
@@ -201,9 +199,9 @@ int main()
 
     const float MOVE_SPEED = 5.0f;
 
-    auto camera2d = engine.Camera2d();
+    auto camera2d = graphicsEngine.Camera2d();
     auto aspectRatio = (float)SCR_WIDTH / (float)SCR_HEIGHT;
-    camera2d->FieldOfView(ICamera2d::Fov(
+    camera2d->FieldOfView(Graphics::ICamera2d::Fov(
             -2.5f * aspectRatio, 2.5f * aspectRatio,
             -2.5f, 2.5f));
     auto cameraDX = 0.0f;
@@ -211,7 +209,7 @@ int main()
 
     double previousTime = glfwGetTime();
 
-    engine.ClearColor(Color(51, 77, 77, 255));
+    graphicsEngine.ClearColor(Graphics::Color(51, 77, 77, 255));
 
     while (!window.WindowShouldClose())
     {
@@ -220,11 +218,6 @@ int main()
             window.Close();
         }
 
-        //TODO: remove once GL_DEPTH_BUFFER_BIT is in engine
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        //tileMapShaderProgram.Use();
-        
         double currentTime = glfwGetTime();
         double deltaTime = currentTime - previousTime;
         previousTime = currentTime;
@@ -290,7 +283,7 @@ int main()
         cameraCenter.y += cameraDY * deltaTime;
         camera2d->Center(cameraCenter);
 
-        engine.Render();
+        graphicsEngine.Render();
     }
 
     return 0;
