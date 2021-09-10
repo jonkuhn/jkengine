@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/bin/learn-opengl",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build/bin",
             "environment": [],
             "externalConsole": false,
             "MIMode": "lldb"
@@ -23,7 +23,7 @@
             "program": "${workspaceFolder}/build/bin/GraphicsUnitTests",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/build/bin",
             "environment": [],
             "externalConsole": false,
             "MIMode": "lldb"
