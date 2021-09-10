@@ -15,5 +15,5 @@ cmake --build . --config Debug -j 6
 
 cd bin
 
-./GraphicsUnitTests && ./GraphicsIntegrationTests && echo "All Tests Passed!"
+./GraphicsUnitTests && ./GraphicsIntegrationTests && ./InputUnitTests && echo "All Tests Passed!"
 

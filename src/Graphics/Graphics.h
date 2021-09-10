@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/IEngine.h"
-#include "Graphics/LibPngWrapper.h"
-#include "Graphics/PngImage.h"
-#include "Graphics/OpenGL/Engine.h"
+#include "IEngine.h"
+#include "LibPngWrapper.h"
+#include "PngImage.h"
+#include "OpenGL/Engine.h"

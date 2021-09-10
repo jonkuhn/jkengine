@@ -5,10 +5,11 @@
 
 #include "IGlfwWrapper.h"
 #include "IOpenGLWindow.h"
+#include "IGlfwInputWindow.h"
 
 namespace Window 
 {
-    class GlfwWindow final : public IOpenGLWindow
+    class GlfwWindow final : public IOpenGLWindow, public IGlfwInputWindow
     {
     public:
         GlfwWindow(IGlfwWrapper& glfw, int winWidth, int winHeight, const std::string& title);
