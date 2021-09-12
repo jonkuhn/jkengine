@@ -1,5 +1,89 @@
+#if 0
+#include <GLFW/glfw3.h>
+#include <iostream>
+
+int main()
+{
+    if (!glfwInit())
+    {
+        std::cout << "glfwInit failed" << std::endl;
+        return 1;
+    }
+
+    // SWAP A and B on Xbox One controller (works)
+    //if (glfwUpdateGamepadMappings("030000005e040000fd02000003090000,Xbox Wireless Controller,a:b1,b:b0,back:b16,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b15,leftshoulder:b6,leftstick:b13,lefttrigger:a5,leftx:a0,lefty:a1,rightshoulder:b7,rightstick:b14,righttrigger:a4,rightx:a2,righty:a3,start:b11,x:b3,y:b4,platform:Mac OS X,\r\n") == GLFW_FALSE)
+    //if (glfwUpdateGamepadMappings("030000007e0500000620000001000000,Joy-Con (L),leftx:h0.2,lefty:h0.4,leftx:h0.8,lefty:h0.1,a:b0,b:b1,back:b13,leftshoulder:b4,leftstick:b10,rightshoulder:b5,start:b8,x:b2,y:b3,platform:Mac OS X,\r\n") == GLFW_FALSE)
+    if (glfwUpdateGamepadMappings("030000007e0500000620000001000000,Joy-Con (L),dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,a:b0,b:b1,back:b13,leftshoulder:b4,leftstick:b10,rightshoulder:b5,start:b8,x:b2,y:b3,platform:Mac OS X,\r\n") == GLFW_FALSE)
+    {
+        std::cout << "glfwUpdateGamepadMappings failed" << std::endl;
+        return 1;
+    }
+
+    GLFWwindow* window = glfwCreateWindow(640, 480, "My Title", NULL, NULL);
+    if (!window)
+    {
+        std::cout << "glfwCreateWindow failed" << std::endl;
+        return 1;
+    }
+
+    double lastScanTime = 0.0;
+    while (!glfwWindowShouldClose(window))
+    {
+        glfwPollEvents();
+
+        double currentTime = glfwGetTime();
+        if(lastScanTime < (currentTime - 1.0))
+        {
+            lastScanTime = currentTime;
+            std::cout << "Scanning for joysticks..." << std::endl;
+            for(int j = GLFW_JOYSTICK_1; j <= GLFW_JOYSTICK_LAST; j++)
+            {
+                auto* name = glfwGetJoystickName(j);
+                if (name != nullptr)
+                {
+                    auto* guid = glfwGetJoystickGUID(j);
+                    bool isGamepad = (glfwJoystickIsGamepad(j) == GLFW_TRUE);
+
+                    //bool a = false;
+                    //bool b = false;
+                    if (isGamepad)
+                    {
+                        GLFWgamepadstate gamepadState;
+                        if(glfwGetGamepadState(j, &gamepadState) == GLFW_FALSE)
+                        {
+                            std::cout << "glfwGetGamepadState failed" << std::endl;
+                        }
+                        //a = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_A];
+                        //b = gamepadState.buttons[GLFW_GAMEPAD_BUTTON_B];
+                    }
+
+                    int count = 0;
+                    const float* axes = glfwGetJoystickAxes(j, &count);
+
+                    for(int a = 0; a < count; a++)
+                    {
+                        std::cout << "a" << a << " = " << *(axes + a) << ", ";
+                    }
+                    std::cout << std::endl;
+
+                    std::cout << name << " GUID: " << guid << " is gamepad: " << isGamepad << std::endl;
+                    //std::cout << name << " GUID: " << guid << " is gamepad: " << isGamepad
+                    //    << " a: " << a << " b: " << b << std::endl;
+
+                }
+            }
+        }
+    }
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    return 0;
+}
+#endif
+
 #include <array>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -217,9 +301,89 @@ int main()
 
     Input::IGamepad* playerGamepad = nullptr;
 
+/*
+    std::ifstream ifs("gamecontrollerdb.txt", std::ifstream::binary);
+    if (!ifs)
+    {
+        std::cout << "open failed" << std::endl;
+        return 0;
+    }
+
+    ifs.seekg(0, ifs.end);
+    int length = ifs.tellg();
+    std::vector<char> buffer(length+1);
+    ifs.seekg(0, ifs.beg);
+    ifs.read(&buffer[0], length);
+    buffer[length] = '\0';
+    ifs.close();
+
+    std::cout << "length of mappings: " << length << std::endl;
+*/
+
+    // The reason the following cannot be loaded is because GLFW does not support output modifiers
+    // (the + and - before leftx and left y)
+    //if (glfwUpdateGamepadMappings("030000007e0500000620000001000000,Joy-Con (L),+leftx:h0.2,+lefty:h0.4,-leftx:h0.8,-lefty:h0.1,a:b0,b:b1,back:b13,leftshoulder:b4,leftstick:b10,rightshoulder:b5,start:b8,x:b2,y:b3,platform:Mac OS X,\r\n") == GLFW_FALSE)
+
+    // This doesn't work entirely right because since output modifiers are not supported it only
+    // maps half of the left axes.
+    //if (glfwUpdateGamepadMappings("030000007e0500000620000001000000,Joy-Con (L),leftx:h0.2,lefty:h0.4,leftx:h0.8,lefty:h0.1,a:b0,b:b1,back:b13,leftshoulder:b4,leftstick:b10,rightshoulder:b5,start:b8,x:b2,y:b3,platform:Mac OS X,\r\n") == GLFW_FALSE)
+
+    // This works but is not analog because the joystick "hat" states are binary.
+    // Even with the above mappings with the modifiers it was really just mapping
+    // binary hat states to each half of each axis.
+    if (glfwUpdateGamepadMappings("030000007e0500000620000001000000,Joy-Con (L),dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,a:b0,b:b1,back:b13,leftshoulder:b4,leftstick:b10,rightshoulder:b5,start:b8,x:b2,y:b3,platform:Mac OS X,\r\n") == GLFW_FALSE)
+    {
+        std::cout << "error" << std::endl;
+        const char* errorDescription;
+        auto errorCode = glfwGetError(&errorDescription);
+        std::stringstream ss;
+        ss << "Failed to update gamepad mappings: error code:"
+        << errorCode << " desc: " << errorDescription;
+        throw std::runtime_error(ss.str());
+    }
+
+    //double lastScanTime = 0;
     while (!window.WindowShouldClose())
     {
         inputEngine.Update();
+
+        double currentTime = glfwGetTime();
+        double deltaTime = currentTime - previousTime;
+        previousTime = currentTime;
+
+/*
+        if(lastScanTime < (currentTime - 1.0))
+        {
+            lastScanTime = currentTime;
+            if (glfwUpdateGamepadMappings("030000007e0500000620000001000000,Joy-Con (L),+leftx:h0.2,+lefty:h0.4,-leftx:h0.8,-lefty:h0.1,a:b0,b:b1,back:b13,leftshoulder:b4,leftstick:b10,rightshoulder:b5,start:b8,x:b2,y:b3,platform:Mac OS X,\r\n") == GLFW_FALSE)
+            {
+                std::cout << "error" << std::endl;
+                const char* errorDescription;
+                auto errorCode = glfwGetError(&errorDescription);
+                std::stringstream ss;
+                ss << "Failed to update gamepad mappings: error code:"
+                << errorCode << " desc: " << errorDescription;
+                throw std::runtime_error(ss.str());
+            }
+
+            const char* errorDescription = nullptr;
+            auto errorCode = glfwGetError(&errorDescription);
+            std::cout << "error code:" << errorCode << std::endl;
+
+            std::cout << "Scanning for joysticks..." << std::endl;
+            for(int j = GLFW_JOYSTICK_1; j <= GLFW_JOYSTICK_LAST; j++)
+            {
+                auto* name = glfwGetJoystickName(j);
+                if (name != nullptr)
+                {
+                    auto* guid = glfwGetJoystickGUID(j);
+                    bool isGamepad = (glfwJoystickIsGamepad(j) == GLFW_TRUE);
+
+                    std::cout << name << " GUID: " << guid << " is gamepad: " << isGamepad << std::endl;
+                }
+            }
+        }
+*/
 
         // TODO: move keyboard input into Input library at some point
         if (window.GetKey(GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -274,10 +438,6 @@ int main()
             std::cout << " RY: " << playerGamepad->RightStickY();
             std::cout << std::endl;
         }
-
-        double currentTime = glfwGetTime();
-        double deltaTime = currentTime - previousTime;
-        previousTime = currentTime;
 
         if(window.GetKey(GLFW_KEY_UP) == GLFW_PRESS)
         {
