@@ -69,12 +69,6 @@ The development environment I am using is as follows:
    ```
 7. For VSCode: Add `"~/.conan/data/**"` to `.vscode/c_cpp_properties.json` at `configurations[0].["includePath"]` so that VSCode will look for headers in installed conan packages.
 
-## Issue with glfw conan package
-As of Nov 21, 2020 the glfw 3.3.2 package would not build for Mac with CMake 3.19.  This issue was fixed in master of glfw in commit 3327050c.  In order to still use conan (and to learn more about it), I copied the conan recipe files for glfw from https://github.com/conan-io/conan-center-index and modified them to build from the above commit of glfw.  These files are under the `patched-dependencies` folder.  In order to get `glfw/3.3.2-3327050c@jkuhn/patched` (as it is referenced in conanfile.txt) into the conan local cache, run the following command in the `patched-dependencies/glfw` directory:
-```
-conan create . jkuhn/patched
-```
-
 ## OpenGL Resources:
 - [Learn OpenGL](https://learnopengl.com)
 
