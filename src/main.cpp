@@ -19,8 +19,8 @@
 
 
 // settings
-constexpr unsigned int SCR_WIDTH = 800;
-constexpr unsigned int SCR_HEIGHT = 600;
+constexpr unsigned int SCR_WIDTH = 1280;
+constexpr unsigned int SCR_HEIGHT = 720;
 
 void processInput(Window::GlfwWindow& window)
 {
@@ -156,66 +156,42 @@ int main()
     Input::Glfw::Engine glfwInpEng(glfw, window);
     Input::IEngine& inputEngine = glfwInpEng;
 
-    // Want:
-    // - World to be 100 tiles by 100 tiles represented by one tile map
-    // - View to be 10 tiles by 10 tiles
-    // - Each tile to be 64 by 64 pixels
-    // - So world is 64,000 by 64,000
-    // - So view is 640 by 640
-    const float WORLD_WIDTH_IN_TILES = 8;
-    const float WORLD_HEIGHT_IN_TILES = 4; 
-
-    // Generate a random tile map texture using a helper class
-    //RandomTileMap randomTileMap(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES);
-    TestTileMapImage randomTileMap;
-    //Texture tileMapTexture(&gl, Texture::Params(randomTileMap)
-    //    .WrapModeS(Texture::WrapMode::ClampToBorder)
-    //    .WrapModeT(Texture::WrapMode::ClampToBorder)
-    //    .MinFilter(Texture::MinFilterMode::Nearest)
-    //    .MagFilter(Texture::MagFilterMode::Nearest));
-
-    // use a small 2x2 tile atlas for testing purposes
-    const float TILE_ATLAS_WIDTH_IN_TILES = 4;
-    const float TILE_ATLAS_HEIGHT_IN_TILES = 4;
-    Graphics::PngImage tileAtlasImage(&libpng, "TestFiles/colortiles4x4emptycenters.png");
-    //Texture tileAtlasTexture(&gl, Texture::Params(tileAtlasImage)
-    //    .WrapModeS(Texture::WrapMode::ClampToBorder)
-    //    .WrapModeT(Texture::WrapMode::ClampToBorder)
-    //    .MinFilter(Texture::MinFilterMode::Nearest)
-    //    .MagFilter(Texture::MagFilterMode::Nearest));
-
-    auto tileAtlas = graphicsEngine.CreateTileAtlas(
-        tileAtlasImage,
-        glm::vec2(TILE_ATLAS_WIDTH_IN_TILES, TILE_ATLAS_HEIGHT_IN_TILES)
+    const int catSpriteSheetWidth = 5;
+    const int catSpriteSheetHeight = 5;
+    Graphics::PngImage catTileAtlasImage(&libpng, "assets/CatAnimations32x32.png");
+    auto catTileAtlas = graphicsEngine.CreateTileAtlas(
+        catTileAtlasImage,
+        glm::vec2(catSpriteSheetWidth, catSpriteSheetHeight)
     );
 
+    auto catSprite = catTileAtlas->CreateSprite(1);
+    catSprite->Position(glm::vec2(0.0f, 1.0f));
+    catSprite->Size(glm::vec2(1.0f, 1.0f));
 
-    // Define a model matrix that scale's up from a unit quad
-    // to world width by world height
-    auto tileMap1 = tileAtlas->CreateTileMap(1, randomTileMap);
-    tileMap1->Position(glm::vec2(-2.0f, -2.0f));
-    tileMap1->Rotation(12.5f);
-    tileMap1->Size(glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES));
+    const float catWalkVelocity = 0.375f * 2.0f;
+    const float catRunVelocity = 3.2f;
 
-    auto tileMap2 = tileAtlas->CreateTileMap(0, randomTileMap);
-    tileMap2->Position(glm::vec2(-2.0f, -2.0f));
-    tileMap2->Size(glm::vec2(WORLD_WIDTH_IN_TILES, WORLD_HEIGHT_IN_TILES));
-
-    const float MOVE_SPEED = 5.0f;
-
+    //auto aspectRatio = (float)SCR_WIDTH / (float)SCR_HEIGHT;
     auto camera2d = graphicsEngine.Camera2d();
-    auto aspectRatio = (float)SCR_WIDTH / (float)SCR_HEIGHT;
     camera2d->FieldOfView(Graphics::ICamera2d::Fov(
-            -2.5f * aspectRatio, 2.5f * aspectRatio,
-            -2.5f, 2.5f));
-    auto cameraDX = 0.0f;
-    auto cameraDY = 0.0f;
+            -8.0f, 8.0f,
+            -4.5f, 4.5f));
+    camera2d->Center(glm::vec2(8.0f, 4.5f));
+    auto catDX = 0.0f;
+    float catAnimationCurrentFrameTime = 0.0f;
+    int catAnimationFrameBase = 0;
+    int catAnimationFrameOffset = 0;
 
     double previousTime = glfwGetTime();
 
     graphicsEngine.ClearColor(Graphics::Color(51, 77, 77, 255));
 
-    Input::IGamepad* playerGamepad = nullptr;
+    //Input::IGamepad* playerGamepad = nullptr;
+
+    constexpr int catRunAnimationStartFrame = 10;
+    constexpr int catRunAnimationFrames = 8;
+    //std::array<float, catRunAnimationFrames> runFrameTimes = { 0.0625, 0.125f, 0.125f, 0.0625f, 0.0625 };
+    std::array<float, catRunAnimationFrames> runFrameTimes = { 0.0625, 0.0625f, 0.0625f, 0.0625f, 0.0625, 0.0625f, 0.0625f, 0.0625f };
 
     while (!window.WindowShouldClose())
     {
@@ -227,6 +203,7 @@ int main()
             window.Close();
         }
 
+/*
         if (playerGamepad == nullptr)
         {
             std::cout << "Looking for player gamepad" << std::endl;
@@ -274,71 +251,71 @@ int main()
             std::cout << " RY: " << playerGamepad->RightStickY();
             std::cout << std::endl;
         }
+        */
 
         double currentTime = glfwGetTime();
         double deltaTime = currentTime - previousTime;
         previousTime = currentTime;
 
-        if(window.GetKey(GLFW_KEY_UP) == GLFW_PRESS)
-        {
-            cameraDY = MOVE_SPEED;
-        }
-        else if(window.GetKey(GLFW_KEY_DOWN) == GLFW_PRESS)
-        {
-            cameraDY = -MOVE_SPEED;
-        }
-        else
-        {
-            cameraDY = 0;
-        }
-
+        bool catRunning = false;
+        int catDirection;
         if(window.GetKey(GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
-            cameraDX = MOVE_SPEED;
+            catDX = catWalkVelocity;
+            catDirection = 1;
+
         }
         else if(window.GetKey(GLFW_KEY_LEFT) == GLFW_PRESS)
         {
-            cameraDX = -MOVE_SPEED;
+            catDX = -catWalkVelocity;
+            catDirection = -1;
+
+        }
+        else if(window.GetKey(GLFW_KEY_D) == GLFW_PRESS)
+        {
+            catDX = catRunVelocity;
+            catDirection = 1;
+            catRunning = true;
+        }
+        else if(window.GetKey(GLFW_KEY_A) == GLFW_PRESS)
+        {
+            catDX = -catRunVelocity;
+            catDirection = -1;
+            catRunning = true;
         }
         else
         {
-            cameraDX = 0;
+            catDX = 0;
+            catDirection = 0;
         }
 
-        //if (cameraDX != 0 && cameraDY != 0)
-        //{
-        //    cameraDX = (cameraDX / cameraDX) * std::sqrt(MOVE_SPEED);
-        //    cameraDY = (cameraDY / cameraDY) * std::sqrt(MOVE_SPEED);
-        //}
+        catAnimationCurrentFrameTime += deltaTime;
+        if (!catRunning && catAnimationCurrentFrameTime >= (0.08333f/2.0f))
+        {
+            catAnimationFrameBase = 0;
+            catAnimationFrameOffset = (8 + catAnimationFrameOffset + catDirection) % 8;
+            catAnimationCurrentFrameTime = 0.0f;
+        }
+        else if (catRunning && catAnimationFrameBase < catRunAnimationStartFrame)
+        {
+            catAnimationFrameBase = catRunAnimationStartFrame;
+            catAnimationFrameOffset = 0;
+            catAnimationCurrentFrameTime = 0.0f;
+        }
+        else if (catRunning && catAnimationCurrentFrameTime >= runFrameTimes[catAnimationFrameOffset])
+        {
+            catAnimationFrameBase = catRunAnimationStartFrame;
+            catAnimationFrameOffset = (catRunAnimationFrames + catAnimationFrameOffset + catDirection) % catRunAnimationFrames;
+            catAnimationCurrentFrameTime = 0.0f;
+        }
 
-        //if (cameraX <= 0 && cameraDX < 0)
-        //{
-        //    cameraX = 0;
-        //    cameraDX = 0;
-        //}
+        catSprite->AtlasLocation(Graphics::GridLocation(
+            (catAnimationFrameBase + catAnimationFrameOffset) % catSpriteSheetWidth,
+            (catAnimationFrameBase + catAnimationFrameOffset) / catSpriteSheetWidth));
 
-        //if (cameraX >= (WORLD_WIDTH_IN_TILES - VIEW_WIDTH_IN_TILES) && cameraDX > 0)
-        //{
-        //    cameraX = WORLD_WIDTH_IN_TILES - VIEW_WIDTH_IN_TILES;
-        //    cameraDX = -cameraDX;
-        //}
-
-        //if (cameraY <= 0 && cameraDY < 0)
-        //{
-        //    cameraY = 0;
-        //    cameraDY = 0;
-        //}
-
-        //if (cameraY >= (WORLD_HEIGHT_IN_TILES - VIEW_HEIGHT_IN_TILES) && cameraDY > 0)
-        //{
-        //    cameraY = WORLD_HEIGHT_IN_TILES - VIEW_HEIGHT_IN_TILES;
-        //    cameraDY = 0;
-        //}
-
-        auto cameraCenter = glm::vec2(camera2d->Center());
-        cameraCenter.x += cameraDX * deltaTime;
-        cameraCenter.y += cameraDY * deltaTime;
-        camera2d->Center(cameraCenter);
+        auto catPos = glm::vec2(catSprite->Position());
+        catPos.x += catDX * deltaTime;
+        catSprite->Position(catPos);
 
         graphicsEngine.Render();
     }

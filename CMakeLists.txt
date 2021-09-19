@@ -20,3 +20,5 @@ add_subdirectory(src)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
+
+file(COPY assets/CatAnimations32x32.png DESTINATION ${CMAKE_BINARY_DIR}/bin/assets)
