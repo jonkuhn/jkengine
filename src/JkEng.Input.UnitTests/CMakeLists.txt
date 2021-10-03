@@ -13,6 +13,7 @@ target_sources(JkEng.Input.UnitTests
     Glfw/FakeGlfwInputWindow.h
 )
 target_include_directories(JkEng.Input.UnitTests PRIVATE
-  ../
+  PRIVATE
+    $<TARGET_PROPERTY:JkEng.Graphics,INCLUDE_DIRECTORIES>
 )
 target_link_libraries(JkEng.Input.UnitTests JkEng.Input ${CONAN_LIBS})

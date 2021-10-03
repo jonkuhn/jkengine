@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "JkEng.Graphics.UnitTests",
             "type": "cppdbg",
@@ -33,6 +34,18 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/bin/JkEng.Input.UnitTests",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/bin",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
+        {
+            "name": "JkEng.Physics.UnitTests",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/bin/JkEng.Physics.UnitTests",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/bin",

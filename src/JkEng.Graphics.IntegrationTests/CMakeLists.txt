@@ -20,9 +20,6 @@ target_sources(JkEng.Graphics.IntegrationTests
     OpenGL/VertexArrayTests.cpp
     Window/WindowTests.cpp
 )
-target_include_directories(JkEng.Graphics.IntegrationTests PRIVATE
-  ../
-)
 target_link_libraries(JkEng.Graphics.IntegrationTests JkEng.Graphics ${CONAN_LIBS})
 
 file(COPY ./TestFiles/test31x47.png DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)
