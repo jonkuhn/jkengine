@@ -6,6 +6,7 @@ else()
 endif()
 target_include_directories(JkEng.Graphics INTERFACE include)
 target_include_directories(JkEng.Graphics PRIVATE include/JkEng/Graphics)
+target_include_directories(JkEng.Graphics PRIVATE src)
 target_sources(JkEng.Graphics
   PRIVATE
     include/JkEng/Graphics/Color.h

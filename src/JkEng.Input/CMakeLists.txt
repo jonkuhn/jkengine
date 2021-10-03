@@ -6,6 +6,7 @@ else()
 endif()
 target_include_directories(JkEng.Input INTERFACE include)
 target_include_directories(JkEng.Input PRIVATE include/JkEng/Input)
+target_include_directories(JkEng.Input PRIVATE src)
 target_sources(JkEng.Input
   PRIVATE
     include/JkEng/Input/IEngine.h

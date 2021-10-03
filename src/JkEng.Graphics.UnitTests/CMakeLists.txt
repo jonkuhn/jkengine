@@ -21,7 +21,8 @@ target_sources(JkEng.Graphics.UnitTests
     Window/WindowTests.cpp
     MockLibPngWrapper.h
 )
-target_include_directories(JkEng.Graphics.UnitTests PRIVATE
-  ../
+target_include_directories(JkEng.Graphics.UnitTests
+  PRIVATE
+    $<TARGET_PROPERTY:JkEng.Graphics,INCLUDE_DIRECTORIES>
 )
 target_link_libraries(JkEng.Graphics.UnitTests JkEng.Graphics ${CONAN_LIBS})
