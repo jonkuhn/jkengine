@@ -8,7 +8,7 @@
 #pragma clang diagnostic pop
 
 #include "../ITileAtlas.h"
-#include "Registry.h"
+#include <Shared/Registry.h>
 #include "Texture.h"
 
 namespace Graphics::OpenGL
