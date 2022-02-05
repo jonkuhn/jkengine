@@ -7,6 +7,7 @@ add_subdirectory(Input)
 if(BUILD_TESTING)
   add_subdirectory(InputUnitTests)
 endif()
+add_subdirectory(Shared)
 add_subdirectory(Window)
 add_executable(learn-opengl)
 target_sources(learn-opengl

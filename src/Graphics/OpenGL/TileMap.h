@@ -10,7 +10,7 @@
 #include "../ITileMap.h"
 
 #include "Object2d.h"
-#include "Registry.h"
+#include <Shared/Registry.h>
 #include "Texture.h"
 
 namespace Graphics::OpenGL

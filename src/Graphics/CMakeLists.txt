@@ -31,7 +31,6 @@ target_sources(Graphics
     OpenGL/OpenGLHelpers.cpp
     OpenGL/IOpenGLWrapper.h
     OpenGL/OpenGLWrapper.h
-    OpenGL/Registry.h
     OpenGL/IShader.h
     OpenGL/Shader.h
     OpenGL/Shader.cpp
@@ -55,4 +54,4 @@ target_sources(Graphics
     OpenGL/ViewportCapture.h
     OpenGL/ViewportCapture.cpp
 )
-target_link_libraries(Graphics Window ${CONAN_LIBS})
+target_link_libraries(Graphics Window Shared ${CONAN_LIBS})

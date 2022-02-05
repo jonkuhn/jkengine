@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(learn-opengl VERSION 0.1.0)
 
+cmake_policy(SET CMP0076 NEW)
+
 # Require out-of-source builds
 file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
 if(EXISTS "${LOC_PATH}")

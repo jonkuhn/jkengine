@@ -7,7 +7,7 @@
 
 #include "../IObject2d.h"
 
-#include "Registry.h"
+#include <Shared/Registry.h>
 
 namespace Graphics::OpenGL
 {
