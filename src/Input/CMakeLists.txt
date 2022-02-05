@@ -14,4 +14,4 @@ target_sources(Input
     Glfw/Gamepad.h
     Glfw/Gamepad.cpp
 )
-target_link_libraries(Input ${CONAN_LIBS})
+target_link_libraries(Input Window ${CONAN_LIBS})

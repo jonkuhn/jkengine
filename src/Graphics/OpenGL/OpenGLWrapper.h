@@ -1,7 +1,7 @@
 #pragma once
 #include "IOpenGLWrapper.h"
 
-#include "../../Window/IOpenGLWindow.h"
+#include <Window/IOpenGLWindow.h>
 
 #include <mutex>
 #include <sstream>
