@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "../IEngine.h"
-#include "../../Window/IOpenGLWindow.h"
+#include <Window/IOpenGLWindow.h>
 #include "Camera2d.h"
 #include "OpenGLWrapper.h"
 #include "ShaderProgram.h"
