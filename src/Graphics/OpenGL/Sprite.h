@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Shared/Registry.h>
+
 #include "../ISprite.h"
 
 #include "Object2d.h"
@@ -9,7 +11,7 @@ namespace Graphics::OpenGL
     class Sprite final : public ISprite
     {
     public:
-        Sprite(Registry<Sprite>& registry)
+        Sprite(Shared::Registry<Sprite>& registry)
           : _object2d(),
             _registration(registry, *this)
         {
@@ -64,6 +66,6 @@ namespace Graphics::OpenGL
     private:
         Object2d _object2d;
         GridLocation _atlasLocation;
-        Registry<Sprite>::Registration _registration;
+        Shared::Registry<Sprite>::Registration _registration;
     };
 }

@@ -7,8 +7,9 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
-#include "../ITileAtlas.h"
 #include <Shared/Registry.h>
+
+#include "../ITileAtlas.h"
 #include "Texture.h"
 
 namespace Graphics::OpenGL
@@ -23,7 +24,7 @@ namespace Graphics::OpenGL
     {
     public:
         TileAtlas(
-            Registry<TileAtlas>& tileAtlasRegistry,
+            Shared::Registry<TileAtlas>& tileAtlasRegistry,
             IOpenGLWrapper& gl,
             unsigned int numberOfDrawingLayers,
             TileMapDrawer& tileMapDrawer,
@@ -74,8 +75,8 @@ namespace Graphics::OpenGL
         SpriteDrawer* _spriteDrawer;
         Texture _atlasTexture;
         glm::vec2 _atlasSizeInTiles;
-        Registry<TileAtlas>::Registration _registration;
-        std::vector<Registry<TileMap>> _perLayerTileMapRegistries;
-        std::vector<Registry<Sprite>> _perLayerSpriteRegistries;
+        Shared::Registry<TileAtlas>::Registration _registration;
+        std::vector<Shared::Registry<TileMap>> _perLayerTileMapRegistries;
+        std::vector<Shared::Registry<Sprite>> _perLayerSpriteRegistries;
     };
 }
