@@ -7,8 +7,6 @@
 
 #include "../IObject2d.h"
 
-#include <Shared/Registry.h>
-
 namespace Graphics::OpenGL
 {
     class Object2d : public IObject2d

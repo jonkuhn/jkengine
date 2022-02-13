@@ -2,8 +2,10 @@
 
 #include <memory>
 
-#include "../IEngine.h"
+#include <Shared/Registry.h>
 #include <Window/IOpenGLWindow.h>
+
+#include "../IEngine.h"
 #include "Camera2d.h"
 #include "OpenGLWrapper.h"
 #include "ShaderProgram.h"
@@ -62,7 +64,7 @@ namespace Graphics::OpenGL
         class Camera2d _camera2d;
         TileMapDrawer _tileMapDrawer;
         SpriteDrawer _spriteDrawer;
-        Registry<TileAtlas> _tileAtlasRegistry;
+        Shared::Registry<TileAtlas> _tileAtlasRegistry;
 
         unsigned int _numberOfDrawingLayers;
     };

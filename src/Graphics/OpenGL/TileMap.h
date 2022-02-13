@@ -7,10 +7,10 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
-#include "../ITileMap.h"
-
-#include "Object2d.h"
 #include <Shared/Registry.h>
+
+#include "../ITileMap.h"
+#include "Object2d.h"
 #include "Texture.h"
 
 namespace Graphics::OpenGL
@@ -22,7 +22,7 @@ namespace Graphics::OpenGL
     {
     public:
         TileMap(
-            Registry<TileMap>& tileMapRegistry,
+            Shared::Registry<TileMap>& tileMapRegistry,
             Texture mapTexture,
             glm::vec2 mapSizeInTiles)
           : _object2d(),
@@ -93,6 +93,6 @@ namespace Graphics::OpenGL
         Object2d _object2d;
         Texture _mapTexture;
         glm::vec2 _mapSizeInTiles;
-        Registry<TileMap>::Registration _registration;
+        Shared::Registry<TileMap>::Registration _registration;
     };
 }

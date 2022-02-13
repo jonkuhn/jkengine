@@ -3,7 +3,7 @@
 #include <cassert>
 #include <unordered_set>
 
-namespace Graphics::OpenGL
+namespace Shared
 {
     template<typename T>
     class Registry
