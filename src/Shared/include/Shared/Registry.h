@@ -110,16 +110,6 @@ namespace Shared
             _objects.erase(&obj);
         }
 
-        inline typename std::unordered_set<T*>::iterator begin()
-        {
-            return _objects.begin();
-        }
-
-        inline typename std::unordered_set<T*>::iterator end()
-        {
-            return _objects.end();
-        }
-
         typedef std::function<void(T&)> ForEachCallback;
         inline void ForEach(ForEachCallback callback)
         {

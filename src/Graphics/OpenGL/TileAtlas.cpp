@@ -32,14 +32,19 @@ void TileAtlas::DrawAllOnLayer(unsigned int layer)
 {
     _tileMapDrawer->SetupForDrawingFromAtlas(*this);
 
-    for(auto* tileMap : _perLayerTileMapRegistries[layer])
-    {
-        _tileMapDrawer->Draw(*tileMap);
-    }
+    _perLayerTileMapRegistries[layer].ForEach(
+        [&](TileMap& tileMap)
+        {
+            _tileMapDrawer->Draw(tileMap);
+        }
+    );
 
     _spriteDrawer->SetupForDrawingFromAtlas(*this);
-    for(auto* sprite : _perLayerSpriteRegistries[layer])
-    {
-        _spriteDrawer->Draw(*sprite);
-    }
+
+    _perLayerSpriteRegistries[layer].ForEach(
+        [&](Sprite& sprite)
+        {
+            _spriteDrawer->Draw(sprite);
+        }
+    );
 }

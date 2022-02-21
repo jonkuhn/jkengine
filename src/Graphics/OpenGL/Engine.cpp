@@ -65,10 +65,12 @@ void Engine::Render()
 
     for(unsigned int layer = 0; layer < _numberOfDrawingLayers; layer++)
     {
-        for(auto* tileAtlas : _tileAtlasRegistry)
-        {
-            tileAtlas->DrawAllOnLayer(layer);
-        }
+        _tileAtlasRegistry.ForEach(
+            [&](TileAtlas& tileAtlas)
+            {
+                tileAtlas.DrawAllOnLayer(layer);
+            }
+        );
     }
 
     _window.Update();
