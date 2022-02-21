@@ -1,10 +1,11 @@
 #pragma once
 
-#include <cassert>
+#include <cstdlib>
 #include <mutex>
 #include <functional>
 #include <iostream>
 #include <unordered_set>
+#include <vector>
 
 namespace Shared
 {
@@ -30,7 +31,8 @@ namespace Shared
                 }
                 catch (std::exception &e)
                 {
-                    std::cerr << e.what() << std::endl;
+                    std::cerr << "FATAL: Caught exception during Registry::Registration "
+                        << "destructor: " << e.what() << std::endl;
                     std::abort();
                 }
             }
@@ -56,7 +58,7 @@ namespace Shared
         };
 
         Registry()
-          : _mutex(),
+          : _objectsMutex(),
             _objects()
         {
 
@@ -64,7 +66,13 @@ namespace Shared
 
         ~Registry()
         {
-            assert(_objects.empty());
+            if(!_objects.empty())
+            {
+                std::cerr << "FATAL: Registry destructor called with "
+                    << _objects.size() << " objects still registered."
+                    << std::endl;
+                std::abort();
+            }
         }
 
         // Do not allow copy.  If it were copyable then registrations
@@ -80,53 +88,33 @@ namespace Shared
 
         inline void Register(T& obj)
         {
-            // TODO: Add to separate collection if ForEach is running
-            // and have ForEach do additions afterwards
-            // Maybe always register to separate collection and
-            // apply to real collection at beginning/end of ForEach.
-            // Or maybe have ForEach take a copy of the collection
-            // and iterate the copy.
-            std::unique_lock<std::mutex> lock(_mutex, std::try_to_lock);
-            if(!lock.owns_lock()){
-                throw std::logic_error("Calling Registry::Register() from ForEach "
-                    "callback is currently not supported");
-            }
+            std::scoped_lock<std::mutex> lock(_objectsMutex);
             _objects.insert(&obj);
         }
 
         inline void Deregister(T& obj)
         {
-            // TODO: Add to separate collection if ForEach is running
-            // and have ForEach do removals afterward
-            // Maybe always deregister to separate collection and
-            // apply to real collection at beginning/end of ForEach.
-            // Or maybe have ForEach take a copy of the collection
-            // and iterate the copy.
-            std::unique_lock<std::mutex> lock(_mutex, std::try_to_lock);
-            if(!lock.owns_lock()){
-                throw std::logic_error("Calling Registry::Deregister() from ForEach "
-                    "callback is currently not supported");
-            }
+            std::scoped_lock<std::mutex> lock(_objectsMutex);
             _objects.erase(&obj);
         }
 
         typedef std::function<void(T&)> ForEachCallback;
         inline void ForEach(ForEachCallback callback)
         {
-            // TODO: Re-entrant calls to ForEach should be allowed
-            std::unique_lock<std::mutex> lock(_mutex, std::try_to_lock);
-            if(!lock.owns_lock()){
-                throw std::logic_error("Nested call to Registry::ForEach() from ForEach "
-                    "callback is currently not supported");
+            std::unordered_set<T*> localCopyOfObjects;
+            {
+                std::scoped_lock<std::mutex> lock(_objectsMutex);
+                localCopyOfObjects = _objects;
             }
-            for(auto* obj : _objects)
+
+            for(auto* obj : localCopyOfObjects)
             {
                 callback(*obj);
             }
         }
 
     private:
-        std::mutex _mutex;
+        std::mutex _objectsMutex;
         std::unordered_set<T*> _objects;
     };
 }
