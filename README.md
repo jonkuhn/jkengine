@@ -1,4 +1,4 @@
-# Learn OpenGL
+# JK Engine
 
 ## Summary
 Project for me to write a simple 2D graphics engine for learning modern OpenGL graphics programming.  I am initially following the tutorial here: https://learnopengl.com.  I may eventually expand it from just graphics into a game engine and potentially expand the graphics to support 3D at some point as well.  However, I have very limited time to spend on this so progress is going to be very slow.
