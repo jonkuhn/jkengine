@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-#include "Input/Glfw/Engine.h"
+#include <jkengine/Input/Glfw/Engine.h>
 #include "FakeGlfwInputWindow.h"
 #include "MockGlfwInputWrapper.h"
 

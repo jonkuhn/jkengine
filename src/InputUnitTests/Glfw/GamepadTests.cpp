@@ -3,7 +3,7 @@
 
 #include <gtest/gtest.h>
 
-#include "Input/Glfw/Gamepad.h"
+#include <jkengine/Input/Glfw/Gamepad.h>
 #include "MockGlfwInputWrapper.h"
 
 using namespace testing;

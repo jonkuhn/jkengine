@@ -1,8 +1,7 @@
-#include "Engine.h"
-
 #include <stdexcept>
 
-#include "Gamepad.h"
+#include <Glfw/Engine.h>
+#include <Glfw/Gamepad.h>
 
 using namespace Input::Glfw;
 
