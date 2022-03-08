@@ -4,8 +4,8 @@
 
 #include <gtest/gtest.h>
 
-#include "Window/GlfwWindow.h"
-#include "Window/GlfwException.h"
+#include <jkengine/Window/GlfwWindow.h>
+#include <jkengine/Window/GlfwException.h>
 #include "MockGlfwWrapper.h"
 #include "../TestHelpers.h"
 

@@ -12,8 +12,8 @@
 #include "Graphics/OpenGL/ShaderProgram.h"
 #include "Graphics/OpenGL/VertexArray.h"
 #include "Graphics/OpenGL/ViewportCapture.h"
-#include "Window/GlfwWindow.h"
-#include "Window/GlfwWrapper.h"
+#include <jkengine/Window/GlfwWindow.h>
+#include <jkengine/Window/GlfwWrapper.h>
 
 using namespace testing;
 using namespace Graphics::OpenGL;

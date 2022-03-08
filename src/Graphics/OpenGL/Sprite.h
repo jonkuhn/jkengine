@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Shared/Registry.h>
+#include <jkengine/Shared/Registry.h>
 
 #include "../ISprite.h"
 

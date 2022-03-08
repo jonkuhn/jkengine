@@ -5,8 +5,8 @@
 
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/OpenGLWrapper.h"
-#include "Window/GlfwWindow.h"
-#include "Window/GlfwWrapper.h"
+#include <jkengine/Window/GlfwWindow.h>
+#include <jkengine/Window/GlfwWrapper.h>
 
 #include "TestHelpers.h"
 

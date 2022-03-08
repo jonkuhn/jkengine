@@ -2,7 +2,7 @@
 #include <string>
 
 #include "../IGamepad.h"
-#include <Window/IGlfwInputWrapper.h>
+#include <jkengine/Window/IGlfwInputWrapper.h>
 
 namespace Input::Glfw
 {

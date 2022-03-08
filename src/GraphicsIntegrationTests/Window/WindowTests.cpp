@@ -4,8 +4,8 @@
 
 #include <gtest/gtest.h>
 
-#include "Window/GlfwWindow.h"
-#include "Window/GlfwWrapper.h"
+#include <jkengine/Window/GlfwWindow.h>
+#include <jkengine/Window/GlfwWrapper.h>
 
 using namespace testing;
 using namespace Window;

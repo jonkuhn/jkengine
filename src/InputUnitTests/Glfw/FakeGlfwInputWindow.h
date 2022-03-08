@@ -1,5 +1,5 @@
 #pragma once
-#include "Window/IGlfwInputWindow.h"
+#include <jkengine/Window/IGlfwInputWindow.h>
 
 class FakeGlfwInputWindow : public Window::IGlfwInputWindow
 {

@@ -2,8 +2,8 @@
 
 #include "Graphics/Graphics.h"
 
-#include "Window/GlfwWindow.h"
-#include "Window/GlfwWrapper.h"
+#include <jkengine/Window/GlfwWindow.h>
+#include <jkengine/Window/GlfwWrapper.h>
 
 #include "ColorTiles4x4.h"
 #include "ScreenSampleHelpers.h"

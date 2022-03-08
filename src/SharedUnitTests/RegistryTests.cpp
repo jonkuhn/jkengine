@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include "Shared/Registry.h"
+#include "jkengine/Shared/Registry.h"
 
 using namespace testing;
 using namespace Shared;

@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include <Shared/Registry.h>
-#include <Window/IOpenGLWindow.h>
+#include <jkengine/Shared/Registry.h>
+#include <jkengine/Window/IOpenGLWindow.h>
 
 #include "../IEngine.h"
 #include "Camera2d.h"

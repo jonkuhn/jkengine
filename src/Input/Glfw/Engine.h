@@ -3,8 +3,8 @@
 #include <array>
 #include <vector>
 
-#include <Window/IGlfwInputWindow.h>
-#include <Window/IGlfwInputWrapper.h>
+#include <jkengine/Window/IGlfwInputWindow.h>
+#include <jkengine/Window/IGlfwInputWrapper.h>
 #include "../IEngine.h"
 
 #include "Gamepad.h"

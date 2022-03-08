@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
-#include <Shared/Registry.h>
+#include <jkengine/Shared/Registry.h>
 
 #include "../ITileAtlas.h"
 #include "Texture.h"
