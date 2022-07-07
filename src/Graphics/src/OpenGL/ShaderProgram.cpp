@@ -1,4 +1,4 @@
-#include "ShaderProgram.h"
+#include "OpenGL/ShaderProgram.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
@@ -10,7 +10,7 @@
 #include <sstream>
 #include <vector>
 
-#include "IOpenGLWrapper.h"
+#include "OpenGL/IOpenGLWrapper.h"
 
 using namespace Graphics::OpenGL;
 

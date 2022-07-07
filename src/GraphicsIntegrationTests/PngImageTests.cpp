@@ -4,8 +4,8 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "Graphics/PngImage.h"
-#include "Graphics/LibPngWrapper.h"
+#include <jkengine/Graphics/PngImage.h>
+#include <jkengine/Graphics/LibPngWrapper.h>
 
 using namespace testing;
 using namespace Graphics;

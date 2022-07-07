@@ -1,10 +1,10 @@
-#include "Shader.h"
+#include "OpenGL/Shader.h"
 
 #include <string>
 #include <sstream>
 #include <vector>
 
-#include "IOpenGLWrapper.h"
+#include "OpenGL/IOpenGLWrapper.h"
 
 using namespace Graphics::OpenGL;
 

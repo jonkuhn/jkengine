@@ -1,7 +1,7 @@
 #pragma once
 #include <gmock/gmock.h>
 
-#include "Graphics/OpenGL/IOpenGLWrapper.h"
+#include <jkengine/Graphics/OpenGL/IOpenGLWrapper.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"

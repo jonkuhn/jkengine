@@ -1,8 +1,8 @@
-#include "TileMapShaderProgram.h"
-#include "Shader.h"
-#include "ShaderProgram.h"
-#include "TileAtlas.h"
-#include "TileMap.h"
+#include "OpenGL/TileMapShaderProgram.h"
+#include "OpenGL/Shader.h"
+#include "OpenGL/ShaderProgram.h"
+#include "OpenGL/TileAtlas.h"
+#include "OpenGL/TileMap.h"
 
 using namespace Graphics::OpenGL;
 

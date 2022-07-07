@@ -1,7 +1,7 @@
-#include "Engine.h"
+#include "OpenGL/Engine.h"
 
-#include "Texture.h"
-#include "ViewportCapture.h"
+#include "OpenGL/Texture.h"
+#include "OpenGL/ViewportCapture.h"
 
 using namespace Graphics::OpenGL;
 

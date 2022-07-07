@@ -2,7 +2,7 @@
 
 #include <array>
 
-#include "Graphics/Color.h"
+#include <jkengine/Graphics/Color.h>
 
 static Graphics::Color ColorBackgroundUglyYellow(0x80, 0x80, 0x00, 0xff);
 

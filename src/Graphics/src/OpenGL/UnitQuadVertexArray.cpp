@@ -1,5 +1,5 @@
-#include "UnitQuadVertexArray.h"
-#include "VertexArray.h"
+#include "OpenGL/UnitQuadVertexArray.h"
+#include "OpenGL/VertexArray.h"
 
 using namespace Graphics::OpenGL;
 

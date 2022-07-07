@@ -1,11 +1,11 @@
-#include "TileAtlas.h"
+#include "OpenGL/TileAtlas.h"
 
 #include <memory>
 
-#include "TileMapDrawer.h"
-#include "TileMap.h"
-#include "SpriteDrawer.h"
-#include "Sprite.h"
+#include "OpenGL/TileMapDrawer.h"
+#include "OpenGL/TileMap.h"
+#include "OpenGL/SpriteDrawer.h"
+#include "OpenGL/Sprite.h"
 
 using namespace Graphics::OpenGL;
 

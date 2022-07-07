@@ -1,7 +1,7 @@
-#include "SpriteShaderProgram.h"
-#include "Shader.h"
-#include "ShaderProgram.h"
-#include "TileAtlas.h"
+#include "OpenGL/SpriteShaderProgram.h"
+#include "OpenGL/Shader.h"
+#include "OpenGL/ShaderProgram.h"
+#include "OpenGL/TileAtlas.h"
 
 using namespace Graphics::OpenGL;
 

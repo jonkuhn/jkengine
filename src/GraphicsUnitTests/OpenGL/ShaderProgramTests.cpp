@@ -9,7 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #pragma clang diagnostic pop
 
-#include "Graphics/OpenGL/ShaderProgram.h"
+#include <jkengine/Graphics/OpenGL/ShaderProgram.h>
 #include "MockOpenGLWrapper.h"
 #include "MockShader.h"
 #include "../TestHelpers.h"

@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "Graphics/OpenGL/Texture.h"
+#include <jkengine/Graphics/OpenGL/Texture.h>
 #include "../TestHelpers.h"
 #include "MockOpenGLWrapper.h"
 #include "../FakeImage.h"

@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-#include "Graphics/PngImage.h"
+#include <jkengine/Graphics/PngImage.h>
 #include "MockLibPngWrapper.h"
 #include "TestHelpers.h"
 

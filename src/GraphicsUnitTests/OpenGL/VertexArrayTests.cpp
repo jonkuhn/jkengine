@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "Graphics/OpenGL/VertexArray.h"
+#include <jkengine/Graphics/OpenGL/VertexArray.h>
 #include "../TestHelpers.h"
 #include "MockOpenGLWrapper.h"
 

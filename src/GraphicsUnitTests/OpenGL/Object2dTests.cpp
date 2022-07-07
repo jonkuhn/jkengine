@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #pragma clang diagnostic pop
 
-#include "Graphics/OpenGL/Object2d.h"
+#include <jkengine/Graphics/OpenGL/Object2d.h>
 #include "../TestHelpers.h"
 
 using namespace testing;

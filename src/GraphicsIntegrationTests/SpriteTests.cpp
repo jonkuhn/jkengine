@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "Graphics/Graphics.h"
+#include <jkengine/Graphics/Graphics.h>
 
 #include <jkengine/Window/GlfwWindow.h>
 #include <jkengine/Window/GlfwWrapper.h>

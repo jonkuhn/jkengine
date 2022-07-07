@@ -1,4 +1,4 @@
-#include "OpenGLHelpers.h"
+#include "OpenGL/OpenGLHelpers.h"
 
 void Graphics::OpenGL::ThrowIfOpenGlError(IOpenGLWrapper& gl, const std::string& msgPrefix)
 {

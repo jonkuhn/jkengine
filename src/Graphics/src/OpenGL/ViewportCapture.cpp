@@ -3,7 +3,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "ViewportCapture.h"
+#include "OpenGL/ViewportCapture.h"
 
 using namespace Graphics::OpenGL;
 

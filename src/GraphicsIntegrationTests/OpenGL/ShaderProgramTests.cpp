@@ -4,9 +4,9 @@
 #include <gtest/gtest.h>
 
 
-#include "Graphics/OpenGL/ShaderProgram.h"
-#include "Graphics/OpenGL/Shader.h"
-#include "Graphics/OpenGL/OpenGLWrapper.h"
+#include <jkengine/Graphics/OpenGL/ShaderProgram.h>
+#include <jkengine/Graphics/OpenGL/Shader.h>
+#include <jkengine/Graphics/OpenGL/OpenGLWrapper.h>
 #include <jkengine/Window/GlfwWindow.h>
 #include <jkengine/Window/GlfwWrapper.h>
 #include "TestHelpers.h"

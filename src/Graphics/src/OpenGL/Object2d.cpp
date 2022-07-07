@@ -1,4 +1,4 @@
-#include "Object2d.h"
+#include "OpenGL/Object2d.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"

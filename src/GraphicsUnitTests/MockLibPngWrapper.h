@@ -2,7 +2,7 @@
 
 #include <gmock/gmock.h>
 
-#include "Graphics/ILibPngWrapper.h"
+#include <jkengine/Graphics/ILibPngWrapper.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"

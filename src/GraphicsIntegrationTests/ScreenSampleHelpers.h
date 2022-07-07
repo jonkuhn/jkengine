@@ -5,8 +5,8 @@
 
 #include <gtest/gtest.h>
 
-#include "Graphics/Color.h"
-#include "Graphics/IScreenshot.h"
+#include <jkengine/Graphics/Color.h>
+#include <jkengine/Graphics/IScreenshot.h>
 
 inline void ExpectColorAtScreenPosition(
     const Graphics::IScreenshot& screenshot,

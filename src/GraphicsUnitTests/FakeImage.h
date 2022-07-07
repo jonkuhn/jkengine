@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "Graphics/IImage.h"
+#include <jkengine/Graphics/IImage.h>
 
 class FakeImage : public ::Graphics::IImage {
 public:

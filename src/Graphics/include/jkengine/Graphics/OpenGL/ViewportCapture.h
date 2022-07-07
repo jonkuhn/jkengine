@@ -2,10 +2,10 @@
 #include <string>
 #include <vector>
 
-#include "IOpenGLWrapper.h"
-
 #include "../IScreenshot.h"
 #include "../Color.h"
+
+#include "IOpenGLWrapper.h"
 
 namespace Graphics::OpenGL
 {
