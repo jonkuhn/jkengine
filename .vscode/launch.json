@@ -40,5 +40,17 @@
             "externalConsole": false,
             "MIMode": "lldb"
         },
+        {
+            "name": "SharedUnitTests",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/bin/SharedUnitTests",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/bin",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb"
+        },
     ]
 }

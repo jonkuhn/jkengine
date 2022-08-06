@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <unordered_set>
 #include <vector>
 
@@ -20,6 +21,26 @@ public:
 
 private:
     Registry<DummyObject>::Registration _registration;
+};
+
+class DestructionTrackingObject
+{
+public:
+    DestructionTrackingObject(Registry<DestructionTrackingObject>& registry, bool& setWhenDestructorIsCalled)
+      : _setWhenDestructorIsCalled(setWhenDestructorIsCalled),
+        _registration(registry, *this)
+    {
+
+    }
+
+    ~DestructionTrackingObject()
+    {
+        _setWhenDestructorIsCalled = true;
+    }
+
+private:
+    bool& _setWhenDestructorIsCalled;
+    Registry<DestructionTrackingObject>::Registration _registration;
 };
 
 class RegistryTests : public Test
@@ -127,6 +148,64 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructedDuringCallback_Next
     ASSERT_EQ(iteratedObjects.size(), static_cast<size_t>(2));
     ASSERT_TRUE(iteratedObjects.contains(obj0.get()));
     ASSERT_TRUE(iteratedObjects.contains(obj2.get()));
+}
+
+TEST_F(RegistryTests, ForEach_GivenRegisteredObjectLaterInIterationIsDestructedDuringCallback_DestructedObjectsAreNotReturned)
+{
+    Registry<DestructionTrackingObject> registry;
+
+    std::array<bool, 3> objectsDestructed = { false, false, false };
+    std::array<std::unique_ptr<DestructionTrackingObject>, 3> objectsUniquePtr = {
+        std::make_unique<DestructionTrackingObject>(registry, objectsDestructed[0]),
+        std::make_unique<DestructionTrackingObject>(registry, objectsDestructed[1]),
+        std::make_unique<DestructionTrackingObject>(registry, objectsDestructed[2])
+    };
+    
+    // Save original pointer to each object so original memory address will be
+    // accessible even if the unique_ptrs above are reset
+    std::array<DestructionTrackingObject*, 3> objectsOriginalAddress = {
+        objectsUniquePtr[0].get(),
+        objectsUniquePtr[1].get(),
+        objectsUniquePtr[2].get()
+    };
+
+    std::cout << "objectsOriginalAddress[0] = 0x" << std::ios::hex << objectsOriginalAddress[0] << std::endl;
+    std::cout << "objectsOriginalAddress[1] = 0x" << std::ios::hex << objectsOriginalAddress[1] << std::endl;
+    std::cout << "objectsOriginalAddress[2] = 0x" << std::ios::hex << objectsOriginalAddress[2] << std::endl;
+
+    int iteration = 0;
+    registry.ForEach(
+        [&](DestructionTrackingObject& currentIterationObject)
+        {
+            std::cout << "iteration " << iteration
+                << " &object = 0x " << std::ios::hex << &currentIterationObject << std::endl;
+
+            // Since the order objects will be encountered by ForEach is not deterministic and not
+            // guaranteed, on the first iteration delete all other registered objects to guarantee
+            // a later iteration will hit a deleted object
+            if (iteration == 0)
+            {
+                for (auto& objectUniquePtr : objectsUniquePtr)
+                {
+                    if (objectUniquePtr.get() != &currentIterationObject)
+                    {
+                        objectUniquePtr.reset();
+                    }
+                }
+            }
+
+            // The object passed to the ForEach callback must never be a destructed object
+            for (std::size_t i = 0; i < objectsOriginalAddress.size(); i++)
+            {
+                if (&currentIterationObject == objectsOriginalAddress[i])
+                {
+                    ASSERT_FALSE(objectsDestructed[i]);
+                }
+            }
+
+            iteration++;
+        }
+    );
 }
 
 TEST_F(RegistryTests, ForEach_GivenNewObjectRegisteredDuringCallback_NextForEachDoesIncludeIt)
