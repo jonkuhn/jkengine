@@ -86,6 +86,12 @@ namespace Shared
         Registry(Registry&&) = delete;
         Registry& operator=(Registry&&) = delete;
 
+        template<typename ... Args>
+        inline std::unique_ptr<T> MakeUnique(Args&&... args)
+        {
+            return std::make_unique<T>(*this, std::forward<Args>(args)...);
+        }
+
         inline void Register(T& obj)
         {
             std::scoped_lock<std::mutex> lock(_objectsMutex);
