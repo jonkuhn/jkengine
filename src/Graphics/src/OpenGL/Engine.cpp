@@ -34,12 +34,11 @@ Engine::Engine(Window::IOpenGLWindow& window, unsigned int numberOfDrawingLayers
     _gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-std::unique_ptr<Graphics::ITileAtlas> Engine::CreateTileAtlas(
+Shared::RegUniquePtr<Graphics::ITileAtlas>::T Engine::CreateTileAtlas(
     const IImage& tileAtlasImage,
     const glm::vec2& atlasSizeInTiles)
 {
-    return std::make_unique<TileAtlas>(
-        _tileAtlasRegistry,
+    return _tileAtlasRegistry.MakeUnique<Graphics::ITileAtlas>(
         _gl,
         _numberOfDrawingLayers,
         _tileMapDrawer,

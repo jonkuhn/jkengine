@@ -12,26 +12,14 @@ using namespace Shared;
 
 class DummyObject
 {
-public:
-    DummyObject(Registry<DummyObject>& registry)
-      : _registration(registry, *this)
-    {
 
-    }
-    
-private:
-    Registry<DummyObject>::Registration _registration;
 };
 
-class DummyObjectWithAdditionalNonRegistryConstructorArguments
+class DummyObjectWithConstructorArguments
 {
 public:
-    DummyObjectWithAdditionalNonRegistryConstructorArguments(
-        Registry<DummyObjectWithAdditionalNonRegistryConstructorArguments>& registry,
-        int i,
-        std::string s)
-      : _registration(registry, *this),
-        _i(i),
+    DummyObjectWithConstructorArguments(int i, std::string s)
+      : _i(i),
         _s(std::move(s))
     {
 
@@ -41,7 +29,6 @@ public:
     inline const std::string& s() { return _s; }
 
 private:
-    Registry<DummyObjectWithAdditionalNonRegistryConstructorArguments>::Registration _registration;
     int _i;
     std::string _s;
 };
@@ -49,11 +36,8 @@ private:
 class DummyObjectWithLValueConstructorArgument
 {
 public:
-    DummyObjectWithLValueConstructorArgument(
-        Registry<DummyObjectWithLValueConstructorArgument>& registry,
-        int& i)
-      : _registration(registry, *this),
-        _i(i)
+    DummyObjectWithLValueConstructorArgument(int& i)
+      : _i(i)
     {
 
     }
@@ -61,16 +45,14 @@ public:
     inline int i() { return _i; }
 
 private:
-    Registry<DummyObjectWithLValueConstructorArgument>::Registration _registration;
     int _i;
 };
 
 class DestructionTrackingObject
 {
 public:
-    DestructionTrackingObject(Registry<DestructionTrackingObject>& registry, bool& setWhenDestructorIsCalled)
-      : _setWhenDestructorIsCalled(setWhenDestructorIsCalled),
-        _registration(registry, *this)
+    DestructionTrackingObject(bool& setWhenDestructorIsCalled)
+      : _setWhenDestructorIsCalled(setWhenDestructorIsCalled)
     {
 
     }
@@ -82,7 +64,6 @@ public:
 
 private:
     bool& _setWhenDestructorIsCalled;
-    Registry<DestructionTrackingObject>::Registration _registration;
 };
 
 class RegistryTests : public Test
@@ -121,7 +102,7 @@ TEST_F(RegistryTests, MakeUnique_GivenObjectWithOnlyRegistryConstructorArgument_
 
 TEST_F(RegistryTests, MakeUnique_GivenObjectWithAdditionalNonRegistryConstructorArguments_ReturnsObject)
 {
-    Registry<DummyObjectWithAdditionalNonRegistryConstructorArguments> registry;
+    Registry<DummyObjectWithConstructorArguments> registry;
 
     auto obj = registry.MakeUnique(123, "abc");
 
@@ -222,10 +203,11 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructedDuringCallback_Next
 
 TEST_F(RegistryTests, ForEach_GivenRegisteredObjectLaterInIterationIsDestructedDuringCallback_DestructedObjectsAreNotReturned)
 {
+    ASSERT_TRUE(false) << "TODO: Figure out why this test passes with my latest code";
     Registry<DestructionTrackingObject> registry;
 
     std::array<bool, 3> objectsDestructed = { false, false, false };
-    std::array<Registry<DestructionTrackingObject>::UniquePtr, 3> objectsUniquePtr = {
+    std::array<RegUniquePtr<DestructionTrackingObject>::T, 3> objectsUniquePtr = {
         registry.MakeUnique(objectsDestructed[0]),
         registry.MakeUnique(objectsDestructed[1]),
         registry.MakeUnique(objectsDestructed[2])
@@ -286,7 +268,7 @@ TEST_F(RegistryTests, ForEach_GivenNewObjectRegisteredDuringCallback_NextForEach
     auto obj1 = registry.MakeUnique();
     auto obj2 = registry.MakeUnique();
 
-    Registry<DummyObject>::UniquePtr obj3;
+    RegUniquePtr<DummyObject>::T obj3;
     registry.ForEach(
         [&](DummyObject&)
         {

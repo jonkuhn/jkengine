@@ -9,71 +9,59 @@
 
 namespace Shared
 {
-    template<typename T>
-    class Registry
+    class IDeregisterable
     {
     public:
-        // TODO: Remove this class
-        class Registration
+        virtual void Deregister(void* pointer) = 0;
+    };
+
+    class RegDeleter
+    {
+    public:
+        RegDeleter()
+            : _deregisterable(nullptr)
         {
-        public:
-            Registration(Registry<T>&, T&)
-            {
 
-            }
+        }
 
-            // Do not allow copy.  Allowing a default copy would mean
-            // objects would be de-registered twice.  Perhaps it could
-            // make sense if the new copy registered itself so there
-            // were two registrations.  However, it is unnecessary right
-            // now for current use cases
-            Registration(const Registration&) = delete;
-            Registration& operator=(const Registration&) = delete;
-
-            // Do not allow move.  Allowing a default move would mean 
-            // objects would be de-registered twice (because the pointers
-            // would remain in the source).  A move could be implemented
-            // by nulling out the pointers in the source object.
-            Registration(Registration&&) = delete;
-            Registration& operator=(Registration&&) = delete;
-        };
-
-        class Deleter
+        RegDeleter(IDeregisterable& deregisterable)
+            : _deregisterable(&deregisterable)
         {
-        public:
-            Deleter()
-              : _registry(nullptr)
+
+        }
+
+        void operator()(void* pointer)
+        {
+            if (pointer == nullptr)
             {
-
-            }
-            Deleter(Registry<T>& registry)
-              : _registry(&registry)
-            {
-
-            }
-
-            void operator()(T* object)
-            {
-                if (object == nullptr)
-                {
-                    std::cerr << "FATAL: RegistryDeleter called with nullptr" << std::endl;
-                    std::abort();
-                }
-
-                if (_registry != nullptr)
-                {
-                    _registry->Deregister(*object);
-                }
-                delete object;
+                std::cerr << "FATAL: RegistryDeleter called with nullptr" << std::endl;
+                std::abort();
             }
 
-        private:
-            Registry<T>* _registry;
-        };
-        friend class Deleter;
+            if (_deregisterable != nullptr)
+            {
+                _deregisterable->Deregister(pointer);
+            }
+            delete[] static_cast<uint8_t*>(pointer);
+        }
 
-        typedef std::unique_ptr<T, Deleter> UniquePtr;
+    private:
+        IDeregisterable* _deregisterable;
+    };
 
+    template<typename TInterface>
+    class RegUniquePtr
+    {
+    public:
+        typedef typename std::unique_ptr<TInterface, RegDeleter> T;
+
+        RegUniquePtr() = delete;
+    };
+
+    template<typename T>
+    class Registry final : public IDeregisterable
+    {
+    public:
         Registry()
           : _objectsMutex(),
             _objects()
@@ -103,12 +91,31 @@ namespace Shared
         Registry(Registry&&) = delete;
         Registry& operator=(Registry&&) = delete;
 
-        template<typename ... Args>
-        inline UniquePtr MakeUnique(Args&&... args)
+        // TODO: make real code use this and also figure out how to
+        // return something that wraps unique_ptr from the user-facing
+        // interfaces from the engine.
+        template<typename TInterface = T, typename ... Args>
+        inline typename RegUniquePtr<TInterface>::T MakeUnique(Args&&... args)
         {
-            auto obj = UniquePtr(new T(*this, std::forward<Args>(args)...), Deleter(*this));
-            Register(*obj);
-            return obj;
+            void* memory = new uint8_t[sizeof(T)];
+            T* objRawPointer = new (memory) T(std::forward<Args>(args)...);
+            typename RegUniquePtr<TInterface>::T objUniquePointer(objRawPointer, RegDeleter(*this));
+            Register(*objRawPointer);
+            return objUniquePointer;
+        }
+
+        void Deregister(void* pointer) override
+        {
+            if (pointer == nullptr)
+            {
+                std::cerr << "FATAL: Registry::Deregister called with nullptr" << std::endl;
+                std::abort();
+            }
+            
+            T& obj = *static_cast<T*>(pointer);
+
+            std::scoped_lock<std::mutex> lock(_objectsMutex);
+            _objects.erase(&obj);
         }
 
         typedef std::function<void(T&)> ForEachCallback;
@@ -131,12 +138,6 @@ namespace Shared
         {
             std::scoped_lock<std::mutex> lock(_objectsMutex);
             _objects.insert(&obj);
-        }
-
-        inline void Deregister(T& obj)
-        {
-            std::scoped_lock<std::mutex> lock(_objectsMutex);
-            _objects.erase(&obj);
         }
 
         std::mutex _objectsMutex;

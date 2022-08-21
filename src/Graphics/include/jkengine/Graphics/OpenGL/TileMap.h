@@ -7,8 +7,6 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
-#include <jkengine/Shared/Registry.h>
-
 #include "../ITileMap.h"
 #include "Object2d.h"
 #include "Texture.h"
@@ -22,25 +20,25 @@ namespace Graphics::OpenGL
     {
     public:
         TileMap(
-            Shared::Registry<TileMap>& tileMapRegistry,
             Texture mapTexture,
             glm::vec2 mapSizeInTiles)
           : _object2d(),
             _mapTexture(std::move(mapTexture)),
-            _mapSizeInTiles(std::move(mapSizeInTiles)),
-            _registration(tileMapRegistry, *this)
+            _mapSizeInTiles(std::move(mapSizeInTiles))
         {
 
         }
 
 
-        // To not allow copy because of Registry and Registration
+        // To not allow copy because of Registry::Registration
         // not being copyable
+        // (maybe reconsider since registration has been removed)
         TileMap(const TileMap& other) = delete;
         TileMap& operator=(const TileMap& other) = delete;
 
-        // To not allow move because of Registry and Registration
+        // To not allow move because of Registry::Registration
         // not being moveable
+        // (maybe reconsider since registration has been removed)
         TileMap(TileMap&& other) = delete;
         TileMap& operator=(TileMap&& other) = delete;
 
@@ -93,6 +91,5 @@ namespace Graphics::OpenGL
         Object2d _object2d;
         Texture _mapTexture;
         glm::vec2 _mapSizeInTiles;
-        Shared::Registry<TileMap>::Registration _registration;
     };
 }
