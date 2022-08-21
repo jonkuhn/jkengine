@@ -18,9 +18,51 @@ public:
     {
 
     }
-
+    
 private:
     Registry<DummyObject>::Registration _registration;
+};
+
+class DummyObjectWithAdditionalNonRegistryConstructorArguments
+{
+public:
+    DummyObjectWithAdditionalNonRegistryConstructorArguments(
+        Registry<DummyObjectWithAdditionalNonRegistryConstructorArguments>& registry,
+        int i,
+        std::string s)
+      : _registration(registry, *this),
+        _i(i),
+        _s(std::move(s))
+    {
+
+    }
+
+    inline int i() { return _i; }
+    inline const std::string& s() { return _s; }
+
+private:
+    Registry<DummyObjectWithAdditionalNonRegistryConstructorArguments>::Registration _registration;
+    int _i;
+    std::string _s;
+};
+
+class DummyObjectWithLValueConstructorArgument
+{
+public:
+    DummyObjectWithLValueConstructorArgument(
+        Registry<DummyObjectWithLValueConstructorArgument>& registry,
+        int& i)
+      : _registration(registry, *this),
+        _i(i)
+    {
+
+    }
+
+    inline int i() { return _i; }
+
+private:
+    Registry<DummyObjectWithLValueConstructorArgument>::Registration _registration;
+    int _i;
 };
 
 class DestructionTrackingObject
@@ -67,13 +109,42 @@ void AssertVectorContains(std::vector<T> vec, T objectToFind)
     );
 }
 
+
+TEST_F(RegistryTests, MakeUnique_GivenObjectWithOnlyRegistryConstructorArgument_ReturnsObject)
+{
+    Registry<DummyObject> registry;
+
+    auto obj = registry.MakeUnique();
+
+    ASSERT_NE(obj.get(), nullptr);
+}
+
+TEST_F(RegistryTests, MakeUnique_GivenObjectWithAdditionalNonRegistryConstructorArguments_ReturnsObject)
+{
+    Registry<DummyObjectWithAdditionalNonRegistryConstructorArguments> registry;
+
+    auto obj = registry.MakeUnique(123, "abc");
+
+    ASSERT_NE(obj.get(), nullptr);
+}
+
+TEST_F(RegistryTests, MakeUnique_GivenObjectWithLValueConstructorArgument_ReturnsObject)
+{
+    Registry<DummyObjectWithLValueConstructorArgument> registry;
+
+    int i = 123;
+    auto obj = registry.MakeUnique(i);
+
+    ASSERT_NE(obj.get(), nullptr);
+}
+
 TEST_F(RegistryTests, ForEach_GivenObjectsRegistered_CallsCallbackForEachObject)
 {
     Registry<DummyObject> registry;
 
-    DummyObject obj0(registry);
-    DummyObject obj1(registry);
-    DummyObject obj2(registry);
+    auto obj0 = registry.MakeUnique();
+    auto obj1 = registry.MakeUnique();
+    auto obj2 = registry.MakeUnique();
 
     std::unordered_set<DummyObject*> iteratedObjects;
 
@@ -85,18 +156,18 @@ TEST_F(RegistryTests, ForEach_GivenObjectsRegistered_CallsCallbackForEachObject)
     );
 
     ASSERT_EQ(iteratedObjects.size(), static_cast<size_t>(3));
-    ASSERT_TRUE(iteratedObjects.contains(&obj0));
-    ASSERT_TRUE(iteratedObjects.contains(&obj1));
-    ASSERT_TRUE(iteratedObjects.contains(&obj2));
+    ASSERT_TRUE(iteratedObjects.contains(obj0.get()));
+    ASSERT_TRUE(iteratedObjects.contains(obj1.get()));
+    ASSERT_TRUE(iteratedObjects.contains(obj2.get()));
 }
 
 TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructed_DoesNotCallCallbackForIt)
 {
     Registry<DummyObject> registry;
 
-    auto obj0 = std::make_unique<DummyObject>(registry);
-    auto obj1 = std::make_unique<DummyObject>(registry);
-    auto obj2 = std::make_unique<DummyObject>(registry);
+    auto obj0 = registry.MakeUnique();
+    auto obj1 = registry.MakeUnique();
+    auto obj2 = registry.MakeUnique();
 
     std::unordered_set<DummyObject*> iteratedObjects;
 
@@ -122,10 +193,9 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructedDuringCallback_Next
 {
     Registry<DummyObject> registry;
 
-    auto obj0 = std::make_unique<DummyObject>(registry);
-    auto obj1 = std::make_unique<DummyObject>(registry);
-    auto obj2 = std::make_unique<DummyObject>(registry);
-
+    auto obj0 = registry.MakeUnique();
+    auto obj1 = registry.MakeUnique();
+    auto obj2 = registry.MakeUnique();
 
     registry.ForEach(
         [&](DummyObject& obj)
@@ -156,9 +226,9 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectLaterInIterationIsDestructedD
 
     std::array<bool, 3> objectsDestructed = { false, false, false };
     std::array<std::unique_ptr<DestructionTrackingObject>, 3> objectsUniquePtr = {
-        std::make_unique<DestructionTrackingObject>(registry, objectsDestructed[0]),
-        std::make_unique<DestructionTrackingObject>(registry, objectsDestructed[1]),
-        std::make_unique<DestructionTrackingObject>(registry, objectsDestructed[2])
+        registry.MakeUnique(objectsDestructed[0]),
+        registry.MakeUnique(objectsDestructed[1]),
+        registry.MakeUnique(objectsDestructed[2])
     };
     
     // Save original pointer to each object so original memory address will be
@@ -212,15 +282,15 @@ TEST_F(RegistryTests, ForEach_GivenNewObjectRegisteredDuringCallback_NextForEach
 {
     Registry<DummyObject> registry;
 
-    auto obj0 = std::make_unique<DummyObject>(registry);
-    auto obj1 = std::make_unique<DummyObject>(registry);
-    auto obj2 = std::make_unique<DummyObject>(registry);
+    auto obj0 = registry.MakeUnique();
+    auto obj1 = registry.MakeUnique();
+    auto obj2 = registry.MakeUnique();
 
     std::unique_ptr<DummyObject> obj3;
     registry.ForEach(
         [&](DummyObject&)
         {
-            obj3 = std::make_unique<DummyObject>(registry);
+            obj3 = registry.MakeUnique();
         }
     );
 
@@ -243,9 +313,9 @@ TEST_F(RegistryTests, ForEach_GivenCallbackCallsForEach_InnerAndOuterLoopOverSam
 {
     Registry<DummyObject> registry;
 
-    auto obj0 = std::make_unique<DummyObject>(registry);
-    auto obj1 = std::make_unique<DummyObject>(registry);
-    auto obj2 = std::make_unique<DummyObject>(registry);
+    auto obj0 = registry.MakeUnique();
+    auto obj1 = registry.MakeUnique();
+    auto obj2 = registry.MakeUnique();
 
     std::vector<std::pair<DummyObject*, DummyObject*>> iteratedObjects;
 
