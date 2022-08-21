@@ -225,7 +225,7 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectLaterInIterationIsDestructedD
     Registry<DestructionTrackingObject> registry;
 
     std::array<bool, 3> objectsDestructed = { false, false, false };
-    std::array<std::unique_ptr<DestructionTrackingObject>, 3> objectsUniquePtr = {
+    std::array<Registry<DestructionTrackingObject>::UniquePtr, 3> objectsUniquePtr = {
         registry.MakeUnique(objectsDestructed[0]),
         registry.MakeUnique(objectsDestructed[1]),
         registry.MakeUnique(objectsDestructed[2])
@@ -286,7 +286,7 @@ TEST_F(RegistryTests, ForEach_GivenNewObjectRegisteredDuringCallback_NextForEach
     auto obj1 = registry.MakeUnique();
     auto obj2 = registry.MakeUnique();
 
-    std::unique_ptr<DummyObject> obj3;
+    Registry<DummyObject>::UniquePtr obj3;
     registry.ForEach(
         [&](DummyObject&)
         {

@@ -13,28 +13,13 @@ namespace Shared
     class Registry
     {
     public:
+        // TODO: Remove this class
         class Registration
         {
         public:
-            Registration(Registry<T>& registry, T& obj)
-              : _registry(registry),
-                _obj(obj)
+            Registration(Registry<T>&, T&)
             {
-                _registry.Register(_obj);
-            }
 
-            ~Registration()
-            {
-                try
-                {
-                    _registry.Deregister(_obj);
-                }
-                catch (std::exception &e)
-                {
-                    std::cerr << "FATAL: Caught exception during Registry::Registration "
-                        << "destructor: " << e.what() << std::endl;
-                    std::abort();
-                }
             }
 
             // Do not allow copy.  Allowing a default copy would mean
@@ -51,11 +36,43 @@ namespace Shared
             // by nulling out the pointers in the source object.
             Registration(Registration&&) = delete;
             Registration& operator=(Registration&&) = delete;
+        };
+
+        class Deleter
+        {
+        public:
+            Deleter()
+              : _registry(nullptr)
+            {
+
+            }
+            Deleter(Registry<T>& registry)
+              : _registry(&registry)
+            {
+
+            }
+
+            void operator()(T* object)
+            {
+                if (object == nullptr)
+                {
+                    std::cerr << "FATAL: RegistryDeleter called with nullptr" << std::endl;
+                    std::abort();
+                }
+
+                if (_registry != nullptr)
+                {
+                    _registry->Deregister(*object);
+                }
+                delete object;
+            }
 
         private:
-            Registry<T>& _registry;
-            T& _obj;
+            Registry<T>* _registry;
         };
+        friend class Deleter;
+
+        typedef std::unique_ptr<T, Deleter> UniquePtr;
 
         Registry()
           : _objectsMutex(),
@@ -87,21 +104,11 @@ namespace Shared
         Registry& operator=(Registry&&) = delete;
 
         template<typename ... Args>
-        inline std::unique_ptr<T> MakeUnique(Args&&... args)
+        inline UniquePtr MakeUnique(Args&&... args)
         {
-            return std::make_unique<T>(*this, std::forward<Args>(args)...);
-        }
-
-        inline void Register(T& obj)
-        {
-            std::scoped_lock<std::mutex> lock(_objectsMutex);
-            _objects.insert(&obj);
-        }
-
-        inline void Deregister(T& obj)
-        {
-            std::scoped_lock<std::mutex> lock(_objectsMutex);
-            _objects.erase(&obj);
+            auto obj = UniquePtr(new T(*this, std::forward<Args>(args)...), Deleter(*this));
+            Register(*obj);
+            return obj;
         }
 
         typedef std::function<void(T&)> ForEachCallback;
@@ -120,6 +127,18 @@ namespace Shared
         }
 
     private:
+        inline void Register(T& obj)
+        {
+            std::scoped_lock<std::mutex> lock(_objectsMutex);
+            _objects.insert(&obj);
+        }
+
+        inline void Deregister(T& obj)
+        {
+            std::scoped_lock<std::mutex> lock(_objectsMutex);
+            _objects.erase(&obj);
+        }
+
         std::mutex _objectsMutex;
         std::unordered_set<T*> _objects;
     };
