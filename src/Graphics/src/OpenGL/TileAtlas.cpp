@@ -9,10 +9,9 @@
 
 using namespace Graphics::OpenGL;
 
-std::unique_ptr<Graphics::ITileMap> TileAtlas::CreateTileMap(unsigned int layer, const Graphics::IImage& tileMapImage)
+Shared::RegUniquePtr<Graphics::ITileMap>::T TileAtlas::CreateTileMap(unsigned int layer, const Graphics::IImage& tileMapImage)
 {
-    return std::make_unique<TileMap>(
-        _perLayerTileMapRegistries[layer],
+    return _perLayerTileMapRegistries[layer].MakeUnique<Graphics::ITileMap>(
         Texture(
             *_gl,
             Texture::Params(tileMapImage)
@@ -23,9 +22,9 @@ std::unique_ptr<Graphics::ITileMap> TileAtlas::CreateTileMap(unsigned int layer,
         glm::vec2(tileMapImage.Width(), tileMapImage.Height()));
 }
 
-std::unique_ptr<Graphics::ISprite> TileAtlas::CreateSprite(unsigned int layer)
+Shared::RegUniquePtr<Graphics::ISprite>::T TileAtlas::CreateSprite(unsigned int layer)
 {
-    return std::make_unique<Sprite>(_perLayerSpriteRegistries[layer]);
+    return _perLayerSpriteRegistries[layer].MakeUnique<Graphics::ISprite>();
 }
 
 void TileAtlas::DrawAllOnLayer(unsigned int layer)

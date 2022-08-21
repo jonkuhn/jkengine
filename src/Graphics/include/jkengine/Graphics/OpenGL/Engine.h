@@ -41,7 +41,7 @@ namespace Graphics::OpenGL
             );
         }
 
-        std::unique_ptr<Graphics::ITileAtlas> CreateTileAtlas(
+        Shared::RegUniquePtr<Graphics::ITileAtlas>::T CreateTileAtlas(
             const IImage& tileAtlas,
             const glm::vec2& atlasSizeInTiles) override;
 

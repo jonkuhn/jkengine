@@ -24,7 +24,6 @@ namespace Graphics::OpenGL
     {
     public:
         TileAtlas(
-            Shared::Registry<TileAtlas>& tileAtlasRegistry,
             IOpenGLWrapper& gl,
             unsigned int numberOfDrawingLayers,
             TileMapDrawer& tileMapDrawer,
@@ -37,7 +36,6 @@ namespace Graphics::OpenGL
             _spriteDrawer(&spriteDrawer),
             _atlasTexture(std::move(atlasTexture)),
             _atlasSizeInTiles(std::move(atlasSizeInTiles)),
-            _registration(tileAtlasRegistry, *this),
             _perLayerTileMapRegistries(numberOfDrawingLayers),
             _perLayerSpriteRegistries(numberOfDrawingLayers)
         {
@@ -54,8 +52,8 @@ namespace Graphics::OpenGL
         TileAtlas(TileAtlas&& other) = delete;
         TileAtlas& operator=(TileAtlas&& other) = delete;
 
-        std::unique_ptr<Graphics::ITileMap> CreateTileMap(unsigned int layer, const IImage& tileMapImage) override;
-        std::unique_ptr<Graphics::ISprite> CreateSprite(unsigned int layer) override;
+        Shared::RegUniquePtr<Graphics::ITileMap>::T CreateTileMap(unsigned int layer, const IImage& tileMapImage) override;
+        Shared::RegUniquePtr<Graphics::ISprite>::T CreateSprite(unsigned int layer) override;
 
         inline const Texture& AtlasTexture() const
         {
@@ -75,7 +73,6 @@ namespace Graphics::OpenGL
         SpriteDrawer* _spriteDrawer;
         Texture _atlasTexture;
         glm::vec2 _atlasSizeInTiles;
-        Shared::Registry<TileAtlas>::Registration _registration;
         std::vector<Shared::Registry<TileMap>> _perLayerTileMapRegistries;
         std::vector<Shared::Registry<Sprite>> _perLayerSpriteRegistries;
     };

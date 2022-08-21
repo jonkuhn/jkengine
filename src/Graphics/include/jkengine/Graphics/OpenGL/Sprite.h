@@ -1,7 +1,5 @@
 #pragma once
 
-#include <jkengine/Shared/Registry.h>
-
 #include "../ISprite.h"
 
 #include "Object2d.h"
@@ -11,9 +9,8 @@ namespace Graphics::OpenGL
     class Sprite final : public ISprite
     {
     public:
-        Sprite(Shared::Registry<Sprite>& registry)
-          : _object2d(),
-            _registration(registry, *this)
+        Sprite()
+          : _object2d()
         {
 
         }
@@ -66,6 +63,5 @@ namespace Graphics::OpenGL
     private:
         Object2d _object2d;
         GridLocation _atlasLocation;
-        Shared::Registry<Sprite>::Registration _registration;
     };
 }
