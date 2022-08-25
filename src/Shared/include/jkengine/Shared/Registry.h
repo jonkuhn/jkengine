@@ -9,6 +9,7 @@
 
 namespace Shared
 {
+    // TODO: consider renaming Deregister() to Destroy or Destruct or something.
     class IDeregisterable
     {
     public:
@@ -42,7 +43,7 @@ namespace Shared
             {
                 _deregisterable->Deregister(pointer);
             }
-            delete[] static_cast<uint8_t*>(pointer);
+
         }
 
     private:
@@ -97,7 +98,7 @@ namespace Shared
         template<typename TInterface = T, typename ... Args>
         inline typename RegUniquePtr<TInterface>::T MakeUnique(Args&&... args)
         {
-            void* memory = new uint8_t[sizeof(T)];
+            void* memory = new (std::align_val_t(alignof(T))) uint8_t[sizeof(T)];
             T* objRawPointer = new (memory) T(std::forward<Args>(args)...);
             typename RegUniquePtr<TInterface>::T objUniquePointer(objRawPointer, RegDeleter(*this));
             Register(*objRawPointer);
@@ -113,9 +114,12 @@ namespace Shared
             }
             
             T& obj = *static_cast<T*>(pointer);
+            obj.~T();
 
             std::scoped_lock<std::mutex> lock(_objectsMutex);
             _objects.erase(&obj);
+
+            ::operator delete[] (static_cast<uint8_t*>(pointer), std::align_val_t(alignof(T))) ;
         }
 
         typedef std::function<void(T&)> ForEachCallback;
@@ -141,6 +145,9 @@ namespace Shared
         }
 
         std::mutex _objectsMutex;
+
+        // TODO: allocate a big block of memory that can hold some
+        // number of properly aligned T objects
         std::unordered_set<T*> _objects;
     };
 }
