@@ -201,9 +201,20 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructedDuringCallback_Next
     ASSERT_TRUE(iteratedObjects.contains(obj2.get()));
 }
 
+TEST_F(RegistryTests, ForEach_GivenRegisteredObjectUniquePtrReset_DestructorIsCalled)
+{
+    Registry<DestructionTrackingObject> registry;
+
+    bool destructorWasCalled = false;
+    auto obj = registry.MakeUnique(destructorWasCalled);
+
+    obj.reset();
+
+    ASSERT_TRUE(destructorWasCalled);
+}
+
 TEST_F(RegistryTests, ForEach_GivenRegisteredObjectLaterInIterationIsDestructedDuringCallback_DestructedObjectsAreNotReturned)
 {
-    ASSERT_TRUE(false) << "TODO: Figure out why this test passes with my latest code";
     Registry<DestructionTrackingObject> registry;
 
     std::array<bool, 3> objectsDestructed = { false, false, false };
