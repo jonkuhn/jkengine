@@ -11,14 +11,14 @@
 
 #include "../ITileAtlas.h"
 #include "Texture.h"
+#include "TileMap.h"
+#include "Sprite.h"
 
 namespace Graphics::OpenGL
 {
     class IOpenGLWrapper;
     class TileMapDrawer;
-    class TileMap;
     class SpriteDrawer;
-    class Sprite;
 
     class TileAtlas final : public ITileAtlas
     {
