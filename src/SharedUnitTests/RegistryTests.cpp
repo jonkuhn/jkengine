@@ -4,15 +4,26 @@
 #include <vector>
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include "jkengine/Shared/Registry.h"
 
 using namespace testing;
 using namespace Shared;
 
-class DummyObject
+class DummyObjectWithNonzeroSize
 {
+public:
+    DummyObjectWithNonzeroSize()
+      : _s("default value")
+    {
 
+    }
+
+    inline const std::string& s() { return _s; }
+
+private:
+    std::string _s;
 };
 
 class DummyObjectWithConstructorArguments
@@ -93,7 +104,7 @@ void AssertVectorContains(std::vector<T> vec, T objectToFind)
 
 TEST_F(RegistryTests, MakeUnique_GivenObjectWithOnlyRegistryConstructorArgument_ReturnsObject)
 {
-    Registry<DummyObject> registry;
+    Registry<DummyObjectWithNonzeroSize> registry;
 
     auto obj = registry.MakeUnique();
 
@@ -119,18 +130,62 @@ TEST_F(RegistryTests, MakeUnique_GivenObjectWithLValueConstructorArgument_Return
     ASSERT_NE(obj.get(), nullptr);
 }
 
+TEST_F(RegistryTests, MakeUnique_GivenTwoObjectsCreated_ObjectsAreAligned)
+{
+    Registry<DummyObjectWithNonzeroSize> registry;
+
+    auto obj0 = registry.MakeUnique();
+    auto obj1 = registry.MakeUnique();
+
+    ASSERT_EQ(reinterpret_cast<uintptr_t>(obj0.get()) % alignof(DummyObjectWithNonzeroSize), 0u);
+    ASSERT_EQ(reinterpret_cast<uintptr_t>(obj1.get()) % alignof(DummyObjectWithNonzeroSize), 0u);
+}
+
+TEST_F(RegistryTests, MakeUnique_GivenTwoObjectsCreated_SecondObjectIsImmediatelyAfterFirstInMemory)
+{
+    Registry<DummyObjectWithNonzeroSize> registry;
+
+    auto obj0 = registry.MakeUnique();
+    auto obj1 = registry.MakeUnique();
+
+    ASSERT_EQ(obj0.get() + 1, obj1.get());
+}
+
+TEST_F(RegistryTests, MakeUnique_GivenLimitOf8ObjectsAndCalled9Times_ThrowsLogicError)
+{
+    static constexpr size_t ObjectLimit = 8;
+    Registry<DummyObjectWithNonzeroSize, ObjectLimit> registry;
+    std::vector<RegUniquePtr<DummyObjectWithNonzeroSize>::T> keepObjectsInScope;
+
+    EXPECT_THROW(
+        try
+        {
+            for (size_t i = 0; i < ObjectLimit + 1; i++)
+            {
+                keepObjectsInScope.push_back(registry.MakeUnique());
+            }
+        }
+        catch (std::logic_error& e)
+        {
+            std::cout << "caught logic exception " << e.what() << std::endl;
+            ASSERT_THAT(e.what(), HasSubstr("Pool is full"));
+            throw;
+        },
+        std::logic_error);
+}
+
 TEST_F(RegistryTests, ForEach_GivenObjectsRegistered_CallsCallbackForEachObject)
 {
-    Registry<DummyObject> registry;
+    Registry<DummyObjectWithNonzeroSize> registry;
 
     auto obj0 = registry.MakeUnique();
     auto obj1 = registry.MakeUnique();
     auto obj2 = registry.MakeUnique();
 
-    std::unordered_set<DummyObject*> iteratedObjects;
+    std::unordered_set<DummyObjectWithNonzeroSize*> iteratedObjects;
 
     registry.ForEach(
-        [&](DummyObject& obj)
+        [&](DummyObjectWithNonzeroSize& obj)
         {
             iteratedObjects.insert(&obj);
         }
@@ -144,18 +199,18 @@ TEST_F(RegistryTests, ForEach_GivenObjectsRegistered_CallsCallbackForEachObject)
 
 TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructed_DoesNotCallCallbackForIt)
 {
-    Registry<DummyObject> registry;
+    Registry<DummyObjectWithNonzeroSize> registry;
 
     auto obj0 = registry.MakeUnique();
     auto obj1 = registry.MakeUnique();
     auto obj2 = registry.MakeUnique();
 
-    std::unordered_set<DummyObject*> iteratedObjects;
+    std::unordered_set<DummyObjectWithNonzeroSize*> iteratedObjects;
 
     obj1.reset();
 
     registry.ForEach(
-        [&](DummyObject& obj)
+        [&](DummyObjectWithNonzeroSize& obj)
         {
             iteratedObjects.insert(&obj);
         }
@@ -172,14 +227,14 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructed_DoesNotCallCallbac
 
 TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructedDuringCallback_NextForEachDoesNotIncludeIt)
 {
-    Registry<DummyObject> registry;
+    Registry<DummyObjectWithNonzeroSize> registry;
 
     auto obj0 = registry.MakeUnique();
     auto obj1 = registry.MakeUnique();
     auto obj2 = registry.MakeUnique();
 
     registry.ForEach(
-        [&](DummyObject& obj)
+        [&](DummyObjectWithNonzeroSize& obj)
         {
             if(&obj == obj1.get())
             {
@@ -188,9 +243,9 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructedDuringCallback_Next
         }
     );
 
-    std::unordered_set<DummyObject*> iteratedObjects;
+    std::unordered_set<DummyObjectWithNonzeroSize*> iteratedObjects;
     registry.ForEach(
-        [&](DummyObject& obj)
+        [&](DummyObjectWithNonzeroSize& obj)
         {
             iteratedObjects.insert(&obj);
         }
@@ -273,23 +328,23 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectLaterInIterationIsDestructedD
 
 TEST_F(RegistryTests, ForEach_GivenNewObjectRegisteredDuringCallback_NextForEachDoesIncludeIt)
 {
-    Registry<DummyObject> registry;
+    Registry<DummyObjectWithNonzeroSize> registry;
 
     auto obj0 = registry.MakeUnique();
     auto obj1 = registry.MakeUnique();
     auto obj2 = registry.MakeUnique();
 
-    RegUniquePtr<DummyObject>::T obj3;
+    RegUniquePtr<DummyObjectWithNonzeroSize>::T obj3;
     registry.ForEach(
-        [&](DummyObject&)
+        [&](DummyObjectWithNonzeroSize&)
         {
             obj3 = registry.MakeUnique();
         }
     );
 
-    std::unordered_set<DummyObject*> iteratedObjects;
+    std::unordered_set<DummyObjectWithNonzeroSize*> iteratedObjects;
     registry.ForEach(
-        [&](DummyObject& obj)
+        [&](DummyObjectWithNonzeroSize& obj)
         {
             iteratedObjects.insert(&obj);
         }
@@ -304,20 +359,20 @@ TEST_F(RegistryTests, ForEach_GivenNewObjectRegisteredDuringCallback_NextForEach
 
 TEST_F(RegistryTests, ForEach_GivenCallbackCallsForEach_InnerAndOuterLoopOverSameObjects)
 {
-    Registry<DummyObject> registry;
+    Registry<DummyObjectWithNonzeroSize> registry;
 
     auto obj0 = registry.MakeUnique();
     auto obj1 = registry.MakeUnique();
     auto obj2 = registry.MakeUnique();
 
-    std::vector<std::pair<DummyObject*, DummyObject*>> iteratedObjects;
+    std::vector<std::pair<DummyObjectWithNonzeroSize*, DummyObjectWithNonzeroSize*>> iteratedObjects;
 
-    std::unique_ptr<DummyObject> obj3;
+    std::unique_ptr<DummyObjectWithNonzeroSize> obj3;
     registry.ForEach(
-        [&](DummyObject& outerObj)
+        [&](DummyObjectWithNonzeroSize& outerObj)
         {
             registry.ForEach(
-                [&](DummyObject& innerObj)
+                [&](DummyObjectWithNonzeroSize& innerObj)
                 {
                     iteratedObjects.push_back(std::make_pair(&outerObj, &innerObj));
                 }
