@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <array>
+#include <set>
 #include <unordered_set>
 #include <vector>
 
@@ -151,27 +152,65 @@ TEST_F(RegistryTests, MakeUnique_GivenTwoObjectsCreated_SecondObjectIsImmediatel
     ASSERT_EQ(obj0.get() + 1, obj1.get());
 }
 
-TEST_F(RegistryTests, MakeUnique_GivenLimitOf8ObjectsAndCalled9Times_ThrowsLogicError)
+TEST_F(RegistryTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_AlwaysReturnsNonNull)
 {
-    static constexpr size_t ObjectLimit = 8;
-    Registry<DummyObjectWithNonzeroSize, ObjectLimit> registry;
+    static constexpr size_t CapacityPerChunk = 8;
+    Registry<DummyObjectWithNonzeroSize, CapacityPerChunk> registry;
     std::vector<RegUniquePtr<DummyObjectWithNonzeroSize>::T> keepObjectsInScope;
 
-    EXPECT_THROW(
-        try
+    ASSERT_NO_THROW(
+        for (size_t i = 0; i < CapacityPerChunk + 1; i++)
         {
-            for (size_t i = 0; i < ObjectLimit + 1; i++)
-            {
-                keepObjectsInScope.push_back(registry.MakeUnique());
-            }
+            auto obj = registry.MakeUnique();
+            ASSERT_NE(obj.get(), nullptr);
+            keepObjectsInScope.push_back(std::move(obj));
+            std::cout << "Created object " << std::dec << i << std::endl;
         }
-        catch (std::logic_error& e)
+    );
+}
+
+TEST_F(RegistryTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_AllAddressesAreUnique)
+{
+    static constexpr size_t CapacityPerChunk = 8;
+    Registry<DummyObjectWithNonzeroSize, CapacityPerChunk> registry;
+    std::vector<RegUniquePtr<DummyObjectWithNonzeroSize>::T> keepObjectsInScope;
+    std::set<DummyObjectWithNonzeroSize*> setOfUniquePointerValues;
+
+    for (size_t i = 0; i < CapacityPerChunk + 1; i++)
+    {
+        auto obj = registry.MakeUnique();
+        setOfUniquePointerValues.insert(obj.get());
+        keepObjectsInScope.push_back(std::move(obj));
+    }
+
+    ASSERT_EQ(setOfUniquePointerValues.size(), CapacityPerChunk+1);
+}
+
+TEST_F(RegistryTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_AddressesDidNotChange)
+{
+    static constexpr size_t CapacityPerChunk = 8;
+    Registry<DummyObjectWithNonzeroSize, CapacityPerChunk> registry;
+    std::vector<RegUniquePtr<DummyObjectWithNonzeroSize>::T> objects;
+
+    for (size_t i = 0; i < CapacityPerChunk + 1; i++)
+    {
+        auto obj = registry.MakeUnique();
+        objects.push_back(std::move(obj));
+    }
+
+    // Assert that each initial address of an object is contained
+    // in the list of objects iterated by ForEach
+    std::unordered_set<DummyObjectWithNonzeroSize*> iteratedObjects;
+    registry.ForEach(
+        [&](DummyObjectWithNonzeroSize& obj)
         {
-            std::cout << "caught logic exception " << e.what() << std::endl;
-            ASSERT_THAT(e.what(), HasSubstr("Pool is full"));
-            throw;
-        },
-        std::logic_error);
+            iteratedObjects.insert(&obj);
+        }
+    );
+    for (auto& obj : objects)
+    {
+        ASSERT_TRUE(iteratedObjects.contains(obj.get()));
+    }
 }
 
 TEST_F(RegistryTests, ForEach_GivenObjectsRegistered_CallsCallbackForEachObject)
