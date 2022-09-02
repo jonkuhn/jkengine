@@ -30,15 +30,9 @@ namespace Graphics::OpenGL
         }
 
 
-        // To not allow copy because of Registry::Registration
-        // not being copyable
-        // (maybe reconsider since registration has been removed)
         TileMap(const TileMap& other) = delete;
         TileMap& operator=(const TileMap& other) = delete;
 
-        // To not allow move because of Registry::Registration
-        // not being moveable
-        // (maybe reconsider since registration has been removed)
         TileMap(TileMap&& other) = delete;
         TileMap& operator=(TileMap&& other) = delete;
 

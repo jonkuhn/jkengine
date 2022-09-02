@@ -14,7 +14,7 @@ Engine::Engine(Window::IOpenGLWindow& window, unsigned int numberOfDrawingLayers
       _camera2d(),
       _tileMapDrawer(_tileMapShaderProgram, _unitQuadVertexArray, _camera2d),
       _spriteDrawer(_spriteShaderProgram, _unitQuadVertexArray, _camera2d),
-      _tileAtlasRegistry(),
+      _tileAtlasPool(),
       _numberOfDrawingLayers(numberOfDrawingLayers)
 {
     // Enable alpha blending so that sprites and tile maps can use
@@ -34,11 +34,11 @@ Engine::Engine(Window::IOpenGLWindow& window, unsigned int numberOfDrawingLayers
     _gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-Shared::RegUniquePtr<Graphics::ITileAtlas>::T Engine::CreateTileAtlas(
+Shared::PoolUniquePtr<Graphics::ITileAtlas>::T Engine::CreateTileAtlas(
     const IImage& tileAtlasImage,
     const glm::vec2& atlasSizeInTiles)
 {
-    return _tileAtlasRegistry.MakeUnique<Graphics::ITileAtlas>(
+    return _tileAtlasPool.MakeUnique<Graphics::ITileAtlas>(
         _gl,
         _numberOfDrawingLayers,
         _tileMapDrawer,
@@ -64,7 +64,7 @@ void Engine::Render()
 
     for(unsigned int layer = 0; layer < _numberOfDrawingLayers; layer++)
     {
-        _tileAtlasRegistry.ForEach(
+        _tileAtlasPool.ForEach(
             [&](TileAtlas& tileAtlas)
             {
                 tileAtlas.DrawAllOnLayer(layer);

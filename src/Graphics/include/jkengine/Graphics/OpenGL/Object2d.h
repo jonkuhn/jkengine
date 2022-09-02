@@ -28,13 +28,9 @@ namespace Graphics::OpenGL
 
         }
 
-        // To not allow copy because of Registry and Registration
-        // not being copyable
         Object2d(const Object2d&) = delete;
         Object2d& operator=(const Object2d&) = delete;
 
-        // To not allow move because of Registry and Registration
-        // not being moveable
         Object2d(Object2d&&) = delete;
         Object2d& operator=(Object2d&&) = delete;
 

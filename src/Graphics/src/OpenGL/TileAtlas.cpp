@@ -9,7 +9,7 @@
 
 using namespace Graphics::OpenGL;
 
-Shared::RegUniquePtr<Graphics::ITileMap>::T TileAtlas::CreateTileMap(unsigned int layer, const Graphics::IImage& tileMapImage)
+Shared::PoolUniquePtr<Graphics::ITileMap>::T TileAtlas::CreateTileMap(unsigned int layer, const Graphics::IImage& tileMapImage)
 {
     return _perLayerTileMapRegistries[layer].MakeUnique<Graphics::ITileMap>(
         Texture(
@@ -22,7 +22,7 @@ Shared::RegUniquePtr<Graphics::ITileMap>::T TileAtlas::CreateTileMap(unsigned in
         glm::vec2(tileMapImage.Width(), tileMapImage.Height()));
 }
 
-Shared::RegUniquePtr<Graphics::ISprite>::T TileAtlas::CreateSprite(unsigned int layer)
+Shared::PoolUniquePtr<Graphics::ISprite>::T TileAtlas::CreateSprite(unsigned int layer)
 {
     return _perLayerSpriteRegistries[layer].MakeUnique<Graphics::ISprite>();
 }

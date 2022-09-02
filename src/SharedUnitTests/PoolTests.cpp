@@ -7,7 +7,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include "jkengine/Shared/Registry.h"
+#include "jkengine/Shared/Pool.h"
 
 using namespace testing;
 using namespace Shared;
@@ -78,10 +78,10 @@ private:
     bool& _setWhenDestructorIsCalled;
 };
 
-class RegistryTests : public Test
+class PoolTests : public Test
 {
 public:
-    RegistryTests()
+    PoolTests()
     {
 
     }
@@ -103,65 +103,65 @@ void AssertVectorContains(std::vector<T> vec, T objectToFind)
 }
 
 
-TEST_F(RegistryTests, MakeUnique_GivenObjectWithOnlyRegistryConstructorArgument_ReturnsObject)
+TEST_F(PoolTests, MakeUnique_GivenObjectWithOnlyPoolConstructorArgument_ReturnsObject)
 {
-    Registry<DummyObjectWithNonzeroSize> registry;
+    Pool<DummyObjectWithNonzeroSize> pool;
 
-    auto obj = registry.MakeUnique();
+    auto obj = pool.MakeUnique();
 
     ASSERT_NE(obj.get(), nullptr);
 }
 
-TEST_F(RegistryTests, MakeUnique_GivenObjectWithAdditionalNonRegistryConstructorArguments_ReturnsObject)
+TEST_F(PoolTests, MakeUnique_GivenObjectWithAdditionalNonPoolConstructorArguments_ReturnsObject)
 {
-    Registry<DummyObjectWithConstructorArguments> registry;
+    Pool<DummyObjectWithConstructorArguments> pool;
 
-    auto obj = registry.MakeUnique(123, "abc");
+    auto obj = pool.MakeUnique(123, "abc");
 
     ASSERT_NE(obj.get(), nullptr);
 }
 
-TEST_F(RegistryTests, MakeUnique_GivenObjectWithLValueConstructorArgument_ReturnsObject)
+TEST_F(PoolTests, MakeUnique_GivenObjectWithLValueConstructorArgument_ReturnsObject)
 {
-    Registry<DummyObjectWithLValueConstructorArgument> registry;
+    Pool<DummyObjectWithLValueConstructorArgument> pool;
 
     int i = 123;
-    auto obj = registry.MakeUnique(i);
+    auto obj = pool.MakeUnique(i);
 
     ASSERT_NE(obj.get(), nullptr);
 }
 
-TEST_F(RegistryTests, MakeUnique_GivenTwoObjectsCreated_ObjectsAreAligned)
+TEST_F(PoolTests, MakeUnique_GivenTwoObjectsCreated_ObjectsAreAligned)
 {
-    Registry<DummyObjectWithNonzeroSize> registry;
+    Pool<DummyObjectWithNonzeroSize> pool;
 
-    auto obj0 = registry.MakeUnique();
-    auto obj1 = registry.MakeUnique();
+    auto obj0 = pool.MakeUnique();
+    auto obj1 = pool.MakeUnique();
 
     ASSERT_EQ(reinterpret_cast<uintptr_t>(obj0.get()) % alignof(DummyObjectWithNonzeroSize), 0u);
     ASSERT_EQ(reinterpret_cast<uintptr_t>(obj1.get()) % alignof(DummyObjectWithNonzeroSize), 0u);
 }
 
-TEST_F(RegistryTests, MakeUnique_GivenTwoObjectsCreated_SecondObjectIsImmediatelyAfterFirstInMemory)
+TEST_F(PoolTests, MakeUnique_GivenTwoObjectsCreated_SecondObjectIsImmediatelyAfterFirstInMemory)
 {
-    Registry<DummyObjectWithNonzeroSize> registry;
+    Pool<DummyObjectWithNonzeroSize> pool;
 
-    auto obj0 = registry.MakeUnique();
-    auto obj1 = registry.MakeUnique();
+    auto obj0 = pool.MakeUnique();
+    auto obj1 = pool.MakeUnique();
 
     ASSERT_EQ(obj0.get() + 1, obj1.get());
 }
 
-TEST_F(RegistryTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_AlwaysReturnsNonNull)
+TEST_F(PoolTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_AlwaysReturnsNonNull)
 {
     static constexpr size_t CapacityPerChunk = 8;
-    Registry<DummyObjectWithNonzeroSize, CapacityPerChunk> registry;
-    std::vector<RegUniquePtr<DummyObjectWithNonzeroSize>::T> keepObjectsInScope;
+    Pool<DummyObjectWithNonzeroSize, CapacityPerChunk> pool;
+    std::vector<PoolUniquePtr<DummyObjectWithNonzeroSize>::T> keepObjectsInScope;
 
     ASSERT_NO_THROW(
         for (size_t i = 0; i < CapacityPerChunk + 1; i++)
         {
-            auto obj = registry.MakeUnique();
+            auto obj = pool.MakeUnique();
             ASSERT_NE(obj.get(), nullptr);
             keepObjectsInScope.push_back(std::move(obj));
             std::cout << "Created object " << std::dec << i << std::endl;
@@ -169,16 +169,16 @@ TEST_F(RegistryTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_A
     );
 }
 
-TEST_F(RegistryTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_AllAddressesAreUnique)
+TEST_F(PoolTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_AllAddressesAreUnique)
 {
     static constexpr size_t CapacityPerChunk = 8;
-    Registry<DummyObjectWithNonzeroSize, CapacityPerChunk> registry;
-    std::vector<RegUniquePtr<DummyObjectWithNonzeroSize>::T> keepObjectsInScope;
+    Pool<DummyObjectWithNonzeroSize, CapacityPerChunk> pool;
+    std::vector<PoolUniquePtr<DummyObjectWithNonzeroSize>::T> keepObjectsInScope;
     std::set<DummyObjectWithNonzeroSize*> setOfUniquePointerValues;
 
     for (size_t i = 0; i < CapacityPerChunk + 1; i++)
     {
-        auto obj = registry.MakeUnique();
+        auto obj = pool.MakeUnique();
         setOfUniquePointerValues.insert(obj.get());
         keepObjectsInScope.push_back(std::move(obj));
     }
@@ -186,22 +186,22 @@ TEST_F(RegistryTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_A
     ASSERT_EQ(setOfUniquePointerValues.size(), CapacityPerChunk+1);
 }
 
-TEST_F(RegistryTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_AddressesDidNotChange)
+TEST_F(PoolTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_AddressesDidNotChange)
 {
     static constexpr size_t CapacityPerChunk = 8;
-    Registry<DummyObjectWithNonzeroSize, CapacityPerChunk> registry;
-    std::vector<RegUniquePtr<DummyObjectWithNonzeroSize>::T> objects;
+    Pool<DummyObjectWithNonzeroSize, CapacityPerChunk> pool;
+    std::vector<PoolUniquePtr<DummyObjectWithNonzeroSize>::T> objects;
 
     for (size_t i = 0; i < CapacityPerChunk + 1; i++)
     {
-        auto obj = registry.MakeUnique();
+        auto obj = pool.MakeUnique();
         objects.push_back(std::move(obj));
     }
 
     // Assert that each initial address of an object is contained
     // in the list of objects iterated by ForEach
     std::unordered_set<DummyObjectWithNonzeroSize*> iteratedObjects;
-    registry.ForEach(
+    pool.ForEach(
         [&](DummyObjectWithNonzeroSize& obj)
         {
             iteratedObjects.insert(&obj);
@@ -213,17 +213,17 @@ TEST_F(RegistryTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_A
     }
 }
 
-TEST_F(RegistryTests, ForEach_GivenObjectsRegistered_CallsCallbackForEachObject)
+TEST_F(PoolTests, ForEach_GivenObjectsRegistered_CallsCallbackForEachObject)
 {
-    Registry<DummyObjectWithNonzeroSize> registry;
+    Pool<DummyObjectWithNonzeroSize> pool;
 
-    auto obj0 = registry.MakeUnique();
-    auto obj1 = registry.MakeUnique();
-    auto obj2 = registry.MakeUnique();
+    auto obj0 = pool.MakeUnique();
+    auto obj1 = pool.MakeUnique();
+    auto obj2 = pool.MakeUnique();
 
     std::unordered_set<DummyObjectWithNonzeroSize*> iteratedObjects;
 
-    registry.ForEach(
+    pool.ForEach(
         [&](DummyObjectWithNonzeroSize& obj)
         {
             iteratedObjects.insert(&obj);
@@ -236,19 +236,19 @@ TEST_F(RegistryTests, ForEach_GivenObjectsRegistered_CallsCallbackForEachObject)
     ASSERT_TRUE(iteratedObjects.contains(obj2.get()));
 }
 
-TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructed_DoesNotCallCallbackForIt)
+TEST_F(PoolTests, ForEach_GivenRegisteredObjectDestructed_DoesNotCallCallbackForIt)
 {
-    Registry<DummyObjectWithNonzeroSize> registry;
+    Pool<DummyObjectWithNonzeroSize> pool;
 
-    auto obj0 = registry.MakeUnique();
-    auto obj1 = registry.MakeUnique();
-    auto obj2 = registry.MakeUnique();
+    auto obj0 = pool.MakeUnique();
+    auto obj1 = pool.MakeUnique();
+    auto obj2 = pool.MakeUnique();
 
     std::unordered_set<DummyObjectWithNonzeroSize*> iteratedObjects;
 
     obj1.reset();
 
-    registry.ForEach(
+    pool.ForEach(
         [&](DummyObjectWithNonzeroSize& obj)
         {
             iteratedObjects.insert(&obj);
@@ -264,15 +264,15 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructed_DoesNotCallCallbac
     ASSERT_FALSE(iteratedObjects.contains(obj1.get()));
 }
 
-TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructedDuringCallback_NextForEachDoesNotIncludeIt)
+TEST_F(PoolTests, ForEach_GivenRegisteredObjectDestructedDuringCallback_NextForEachDoesNotIncludeIt)
 {
-    Registry<DummyObjectWithNonzeroSize> registry;
+    Pool<DummyObjectWithNonzeroSize> pool;
 
-    auto obj0 = registry.MakeUnique();
-    auto obj1 = registry.MakeUnique();
-    auto obj2 = registry.MakeUnique();
+    auto obj0 = pool.MakeUnique();
+    auto obj1 = pool.MakeUnique();
+    auto obj2 = pool.MakeUnique();
 
-    registry.ForEach(
+    pool.ForEach(
         [&](DummyObjectWithNonzeroSize& obj)
         {
             if(&obj == obj1.get())
@@ -283,7 +283,7 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructedDuringCallback_Next
     );
 
     std::unordered_set<DummyObjectWithNonzeroSize*> iteratedObjects;
-    registry.ForEach(
+    pool.ForEach(
         [&](DummyObjectWithNonzeroSize& obj)
         {
             iteratedObjects.insert(&obj);
@@ -295,27 +295,27 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectDestructedDuringCallback_Next
     ASSERT_TRUE(iteratedObjects.contains(obj2.get()));
 }
 
-TEST_F(RegistryTests, ForEach_GivenRegisteredObjectUniquePtrReset_DestructorIsCalled)
+TEST_F(PoolTests, ForEach_GivenRegisteredObjectUniquePtrReset_DestructorIsCalled)
 {
-    Registry<DestructionTrackingObject> registry;
+    Pool<DestructionTrackingObject> pool;
 
     bool destructorWasCalled = false;
-    auto obj = registry.MakeUnique(destructorWasCalled);
+    auto obj = pool.MakeUnique(destructorWasCalled);
 
     obj.reset();
 
     ASSERT_TRUE(destructorWasCalled);
 }
 
-TEST_F(RegistryTests, ForEach_GivenRegisteredObjectLaterInIterationIsDestructedDuringCallback_DestructedObjectsAreNotReturned)
+TEST_F(PoolTests, ForEach_GivenRegisteredObjectLaterInIterationIsDestructedDuringCallback_DestructedObjectsAreNotReturned)
 {
-    Registry<DestructionTrackingObject> registry;
+    Pool<DestructionTrackingObject> pool;
 
     std::array<bool, 3> objectsDestructed = { false, false, false };
-    std::array<RegUniquePtr<DestructionTrackingObject>::T, 3> objectsUniquePtr = {
-        registry.MakeUnique(objectsDestructed[0]),
-        registry.MakeUnique(objectsDestructed[1]),
-        registry.MakeUnique(objectsDestructed[2])
+    std::array<PoolUniquePtr<DestructionTrackingObject>::T, 3> objectsUniquePtr = {
+        pool.MakeUnique(objectsDestructed[0]),
+        pool.MakeUnique(objectsDestructed[1]),
+        pool.MakeUnique(objectsDestructed[2])
     };
     
     // Save original pointer to each object so original memory address will be
@@ -331,7 +331,7 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectLaterInIterationIsDestructedD
     std::cout << "objectsOriginalAddress[2] = 0x" << std::ios::hex << objectsOriginalAddress[2] << std::endl;
 
     int iteration = 0;
-    registry.ForEach(
+    pool.ForEach(
         [&](DestructionTrackingObject& currentIterationObject)
         {
             std::cout << "iteration " << iteration
@@ -365,24 +365,24 @@ TEST_F(RegistryTests, ForEach_GivenRegisteredObjectLaterInIterationIsDestructedD
     );
 }
 
-TEST_F(RegistryTests, ForEach_GivenNewObjectRegisteredDuringCallback_NextForEachDoesIncludeIt)
+TEST_F(PoolTests, ForEach_GivenNewObjectRegisteredDuringCallback_NextForEachDoesIncludeIt)
 {
-    Registry<DummyObjectWithNonzeroSize> registry;
+    Pool<DummyObjectWithNonzeroSize> pool;
 
-    auto obj0 = registry.MakeUnique();
-    auto obj1 = registry.MakeUnique();
-    auto obj2 = registry.MakeUnique();
+    auto obj0 = pool.MakeUnique();
+    auto obj1 = pool.MakeUnique();
+    auto obj2 = pool.MakeUnique();
 
-    RegUniquePtr<DummyObjectWithNonzeroSize>::T obj3;
-    registry.ForEach(
+    PoolUniquePtr<DummyObjectWithNonzeroSize>::T obj3;
+    pool.ForEach(
         [&](DummyObjectWithNonzeroSize&)
         {
-            obj3 = registry.MakeUnique();
+            obj3 = pool.MakeUnique();
         }
     );
 
     std::unordered_set<DummyObjectWithNonzeroSize*> iteratedObjects;
-    registry.ForEach(
+    pool.ForEach(
         [&](DummyObjectWithNonzeroSize& obj)
         {
             iteratedObjects.insert(&obj);
@@ -396,21 +396,21 @@ TEST_F(RegistryTests, ForEach_GivenNewObjectRegisteredDuringCallback_NextForEach
     ASSERT_TRUE(iteratedObjects.contains(obj3.get()));
 }
 
-TEST_F(RegistryTests, ForEach_GivenCallbackCallsForEach_InnerAndOuterLoopOverSameObjects)
+TEST_F(PoolTests, ForEach_GivenCallbackCallsForEach_InnerAndOuterLoopOverSameObjects)
 {
-    Registry<DummyObjectWithNonzeroSize> registry;
+    Pool<DummyObjectWithNonzeroSize> pool;
 
-    auto obj0 = registry.MakeUnique();
-    auto obj1 = registry.MakeUnique();
-    auto obj2 = registry.MakeUnique();
+    auto obj0 = pool.MakeUnique();
+    auto obj1 = pool.MakeUnique();
+    auto obj2 = pool.MakeUnique();
 
     std::vector<std::pair<DummyObjectWithNonzeroSize*, DummyObjectWithNonzeroSize*>> iteratedObjects;
 
     std::unique_ptr<DummyObjectWithNonzeroSize> obj3;
-    registry.ForEach(
+    pool.ForEach(
         [&](DummyObjectWithNonzeroSize& outerObj)
         {
-            registry.ForEach(
+            pool.ForEach(
                 [&](DummyObjectWithNonzeroSize& innerObj)
                 {
                     iteratedObjects.push_back(std::make_pair(&outerObj, &innerObj));
