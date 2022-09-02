@@ -16,16 +16,16 @@ namespace Shared
         virtual void Deregister(void* pointer) = 0;
     };
 
-    class RegDeleter
+    class PoolDeleter
     {
     public:
-        RegDeleter()
+        PoolDeleter()
             : _deregisterable(nullptr)
         {
 
         }
 
-        RegDeleter(IDeregisterable& deregisterable)
+        PoolDeleter(IDeregisterable& deregisterable)
             : _deregisterable(&deregisterable)
         {
 
@@ -35,7 +35,7 @@ namespace Shared
         {
             if (pointer == nullptr)
             {
-                std::cerr << "FATAL: RegistryDeleter called with nullptr" << std::endl;
+                std::cerr << "FATAL: PoolDeleter called with nullptr" << std::endl;
                 std::abort();
             }
 
@@ -51,20 +51,20 @@ namespace Shared
     };
 
     template<typename TInterface>
-    class RegUniquePtr
+    class PoolUniquePtr
     {
     public:
-        typedef typename std::unique_ptr<TInterface, RegDeleter> T;
+        typedef typename std::unique_ptr<TInterface, PoolDeleter> T;
 
-        RegUniquePtr() = delete;
+        PoolUniquePtr() = delete;
     };
 
     // TODO: Rename to Pool
     template<typename T, size_t CapacityPerChunk = 128>
-    class Registry final : public IDeregisterable
+    class Pool final : public IDeregisterable
     {
     public:
-        Registry()
+        Pool()
           : _mutex(),
             _isChunkIndexAllocated(),
             _memoryChunks(),
@@ -73,7 +73,7 @@ namespace Shared
             AllocateNewChunk();
         }
 
-        ~Registry()
+        ~Pool()
         {
             size_t countStillAllocated = 0;
             for(auto& isIndexAllocated : _isChunkIndexAllocated)
@@ -86,7 +86,7 @@ namespace Shared
 
             if (countStillAllocated)
             {
-                std::cerr << "FATAL: Registry destructor called with "
+                std::cerr << "FATAL: Pool destructor called with "
                     << countStillAllocated << " objects still registered."
                     << std::endl;
                 std::abort();
@@ -99,19 +99,19 @@ namespace Shared
 
         }
 
-        // Do not allow copy.  If it were copyable then registrations
+        // Do not allow copy.  If it were copyable then PoolDeleter
         // would only de-register from the original not the copy.
-        Registry(const Registry&) = delete;
-        Registry& operator=(const Registry&) = delete;
+        Pool(const Pool&) = delete;
+        Pool& operator=(const Pool&) = delete;
 
-        // Do not allow move.  If it were moveable then the registrations
+        // Do not allow move.  If it were moveable then the PoolDeleter
         // would need to somehow be updated to point at the destination
-        // registry rather than the source.
-        Registry(Registry&&) = delete;
-        Registry& operator=(Registry&&) = delete;
+        // pool rather than the source.
+        Pool(Pool&&) = delete;
+        Pool& operator=(Pool&&) = delete;
 
         template<typename TInterface = T, typename ... Args>
-        inline typename RegUniquePtr<TInterface>::T MakeUnique(Args&&... args)
+        inline typename PoolUniquePtr<TInterface>::T MakeUnique(Args&&... args)
         {
             void* memoryForObj = TryToFindMemoryForNewObject();
             if (memoryForObj == nullptr)
@@ -125,9 +125,9 @@ namespace Shared
             // TODO: consider clearing _isIndexAllocated[i] if the following
             // throws by using an RAII object to set _isIndexAllocated[i]
 
-            typename RegUniquePtr<TInterface>::T objUniquePointer(
+            typename PoolUniquePtr<TInterface>::T objUniquePointer(
                 new (memoryForObj) T(std::forward<Args>(args)...),
-                RegDeleter(*this));
+                PoolDeleter(*this));
 
             return objUniquePointer;
         }
@@ -136,7 +136,7 @@ namespace Shared
         {
             if (pointer == nullptr)
             {
-                std::cerr << "FATAL: Registry::Deregister called with nullptr" << std::endl;
+                std::cerr << "FATAL: Pool::Deregister called with nullptr" << std::endl;
                 std::abort();
             }
 

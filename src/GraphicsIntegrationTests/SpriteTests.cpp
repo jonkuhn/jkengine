@@ -38,7 +38,7 @@ protected:
     Window::GlfwWindow _window;
     std::unique_ptr<IEngine> _engine;
     ICamera2d* _camera;
-    Shared::RegUniquePtr<ITileAtlas>::T _atlasColorTilesEmptyCenters4x4;
+    Shared::PoolUniquePtr<ITileAtlas>::T _atlasColorTilesEmptyCenters4x4;
 };
 
 TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCenteredAtOrigin_EntireSpriteIsVisible)

@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
-#include <jkengine/Shared/Registry.h>
+#include <jkengine/Shared/Pool.h>
 
 #include "../ITileAtlas.h"
 #include "Texture.h"
@@ -42,18 +42,16 @@ namespace Graphics::OpenGL
 
         }
 
-        // To not allow copy because of Registry and Registration
-        // not being copyable
+        // To not allow copy because of Pool not being copyable
         TileAtlas(const TileAtlas& other) = delete;
         TileAtlas& operator=(const TileAtlas& other) = delete;
 
-        // To not allow move because of Registry and Registration
-        // not being moveable
+        // To not allow move because of Pool not being moveable
         TileAtlas(TileAtlas&& other) = delete;
         TileAtlas& operator=(TileAtlas&& other) = delete;
 
-        Shared::RegUniquePtr<Graphics::ITileMap>::T CreateTileMap(unsigned int layer, const IImage& tileMapImage) override;
-        Shared::RegUniquePtr<Graphics::ISprite>::T CreateSprite(unsigned int layer) override;
+        Shared::PoolUniquePtr<Graphics::ITileMap>::T CreateTileMap(unsigned int layer, const IImage& tileMapImage) override;
+        Shared::PoolUniquePtr<Graphics::ISprite>::T CreateSprite(unsigned int layer) override;
 
         inline const Texture& AtlasTexture() const
         {
@@ -73,7 +71,7 @@ namespace Graphics::OpenGL
         SpriteDrawer* _spriteDrawer;
         Texture _atlasTexture;
         glm::vec2 _atlasSizeInTiles;
-        std::vector<Shared::Registry<TileMap>> _perLayerTileMapRegistries;
-        std::vector<Shared::Registry<Sprite>> _perLayerSpriteRegistries;
+        std::vector<Shared::Pool<TileMap>> _perLayerTileMapRegistries;
+        std::vector<Shared::Pool<Sprite>> _perLayerSpriteRegistries;
     };
 }

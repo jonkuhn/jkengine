@@ -22,7 +22,7 @@ namespace Graphics
 
         virtual void ClearColor(const Color &color) = 0;
 
-        virtual Shared::RegUniquePtr<Graphics::ITileAtlas>::T CreateTileAtlas(
+        virtual Shared::PoolUniquePtr<Graphics::ITileAtlas>::T CreateTileAtlas(
             const IImage& tileAtlas,
             const glm::vec2& atlasSizeInTiles) = 0;
 

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <jkengine/Shared/Registry.h>
+#include <jkengine/Shared/Pool.h>
 
 #include "IImage.h"
 #include "ISprite.h"
@@ -14,7 +14,7 @@ namespace Graphics
     {
     public:
         virtual ~ITileAtlas() = default;
-        virtual Shared::RegUniquePtr<Graphics::ITileMap>::T CreateTileMap(unsigned int layer, const IImage& tileMapImage) = 0;
-        virtual Shared::RegUniquePtr<Graphics::ISprite>::T CreateSprite(unsigned int layer) = 0;
+        virtual Shared::PoolUniquePtr<Graphics::ITileMap>::T CreateTileMap(unsigned int layer, const IImage& tileMapImage) = 0;
+        virtual Shared::PoolUniquePtr<Graphics::ISprite>::T CreateSprite(unsigned int layer) = 0;
     };
 }

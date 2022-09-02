@@ -122,12 +122,12 @@ protected:
     Window::GlfwWindow _window;
     std::unique_ptr<IEngine> _engine;
     ICamera2d* _camera;
-    Shared::RegUniquePtr<ITileAtlas>::T _atlasColorTiles4x4;
-    Shared::RegUniquePtr<ITileAtlas>::T _atlasColorTilesEmptyCenters4x4;
+    Shared::PoolUniquePtr<ITileAtlas>::T _atlasColorTiles4x4;
+    Shared::PoolUniquePtr<ITileAtlas>::T _atlasColorTilesEmptyCenters4x4;
     TileMapImage8x4 _tileMapImage8x4;
     TileMapImage8x4 _tileMapImage8x4FlippedTopToBottom;
     
-    Shared::RegUniquePtr<IObject2d>::T SetupTileMap8x4InCenterOfCamera8x6Fov(ITileAtlas& tileAtlas, const IImage& tileMapImage, unsigned int layer)
+    Shared::PoolUniquePtr<IObject2d>::T SetupTileMap8x4InCenterOfCamera8x6Fov(ITileAtlas& tileAtlas, const IImage& tileMapImage, unsigned int layer)
     {
         // Create instance of 8x4 tile map with lower left at origin
         // with no rotation and size in world coordinates set to

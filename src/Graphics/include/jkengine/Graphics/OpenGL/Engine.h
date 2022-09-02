@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <jkengine/Shared/Registry.h>
+#include <jkengine/Shared/Pool.h>
 #include <jkengine/Window/IOpenGLWindow.h>
 
 #include "../IEngine.h"
@@ -41,7 +41,7 @@ namespace Graphics::OpenGL
             );
         }
 
-        Shared::RegUniquePtr<Graphics::ITileAtlas>::T CreateTileAtlas(
+        Shared::PoolUniquePtr<Graphics::ITileAtlas>::T CreateTileAtlas(
             const IImage& tileAtlas,
             const glm::vec2& atlasSizeInTiles) override;
 
@@ -64,7 +64,7 @@ namespace Graphics::OpenGL
         class Camera2d _camera2d;
         TileMapDrawer _tileMapDrawer;
         SpriteDrawer _spriteDrawer;
-        Shared::Registry<TileAtlas> _tileAtlasRegistry;
+        Shared::Pool<TileAtlas> _tileAtlasPool;
 
         unsigned int _numberOfDrawingLayers;
     };
