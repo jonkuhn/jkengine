@@ -11,7 +11,7 @@ using namespace Graphics::OpenGL;
 
 Shared::PoolUniquePtr<Graphics::ITileMap>::T TileAtlas::CreateTileMap(unsigned int layer, const Graphics::IImage& tileMapImage)
 {
-    return _perLayerTileMapRegistries[layer].MakeUnique<Graphics::ITileMap>(
+    return _perLayerTileMapPools[layer].MakeUnique<Graphics::ITileMap>(
         Texture(
             *_gl,
             Texture::Params(tileMapImage)
@@ -24,14 +24,14 @@ Shared::PoolUniquePtr<Graphics::ITileMap>::T TileAtlas::CreateTileMap(unsigned i
 
 Shared::PoolUniquePtr<Graphics::ISprite>::T TileAtlas::CreateSprite(unsigned int layer)
 {
-    return _perLayerSpriteRegistries[layer].MakeUnique<Graphics::ISprite>();
+    return _perLayerSpritePools[layer].MakeUnique<Graphics::ISprite>();
 }
 
 void TileAtlas::DrawAllOnLayer(unsigned int layer)
 {
     _tileMapDrawer->SetupForDrawingFromAtlas(*this);
 
-    _perLayerTileMapRegistries[layer].ForEach(
+    _perLayerTileMapPools[layer].ForEach(
         [&](TileMap& tileMap)
         {
             _tileMapDrawer->Draw(tileMap);
@@ -40,7 +40,7 @@ void TileAtlas::DrawAllOnLayer(unsigned int layer)
 
     _spriteDrawer->SetupForDrawingFromAtlas(*this);
 
-    _perLayerSpriteRegistries[layer].ForEach(
+    _perLayerSpritePools[layer].ForEach(
         [&](Sprite& sprite)
         {
             _spriteDrawer->Draw(sprite);

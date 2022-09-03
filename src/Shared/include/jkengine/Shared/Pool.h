@@ -212,7 +212,7 @@ namespace Shared
             if (countStillAllocated > 0)
             {
                 std::cerr << "FATAL: Pool destructor called with "
-                    << countStillAllocated << " objects still registered."
+                    << countStillAllocated << " objects still allocated."
                     << std::endl;
                 std::abort();
             }

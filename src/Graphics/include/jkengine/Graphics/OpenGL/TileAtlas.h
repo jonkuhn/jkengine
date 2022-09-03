@@ -36,8 +36,8 @@ namespace Graphics::OpenGL
             _spriteDrawer(&spriteDrawer),
             _atlasTexture(std::move(atlasTexture)),
             _atlasSizeInTiles(std::move(atlasSizeInTiles)),
-            _perLayerTileMapRegistries(numberOfDrawingLayers),
-            _perLayerSpriteRegistries(numberOfDrawingLayers)
+            _perLayerTileMapPools(numberOfDrawingLayers),
+            _perLayerSpritePools(numberOfDrawingLayers)
         {
 
         }
@@ -71,7 +71,7 @@ namespace Graphics::OpenGL
         SpriteDrawer* _spriteDrawer;
         Texture _atlasTexture;
         glm::vec2 _atlasSizeInTiles;
-        std::vector<Shared::Pool<TileMap>> _perLayerTileMapRegistries;
-        std::vector<Shared::Pool<Sprite>> _perLayerSpriteRegistries;
+        std::vector<Shared::Pool<TileMap>> _perLayerTileMapPools;
+        std::vector<Shared::Pool<Sprite>> _perLayerSpritePools;
     };
 }

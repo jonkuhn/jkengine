@@ -213,7 +213,7 @@ TEST_F(PoolTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_Addre
     }
 }
 
-TEST_F(PoolTests, ForEach_GivenObjectsRegistered_CallsCallbackForEachObject)
+TEST_F(PoolTests, ForEach_GivenObjectsInPool_CallsCallbackForEachObject)
 {
     Pool<DummyObjectWithNonzeroSize> pool;
 
@@ -236,7 +236,7 @@ TEST_F(PoolTests, ForEach_GivenObjectsRegistered_CallsCallbackForEachObject)
     ASSERT_TRUE(iteratedObjects.contains(obj2.get()));
 }
 
-TEST_F(PoolTests, ForEach_GivenRegisteredObjectDestructed_DoesNotCallCallbackForIt)
+TEST_F(PoolTests, ForEach_GivenObjectDestructed_DoesNotCallCallbackForIt)
 {
     Pool<DummyObjectWithNonzeroSize> pool;
 
@@ -264,7 +264,7 @@ TEST_F(PoolTests, ForEach_GivenRegisteredObjectDestructed_DoesNotCallCallbackFor
     ASSERT_FALSE(iteratedObjects.contains(obj1.get()));
 }
 
-TEST_F(PoolTests, ForEach_GivenRegisteredObjectDestructedDuringCallback_NextForEachDoesNotIncludeIt)
+TEST_F(PoolTests, ForEach_GivenObjectDestructedDuringCallback_NextForEachDoesNotIncludeIt)
 {
     Pool<DummyObjectWithNonzeroSize> pool;
 
@@ -295,7 +295,7 @@ TEST_F(PoolTests, ForEach_GivenRegisteredObjectDestructedDuringCallback_NextForE
     ASSERT_TRUE(iteratedObjects.contains(obj2.get()));
 }
 
-TEST_F(PoolTests, ForEach_GivenRegisteredObjectUniquePtrReset_DestructorIsCalled)
+TEST_F(PoolTests, ForEach_GivenObjectUniquePtrReset_DestructorIsCalled)
 {
     Pool<DestructionTrackingObject> pool;
 
@@ -307,7 +307,7 @@ TEST_F(PoolTests, ForEach_GivenRegisteredObjectUniquePtrReset_DestructorIsCalled
     ASSERT_TRUE(destructorWasCalled);
 }
 
-TEST_F(PoolTests, ForEach_GivenRegisteredObjectLaterInIterationIsDestructedDuringCallback_DestructedObjectsAreNotReturned)
+TEST_F(PoolTests, ForEach_GivenObjectLaterInIterationIsDestructedDuringCallback_DestructedObjectsAreNotReturned)
 {
     Pool<DestructionTrackingObject> pool;
 
@@ -365,7 +365,7 @@ TEST_F(PoolTests, ForEach_GivenRegisteredObjectLaterInIterationIsDestructedDurin
     );
 }
 
-TEST_F(PoolTests, ForEach_GivenNewObjectRegisteredDuringCallback_NextForEachDoesIncludeIt)
+TEST_F(PoolTests, ForEach_GivenNewObjectDuringCallback_NextForEachDoesIncludeIt)
 {
     Pool<DummyObjectWithNonzeroSize> pool;
 
