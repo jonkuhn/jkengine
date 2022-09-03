@@ -9,24 +9,23 @@
 
 namespace Shared
 {
-    // TODO: consider renaming Deregister() to Destroy or Destruct or something.
-    class IDeregisterable
+    class IDestroyer
     {
     public:
-        virtual void Deregister(void* pointer) = 0;
+        virtual void Destroy(void* pointer) = 0;
     };
 
     class PoolDeleter
     {
     public:
         PoolDeleter()
-            : _deregisterable(nullptr)
+            : _destroyer(nullptr)
         {
 
         }
 
-        PoolDeleter(IDeregisterable& deregisterable)
-            : _deregisterable(&deregisterable)
+        PoolDeleter(IDestroyer& destroyer)
+            : _destroyer(&destroyer)
         {
 
         }
@@ -39,15 +38,15 @@ namespace Shared
                 std::abort();
             }
 
-            if (_deregisterable != nullptr)
+            if (_destroyer != nullptr)
             {
-                _deregisterable->Deregister(pointer);
+                _destroyer->Destroy(pointer);
             }
 
         }
 
     private:
-        IDeregisterable* _deregisterable;
+        IDestroyer* _destroyer;
     };
 
     template<typename TInterface>
@@ -59,9 +58,8 @@ namespace Shared
         PoolUniquePtr() = delete;
     };
 
-    // TODO: Rename to Pool
     template<typename T, size_t CapacityPerChunk = 128>
-    class Pool final : public IDeregisterable
+    class Pool final : public IDestroyer
     {
     public:
         Pool()
@@ -132,11 +130,11 @@ namespace Shared
             return objUniquePointer;
         }
 
-        void Deregister(void* pointer) override
+        void Destroy(void* pointer) override
         {
             if (pointer == nullptr)
             {
-                std::cerr << "FATAL: Pool::Deregister called with nullptr" << std::endl;
+                std::cerr << "FATAL: Pool::Destroy called with nullptr" << std::endl;
                 std::abort();
             }
 
@@ -164,7 +162,7 @@ namespace Shared
             }
 
             std::stringstream ss;
-            ss << "Deregister called for object that is out of range: "
+            ss << "Destroy called for object that is out of range: "
                 << " pointer = 0x" << std::hex << reinterpret_cast<uintptr_t>(pointer)
                 << " sizeof(T) = " << std::dec << sizeof(T)
                 << " alignof(T) = " << std::dec << alignof(T);
