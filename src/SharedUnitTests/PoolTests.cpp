@@ -179,6 +179,7 @@ TEST_F(PoolTests, MakeUnique_GivenInitialCapacityOf8ObjectsAndCalled9Times_AllAd
     for (size_t i = 0; i < CapacityPerChunk + 1; i++)
     {
         auto obj = pool.MakeUnique();
+        std::cout << " addr[" << i << "] = 0x" << reinterpret_cast<uintptr_t>(obj.get()) << std::endl;
         setOfUniquePointerValues.insert(obj.get());
         keepObjectsInScope.push_back(std::move(obj));
     }
