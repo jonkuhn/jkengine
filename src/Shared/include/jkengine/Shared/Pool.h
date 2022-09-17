@@ -1,9 +1,11 @@
 #pragma once
 
+#include <chrono>
 #include <cstdlib>
 #include <bitset>
 #include <iostream>
 #include <mutex>
+#include <numeric>
 #include <sstream>
 #include <vector>
 
@@ -58,16 +60,26 @@ namespace Shared
         PoolUniquePtr() = delete;
     };
 
-    template<typename T, size_t CapacityPerChunk>
+    namespace
+    {
+        
+    }
+
+    template<typename T, int CapacityPerChunk>
     class MemoryChunk
     {
     public:
         MemoryChunk()
           : _isIndexAllocated(),
+            _freeIndices(),
             _memoryChunk(new (std::align_val_t(alignof(T))) uint8_t[sizeof(T) * CapacityPerChunk]),
             _objects(reinterpret_cast<T*>(_memoryChunk))
         {
-
+            _freeIndices.reserve(CapacityPerChunk);
+            for (int i = (CapacityPerChunk-1); i >= 0; i--)
+            {
+                _freeIndices.push_back(i);
+            }
         }
 
         ~MemoryChunk()
@@ -84,6 +96,7 @@ namespace Shared
 
         MemoryChunk(MemoryChunk&& other) noexcept
           : _isIndexAllocated(std::move(other._isIndexAllocated)),
+            _freeIndices(std::move(other._freeIndices)),
             _memoryChunk(std::exchange(other._memoryChunk, nullptr)),
             _objects(std::exchange(other._objects, nullptr))
         {
@@ -93,12 +106,13 @@ namespace Shared
         MemoryChunk& operator=(MemoryChunk&& other) noexcept
         {
             std::swap(_isIndexAllocated, other._isIndexAllocated);
+            std::swap(_freeIndices, other._freeIndices);
             std::swap(_memoryChunk, other._memoryChunk);
             std::swap(_objects, other._objects);
             return *this;
         };
 
-        inline T* ObjectAt(size_t index)
+        inline T* ObjectAt(int index)
         {
             if (_isIndexAllocated[index])
             {
@@ -107,9 +121,9 @@ namespace Shared
             return nullptr;
         }
 
-        inline size_t CountAllocatedIndices()
+        inline int CountAllocatedIndices()
         {
-            return _isIndexAllocated.count();
+            return CapacityPerChunk - _freeIndices.size();
         }
 
         inline bool IsPointerInRange(void* pointer)
@@ -149,7 +163,8 @@ namespace Shared
 
             uint8_t* pointerAsBytePtr = reinterpret_cast<uint8_t*>(object);
             uint8_t* startOfChunk = _memoryChunk;
-            size_t index = (pointerAsBytePtr - startOfChunk) / sizeof(T);
+            int index = (pointerAsBytePtr - startOfChunk) / sizeof(T);
+            _freeIndices.push_back(index);
             _isIndexAllocated[index] = false;
         }
 
@@ -158,7 +173,7 @@ namespace Shared
             uint8_t* pointerAsBytePtr = static_cast<uint8_t*>(pointer);
             uint8_t* startOfChunk = _memoryChunk;
             uint8_t* pastEndOfChunk = startOfChunk + CapacityPerChunk * sizeof(T);
-            size_t index = (pointerAsBytePtr - startOfChunk) / sizeof(T);
+            int index = (pointerAsBytePtr - startOfChunk) / sizeof(T);
 
             std::stringstream ss;
             ss << " MemoryChunk(_objects = 0x" << std::hex << reinterpret_cast<uintptr_t>(_objects)
@@ -172,24 +187,25 @@ namespace Shared
     private:
         inline void* TryToFindMemoryForNewObject()
         {
-            for (size_t index = 0; index < CapacityPerChunk; index++)
+            if (_freeIndices.empty())
             {
-                if (!_isIndexAllocated[index])
-                {
-                    _isIndexAllocated[index] = true;
-                    return &_objects[index];
-                }
+                return nullptr;
             }
 
-            return nullptr;
+            int index = _freeIndices.back();
+            _freeIndices.pop_back();
+            _isIndexAllocated[index] = true;
+
+            return &_objects[index];
         }
 
         std::bitset<CapacityPerChunk> _isIndexAllocated;
+        std::vector<int> _freeIndices;
         uint8_t* _memoryChunk;
         T* _objects;
     };
 
-    template<typename T, size_t CapacityPerChunk = 128>
+    template<typename T, int CapacityPerChunk = 128>
     class Pool final : public IDestroyer
     {
     public:
@@ -203,7 +219,7 @@ namespace Shared
         ~Pool()
         {
             std::scoped_lock<std::mutex> lock(_mutex);
-            size_t countStillAllocated = 0;
+            int countStillAllocated = 0;
             for(auto& memoryChunk : _memoryChunks)
             {
                 countStillAllocated += memoryChunk.CountAllocatedIndices();
@@ -287,15 +303,15 @@ namespace Shared
             // This is safe because we never decrease the size of 
             // _memoryChunks so all indices less than this will be
             // valid.
-            size_t memoryChunkCount = 0;
+            int memoryChunkCount = 0;
             {
                 std::scoped_lock<std::mutex> lock(_mutex);
                 memoryChunkCount = _memoryChunks.size();
             }
 
-            for (size_t chunk = 0; chunk < memoryChunkCount; chunk++)
+            for (int chunk = 0; chunk < memoryChunkCount; chunk++)
             {
-                for (size_t index = 0; index < CapacityPerChunk; index++)
+                for (int index = 0; index < CapacityPerChunk; index++)
                 {
                     T* obj = nullptr;
                     {

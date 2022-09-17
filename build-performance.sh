@@ -11,7 +11,7 @@ conan install .. --build=missing
 cmake ..
 
 # build the project
-cmake --build . --config Debug -j 6
+cmake --build . --config Release -j 6
 
 if [ $? -ne 0 ]; then
     echo "Build Failed"
@@ -20,5 +20,4 @@ fi
 
 cd bin
 
-./SharedUnitTests && ./GraphicsUnitTests && ./GraphicsIntegrationTests && ./InputUnitTests && echo "All Tests Passed!"
-
+./SharedPerformanceTests
