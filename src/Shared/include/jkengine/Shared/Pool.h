@@ -60,11 +60,6 @@ namespace Shared
         PoolUniquePtr() = delete;
     };
 
-    namespace
-    {
-        
-    }
-
     template<typename T, int CapacityPerChunk>
     class MemoryChunk
     {
@@ -336,4 +331,3 @@ namespace Shared
         std::vector<MemoryChunk<T, CapacityPerChunk>> _memoryChunks;
     };
 }
-

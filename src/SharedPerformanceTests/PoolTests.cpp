@@ -8,6 +8,8 @@
 #include <gmock/gmock.h>
 
 #include "jkengine/Shared/Pool.h"
+#include "jkengine/Shared/Pool2.h"
+#include "jkengine/Shared/Pool3.h"
 
 using namespace testing;
 using namespace Shared;
@@ -57,6 +59,42 @@ TEST_F(PoolTests, SmallObject_InsertionPerformance)
         auto end = std::chrono::high_resolution_clock::now();
 
         std::cout << "Pool<SmallObject>: "
+            << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us"
+            << std::endl;
+    }
+
+    {
+        Pool2<SmallObject> pool;
+        std::vector<PoolUniquePtr2<SmallObject>::T> keepAlive;
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        for (int32_t i = 0; i < objectCount; i++)
+        {
+            keepAlive.push_back(pool.MakeUnique(i*2, i));
+        }
+
+        auto end = std::chrono::high_resolution_clock::now();
+
+        std::cout << "Pool2<SmallObject>: "
+            << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us"
+            << std::endl;
+    }
+
+    {
+        Pool3<SmallObject> pool;
+        std::vector<PoolUniquePtr3<SmallObject>> keepAlive;
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        for (int32_t i = 0; i < objectCount; i++)
+        {
+            keepAlive.push_back(pool.MakeUnique(i*2, i));
+        }
+
+        auto end = std::chrono::high_resolution_clock::now();
+
+        std::cout << "Pool3<SmallObject>: "
             << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us"
             << std::endl;
     }
@@ -123,6 +161,54 @@ TEST_F(PoolTests, SmallObject_IterationPerformance)
         auto end = std::chrono::high_resolution_clock::now();
 
         std::cout << "Pool<SmallObject>: "
+            << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us"
+            << std::endl;
+    }
+
+    {
+        Pool2<SmallObject> pool;
+        std::vector<PoolUniquePtr2<SmallObject>::T> keepAlive;
+
+        for (int32_t i = 0; i < objectCount; i++)
+        {
+            keepAlive.push_back(pool.MakeUnique(i*2, i));
+        }
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        pool.ForEach([&](SmallObject& so)
+            {
+                aTotal[0] += so.a();
+                bTotal[0] += so.b();
+            });
+
+        auto end = std::chrono::high_resolution_clock::now();
+
+        std::cout << "Pool2<SmallObject>: "
+            << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us"
+            << std::endl;
+    }
+
+    {
+        Pool3<SmallObject> pool;
+        std::vector<PoolUniquePtr3<SmallObject>> keepAlive;
+
+        for (int32_t i = 0; i < objectCount; i++)
+        {
+            keepAlive.push_back(pool.MakeUnique(i*2, i));
+        }
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        pool.ForEach([&](SmallObject& so)
+            {
+                aTotal[0] += so.a();
+                bTotal[0] += so.b();
+            });
+
+        auto end = std::chrono::high_resolution_clock::now();
+
+        std::cout << "Pool3<SmallObject>: "
             << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << " us"
             << std::endl;
     }
