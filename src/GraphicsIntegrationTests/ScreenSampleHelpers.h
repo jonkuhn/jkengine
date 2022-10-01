@@ -8,6 +8,17 @@
 #include <jkengine/Graphics/Color.h>
 #include <jkengine/Graphics/IScreenshot.h>
 
+
+template<unsigned int ColumnCount, unsigned int RowCount>
+inline std::array<std::array<Graphics::Color, ColumnCount>, RowCount> OneColorGrid(const Graphics::Color& color)
+{
+    std::array<std::array<Graphics::Color, ColumnCount>, RowCount> result;
+    std::array<Graphics::Color, ColumnCount> oneRowOneColor;
+    oneRowOneColor.fill(color);
+    result.fill(oneRowOneColor);
+    return result;
+}
+
 inline void ExpectColorAtScreenPosition(
     const Graphics::IScreenshot& screenshot,
     std::string name,

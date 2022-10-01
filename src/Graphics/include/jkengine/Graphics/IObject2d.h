@@ -12,6 +12,8 @@ namespace Graphics
     public:
         virtual ~IObject2d() = default;
 
+        virtual void Show(bool show) = 0;
+        virtual bool Show() const = 0;
         virtual void Position(const glm::vec2& position) = 0;
         virtual const glm::vec3& Position() const = 0;
         virtual void Size(glm::vec2 size) = 0;

@@ -8,6 +8,7 @@ target_include_directories(Graphics INTERFACE include)
 target_include_directories(Graphics PRIVATE include/jkengine/Graphics)
 target_sources(Graphics
   PRIVATE
+    include/jkengine/Graphics/AfterBuildPtr.h
     include/jkengine/Graphics/Color.h
     include/jkengine/Graphics/Graphics.h
     include/jkengine/Graphics/GridLocation.h
@@ -18,10 +19,14 @@ target_sources(Graphics
     include/jkengine/Graphics/PngImage.h
     include/jkengine/Graphics/ILibPngWrapper.h
     include/jkengine/Graphics/LibPngWrapper.h
+    include/jkengine/Graphics/IScene.h
+    include/jkengine/Graphics/SceneDefinition.h
     include/jkengine/Graphics/IScreenshot.h
     include/jkengine/Graphics/ISprite.h
-    include/jkengine/Graphics/ITileAtlas.h
+    include/jkengine/Graphics/SpriteDefinition.h
+    include/jkengine/Graphics/TileAtlasDefinition.h
     include/jkengine/Graphics/ITileMap.h
+    include/jkengine/Graphics/TileMapDefinition.h
     src/Color.cpp
     src/PngImage.cpp
     include/jkengine/Graphics/OpenGL/Camera2d.h
@@ -30,6 +35,7 @@ target_sources(Graphics
     include/jkengine/Graphics/OpenGL/OpenGLHelpers.h
     include/jkengine/Graphics/OpenGL/IOpenGLWrapper.h
     include/jkengine/Graphics/OpenGL/OpenGLWrapper.h
+    include/jkengine/Graphics/OpenGL/Scene.h
     include/jkengine/Graphics/OpenGL/IShader.h
     include/jkengine/Graphics/OpenGL/Shader.h
     include/jkengine/Graphics/OpenGL/ShaderProgram.h
@@ -47,6 +53,7 @@ target_sources(Graphics
     src/OpenGL/Engine.cpp
     src/OpenGL/Object2d.cpp
     src/OpenGL/OpenGLHelpers.cpp
+    src/OpenGL/Scene.cpp
     src/OpenGL/Shader.cpp
     src/OpenGL/ShaderProgram.cpp
     src/OpenGL/SpriteShaderProgram.cpp

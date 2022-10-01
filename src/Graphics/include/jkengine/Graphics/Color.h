@@ -3,8 +3,9 @@
 
 namespace Graphics
 {
-    struct Color
+    class Color
     {
+    public:
         uint8_t r, g, b, a;
 
         Color()

@@ -10,9 +10,24 @@ namespace Graphics::OpenGL
     {
     public:
         Sprite()
-          : _object2d()
         {
 
+        }
+
+        Sprite(const Sprite& other) = delete;
+        Sprite& operator=(const Sprite& other) = delete;
+
+        Sprite(Sprite&& other) = default;
+        Sprite& operator=(Sprite&& other) = default;
+
+        inline void Show(bool show) override
+        {
+            _object2d.Show(show);
+        }
+
+        inline bool Show() const override
+        {
+            return _object2d.Show();
         }
 
         inline void AtlasLocation(GridLocation atlasLocation) override

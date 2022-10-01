@@ -29,12 +29,21 @@ namespace Graphics::OpenGL
 
         }
 
-
         TileMap(const TileMap& other) = delete;
         TileMap& operator=(const TileMap& other) = delete;
 
-        TileMap(TileMap&& other) = delete;
-        TileMap& operator=(TileMap&& other) = delete;
+        TileMap(TileMap&& other) = default;
+        TileMap& operator=(TileMap&& other) = default;
+
+        inline void Show(bool show) override
+        {
+            _object2d.Show(show);
+        }
+
+        inline bool Show() const override
+        {
+            return _object2d.Show();
+        }
 
         inline const Texture& MapTexture() const
         {
