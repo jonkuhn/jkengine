@@ -31,39 +31,49 @@ namespace Graphics::OpenGL
         Object2d(const Object2d&) = delete;
         Object2d& operator=(const Object2d&) = delete;
 
-        Object2d(Object2d&&) = delete;
-        Object2d& operator=(Object2d&&) = delete;
+        Object2d(Object2d&&) = default;
+        Object2d& operator=(Object2d&&) = default;
 
-        inline void Position(const glm::vec2& position)
+        virtual void Show(bool show) override
+        {
+            _show = show;
+        }
+
+        virtual bool Show() const override
+        {
+            return _show;
+        }
+
+        virtual void Position(const glm::vec2& position) override
         {
             _modelNeedsUpdated = true;
             _position.x = position.x;
             _position.y = position.y;
         }
         
-        inline const glm::vec3& Position() const
+        virtual const glm::vec3& Position() const override
         {
             return _position;
         }
 
-        inline void Size(glm::vec2 size)
+        virtual void Size(glm::vec2 size) override
         {
             _modelNeedsUpdated = true;
             _size = std::move(size);
         }
 
-        inline const glm::vec2& Size() const
+        virtual const glm::vec2& Size() const override
         {
             return _size;
         }
 
-        inline void Rotation(float rotationDegrees)
+        virtual void Rotation(float rotationDegrees) override
         {
             _modelNeedsUpdated = true;
             _rotationDegrees = rotationDegrees;
         }
 
-        inline float Rotation() const
+        virtual float Rotation() const override
         {
             return _rotationDegrees;
         }
@@ -80,6 +90,7 @@ namespace Graphics::OpenGL
         float _rotationDegrees;
         mutable glm::mat4 _model;  
         mutable bool _modelNeedsUpdated;
+        bool _show : 1 = false;
 
         void EnsureModelMatrixIsUpdated() const;
     };

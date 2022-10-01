@@ -17,19 +17,33 @@ public:
     static constexpr int WindowWidth = 800;
     static constexpr int WindowHeight = 600;
     static constexpr float AspectRatio = static_cast<float>(WindowWidth) / static_cast<float>(WindowHeight);
-    static constexpr unsigned int DrawingLayers = 3;
+    static constexpr size_t DrawingLayers = 3;
 
     SpriteTests()
       : _libPng(),
         _glfw(),
         _window(_glfw, WindowWidth, WindowHeight, "SpriteTests"),
-        _engine(std::make_unique<OpenGL::Engine>(_window, DrawingLayers)),
-        _camera(_engine->Camera2d()),
-        _atlasColorTilesEmptyCenters4x4()
+        _engine(std::make_unique<OpenGL::Engine>(_window)),
+        _scene(),
+        _camera(nullptr)
     {
-        _engine->ClearColor(ColorBackgroundUglyYellow);
-        PngImage colorTiles4x4EmptyCenters(&_libPng, "TestFiles/colortiles4x4emptycenters.png");
-        _atlasColorTilesEmptyCenters4x4 = _engine->CreateTileAtlas(colorTiles4x4EmptyCenters, glm::vec2(4.0f, 4.0f));
+        SceneDefinition sceneDefinition{DrawingLayers};
+
+        PngImage imageColorTiles4x4EmptyCenters(&_libPng, "TestFiles/colortiles4x4emptycenters.png");
+        TileAtlasDefinition tileAtlas{
+            DrawingLayers,
+            &imageColorTiles4x4EmptyCenters,
+            glm::vec2(4.0f, 4.0f)
+        };
+
+        // TODO: Extract scene creation into a Setup method
+        tileAtlas.AddSprite(SpriteDefinition{&_spriteOnLayer0, 0});
+        tileAtlas.AddSprite(SpriteDefinition{&_spriteOnLayer1, 1});
+        sceneDefinition.AddTileAtlas(tileAtlas);
+
+        _scene = _engine->CreateScene(sceneDefinition);
+        _scene->ClearColor(ColorBackgroundUglyYellow);
+        _camera = _scene->Camera2d();
     }
 
 protected:
@@ -37,13 +51,42 @@ protected:
     Window::GlfwWrapper _glfw;
     Window::GlfwWindow _window;
     std::unique_ptr<IEngine> _engine;
+    std::unique_ptr<IScene> _scene;
     ICamera2d* _camera;
-    Shared::PoolUniquePtr<ITileAtlas>::T _atlasColorTilesEmptyCenters4x4;
+    AfterBuildPtr<ISprite> _spriteOnLayer0;
+    AfterBuildPtr<ISprite> _spriteOnLayer1;
 };
+
+TEST_F(SpriteTests, GivenSceneWithTwoSprite_NoSpritesVisibleByDefault)
+{
+    // Note: scene created by fixture has 2 sprites
+    _camera->Center(glm::vec2(0.0f, 0.0f));
+
+    // Set FoV so that 8 units are visible horizontally and due
+    // to the aspect ration 6 units will be visible vertically
+    _camera->FieldOfView(ICamera2d::Fov(
+        -4.0f, 4.0f,
+        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+
+    _scene->Render();
+
+    constexpr unsigned int ColumnCount = 32;
+    constexpr unsigned int RowCount = 24;
+    ExpectTileColorGridOnScreen<ColumnCount, RowCount>(
+        *(_engine->TakeScreenshot()),
+        OneColorGrid<ColumnCount, RowCount>(ColorBackgroundUglyYellow)
+    );
+}
 
 TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCenteredAtOrigin_EntireSpriteIsVisible)
 {
-    auto sprite = _atlasColorTilesEmptyCenters4x4->CreateSprite(0);
+    // TODO: Since multiple sprites are loaded now we need to hide them
+    // explicitly because they default to being within the field of view
+    // Can either just move them out of the field of view or can build hiding
+    // abilities into the engine, but still each test will need to hide.
+
+    ISprite* sprite = _spriteOnLayer0.Get();
+    sprite->Show(true);
     sprite->Position(glm::vec2(0.0f, 0.0f));
     sprite->Rotation(0.0f);
     sprite->Size(glm::vec2(3.0f, 3.0f));
@@ -57,7 +100,7 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCent
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-    _engine->Render();
+    _scene->Render();
 
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;
@@ -94,7 +137,8 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCent
 
 TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX2Y1_Camera8x6FovCenteredAtOrigin_EntireSpriteIsVisible)
 {
-    auto sprite = _atlasColorTilesEmptyCenters4x4->CreateSprite(0);
+    ISprite* sprite = _spriteOnLayer0.Get();
+    sprite->Show(true);
     sprite->Position(glm::vec2(0.0f, 0.0f));
     sprite->Rotation(0.0f);
     sprite->Size(glm::vec2(3.0f, 3.0f));
@@ -108,7 +152,7 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX2Y1_Camera8x6FovCent
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-    _engine->Render();
+    _scene->Render();
 
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;
@@ -145,7 +189,8 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX2Y1_Camera8x6FovCent
 
 TEST_F(SpriteTests, Given6x6SpriteAtX30Y60_Camera8x6FovCenteredAtCenterOfSprite_EntireSpriteIsVisible)
 {
-    auto sprite = _atlasColorTilesEmptyCenters4x4->CreateSprite(0);
+    ISprite* sprite = _spriteOnLayer0.Get();
+    sprite->Show(true);
     sprite->Position(glm::vec2(30.0f, 60.0f));
     sprite->Rotation(0.0f);
     sprite->Size(glm::vec2(6.0f, 6.0f));
@@ -159,7 +204,7 @@ TEST_F(SpriteTests, Given6x6SpriteAtX30Y60_Camera8x6FovCenteredAtCenterOfSprite_
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-    _engine->Render();
+    _scene->Render();
 
     auto scr = _engine->TakeScreenshot();
 
@@ -204,7 +249,8 @@ TEST_F(SpriteTests, Given6x6SpriteAtX30Y60_Camera8x6FovCenteredAtCenterOfSprite_
 
 TEST_F(SpriteTests, Given6x6Sprite_GivenOffCameraAtX4Y0_SpriteIsNotVisible)
 {
-    auto sprite = _atlasColorTilesEmptyCenters4x4->CreateSprite(0);
+    ISprite* sprite = _spriteOnLayer0.Get();
+    sprite->Show(true);
     sprite->Position(glm::vec2(30.0f, 60.0f));
     sprite->Rotation(0.0f);
     sprite->Size(glm::vec2(6.0f, 6.0f));
@@ -218,7 +264,7 @@ TEST_F(SpriteTests, Given6x6Sprite_GivenOffCameraAtX4Y0_SpriteIsNotVisible)
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-    _engine->Render();
+    _scene->Render();
 
     auto scr = _engine->TakeScreenshot();
 
@@ -247,7 +293,8 @@ TEST_F(SpriteTests, Given6x6Sprite_GivenOffCameraAtX4Y0_SpriteIsNotVisible)
 
 TEST_F(SpriteTests, Given3x3SpriteAtOriginRotated45Degrees_Camera8x6FovCenteredOnSprite_EntireSpriteIsVisible)
 {
-    auto sprite = _atlasColorTilesEmptyCenters4x4->CreateSprite(0);
+    ISprite* sprite = _spriteOnLayer0.Get();
+    sprite->Show(true);
     sprite->Position(glm::vec2(0.0f, 0.0f));
     sprite->Rotation(45.0f);
     sprite->Size(glm::vec2(3.0f, 3.0f));
@@ -261,7 +308,7 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginRotated45Degrees_Camera8x6FovCenteredO
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-    _engine->Render();
+    _scene->Render();
 
     auto screenshot = _engine->TakeScreenshot();
 
@@ -320,13 +367,15 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginRotated45Degrees_Camera8x6FovCenteredO
 
 TEST_F(SpriteTests, GivenTwo3x3SpritesOnDifferentLayers_TransparentAreasOfHigherLayerSpriteShowLowerLayerSprite)
 {
-    auto spriteLayer1 = _atlasColorTilesEmptyCenters4x4->CreateSprite(1);
+    ISprite* spriteLayer1 = _spriteOnLayer1.Get();
+    spriteLayer1->Show(true);
     spriteLayer1->Position(glm::vec2(0.0f, 0.0f));
     spriteLayer1->Rotation(0.0f);
     spriteLayer1->Size(glm::vec2(3.0f, 3.0f));
     spriteLayer1->AtlasLocation(GridLocation(0, 0));
 
-    auto spriteLayer0 = _atlasColorTilesEmptyCenters4x4->CreateSprite(0);
+    ISprite* spriteLayer0 = _spriteOnLayer0.Get();
+    spriteLayer0->Show(true);
     spriteLayer0->Position(glm::vec2(-1.0f, 0.0f));
     spriteLayer0->Rotation(0.0f);
     spriteLayer0->Size(glm::vec2(3.0f, 3.0f));
@@ -345,7 +394,7 @@ TEST_F(SpriteTests, GivenTwo3x3SpritesOnDifferentLayers_TransparentAreasOfHigher
     // this is because the sizes of the tiles in the tile atlas are not
     // evenly divisible into 3 "sub-tiles".  The first two rows and
     // columns are 21 pixels and the last row and column is 22 pixels.
-    _engine->Render();
+    _scene->Render();
 
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;

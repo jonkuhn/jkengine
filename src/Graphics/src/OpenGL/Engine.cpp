@@ -1,21 +1,16 @@
 #include "OpenGL/Engine.h"
 
+#include "SceneDefinition.h"
+
+#include "OpenGL/Scene.h"
 #include "OpenGL/Texture.h"
 #include "OpenGL/ViewportCapture.h"
 
 using namespace Graphics::OpenGL;
 
-Engine::Engine(Window::IOpenGLWindow& window, unsigned int numberOfDrawingLayers)
+Engine::Engine(Window::IOpenGLWindow& window)
     : _window(window),
-      _gl(_window),
-      _tileMapShaderProgram(_gl),
-      _spriteShaderProgram(_gl),
-      _unitQuadVertexArray(_gl),
-      _camera2d(),
-      _tileMapDrawer(_tileMapShaderProgram, _unitQuadVertexArray, _camera2d),
-      _spriteDrawer(_spriteShaderProgram, _unitQuadVertexArray, _camera2d),
-      _tileAtlasPool(),
-      _numberOfDrawingLayers(numberOfDrawingLayers)
+      _gl(_window)
 {
     // Enable alpha blending so that sprites and tile maps can use
     // transparency.  Set the blend function to use the source alpha
@@ -34,43 +29,12 @@ Engine::Engine(Window::IOpenGLWindow& window, unsigned int numberOfDrawingLayers
     _gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-Shared::PoolUniquePtr<Graphics::ITileAtlas>::T Engine::CreateTileAtlas(
-    const IImage& tileAtlasImage,
-    const glm::vec2& atlasSizeInTiles)
+std::unique_ptr<Graphics::IScene> Engine::CreateScene(const SceneDefinition& definition)
 {
-    return _tileAtlasPool.MakeUnique<Graphics::ITileAtlas>(
-        _gl,
-        _numberOfDrawingLayers,
-        _tileMapDrawer,
-        _spriteDrawer,
-        Texture(
-            _gl,
-            Texture::Params(tileAtlasImage)
-                .WrapModeS(Texture::WrapMode::ClampToBorder)
-                .WrapModeT(Texture::WrapMode::ClampToBorder)
-                .MinFilter(Texture::MinFilterMode::Nearest)
-                .MagFilter(Texture::MagFilterMode::Nearest)),
-        atlasSizeInTiles);
+    return std::make_unique<Scene>(_window, definition);
 }
 
 std::unique_ptr<Graphics::IScreenshot> Engine::TakeScreenshot()
 {
     return std::make_unique<ViewportCapture>(_gl);
-}
-
-void Engine::Render()
-{
-    _gl.Clear(GL_COLOR_BUFFER_BIT);
-
-    for(unsigned int layer = 0; layer < _numberOfDrawingLayers; layer++)
-    {
-        _tileAtlasPool.ForEach(
-            [&](TileAtlas& tileAtlas)
-            {
-                tileAtlas.DrawAllOnLayer(layer);
-            }
-        );
-    }
-
-    _window.Update();
 }

@@ -9,10 +9,14 @@
 
 #include <jkengine/Shared/Pool.h>
 
-#include "../ITileAtlas.h"
 #include "Texture.h"
 #include "TileMap.h"
 #include "Sprite.h"
+
+namespace Graphics
+{
+    class TileAtlasDefinition;
+}
 
 namespace Graphics::OpenGL
 {
@@ -20,38 +24,20 @@ namespace Graphics::OpenGL
     class TileMapDrawer;
     class SpriteDrawer;
 
-    class TileAtlas final : public ITileAtlas
+    class TileAtlas final
     {
     public:
         TileAtlas(
             IOpenGLWrapper& gl,
-            unsigned int numberOfDrawingLayers,
             TileMapDrawer& tileMapDrawer,
             SpriteDrawer& spriteDrawer,
-            Texture atlasTexture,
-            glm::vec2 atlasSizeInTiles)
-          : 
-            _gl(&gl),
-            _tileMapDrawer(&tileMapDrawer),
-            _spriteDrawer(&spriteDrawer),
-            _atlasTexture(std::move(atlasTexture)),
-            _atlasSizeInTiles(std::move(atlasSizeInTiles)),
-            _perLayerTileMapPools(numberOfDrawingLayers),
-            _perLayerSpritePools(numberOfDrawingLayers)
-        {
+            const TileAtlasDefinition& definition);
 
-        }
-
-        // To not allow copy because of Pool not being copyable
         TileAtlas(const TileAtlas& other) = delete;
         TileAtlas& operator=(const TileAtlas& other) = delete;
 
-        // To not allow move because of Pool not being moveable
-        TileAtlas(TileAtlas&& other) = delete;
-        TileAtlas& operator=(TileAtlas&& other) = delete;
-
-        Shared::PoolUniquePtr<Graphics::ITileMap>::T CreateTileMap(unsigned int layer, const IImage& tileMapImage) override;
-        Shared::PoolUniquePtr<Graphics::ISprite>::T CreateSprite(unsigned int layer) override;
+        TileAtlas(TileAtlas&& other) = default;
+        TileAtlas& operator=(TileAtlas&& other) = default;
 
         inline const Texture& AtlasTexture() const
         {
@@ -71,7 +57,7 @@ namespace Graphics::OpenGL
         SpriteDrawer* _spriteDrawer;
         Texture _atlasTexture;
         glm::vec2 _atlasSizeInTiles;
-        std::vector<Shared::Pool<TileMap>> _perLayerTileMapPools;
-        std::vector<Shared::Pool<Sprite>> _perLayerSpritePools;
+        std::vector<std::vector<TileMap>> _perLayerTileMaps;
+        std::vector<std::vector<Sprite>> _perLayerSprites;
     };
 }
