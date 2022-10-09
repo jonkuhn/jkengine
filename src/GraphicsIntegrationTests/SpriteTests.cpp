@@ -23,10 +23,26 @@ public:
       : _libPng(),
         _glfw(),
         _window(_glfw, WindowWidth, WindowHeight, "SpriteTests"),
-        _engine(std::make_unique<OpenGL::Engine>(_window)),
-        _scene(),
-        _camera(nullptr)
+        _engine(std::make_unique<OpenGL::Engine>(_window))
     {
+    }
+
+protected:
+    LibPngWrapper _libPng;
+    Window::GlfwWrapper _glfw;
+    Window::GlfwWindow _window;
+    std::unique_ptr<IEngine> _engine;
+
+    struct SceneWithOneSprite
+    {
+        std::unique_ptr<IScene> scene;
+        ICamera2d* camera;
+        AfterBuildPtr<ISprite> sprite;
+    };
+
+    SceneWithOneSprite SetupSceneWithOneSprite()
+    {
+        SceneWithOneSprite result{};
         SceneDefinition sceneDefinition{DrawingLayers};
 
         PngImage imageColorTiles4x4EmptyCenters(&_libPng, "TestFiles/colortiles4x4emptycenters.png");
@@ -36,39 +52,59 @@ public:
             glm::vec2(4.0f, 4.0f)
         };
 
-        // TODO: Extract scene creation into a Setup method
-        tileAtlas.AddSprite(SpriteDefinition{&_spriteOnLayer0, 0});
-        tileAtlas.AddSprite(SpriteDefinition{&_spriteOnLayer1, 1});
+        tileAtlas.AddSprite(SpriteDefinition{&result.sprite, 0});
         sceneDefinition.AddTileAtlas(tileAtlas);
 
-        _scene = _engine->CreateScene(sceneDefinition);
-        _scene->ClearColor(ColorBackgroundUglyYellow);
-        _camera = _scene->Camera2d();
+        result.scene = _engine->CreateScene(sceneDefinition);
+        result.scene->ClearColor(ColorBackgroundUglyYellow);
+        result.camera = result.scene->Camera2d();
+        return result;
     }
 
-protected:
-    LibPngWrapper _libPng;
-    Window::GlfwWrapper _glfw;
-    Window::GlfwWindow _window;
-    std::unique_ptr<IEngine> _engine;
-    std::unique_ptr<IScene> _scene;
-    ICamera2d* _camera;
-    AfterBuildPtr<ISprite> _spriteOnLayer0;
-    AfterBuildPtr<ISprite> _spriteOnLayer1;
+    struct SceneWithTwoSpritesOnDifferentLayers
+    {
+        std::unique_ptr<IScene> scene;
+        ICamera2d* camera;
+        AfterBuildPtr<ISprite> spriteOnLayer0;
+        AfterBuildPtr<ISprite> spriteOnLayer1;
+    };
+
+    SceneWithTwoSpritesOnDifferentLayers SetupSceneWithTwoSpritesOnDifferentLayers()
+    {
+        SceneWithTwoSpritesOnDifferentLayers result{};
+        SceneDefinition sceneDefinition{DrawingLayers};
+
+        PngImage imageColorTiles4x4EmptyCenters(&_libPng, "TestFiles/colortiles4x4emptycenters.png");
+        TileAtlasDefinition tileAtlas{
+            DrawingLayers,
+            &imageColorTiles4x4EmptyCenters,
+            glm::vec2(4.0f, 4.0f)
+        };
+
+        tileAtlas.AddSprite(SpriteDefinition{&result.spriteOnLayer0, 0});
+        tileAtlas.AddSprite(SpriteDefinition{&result.spriteOnLayer1, 1});
+        sceneDefinition.AddTileAtlas(tileAtlas);
+
+        result.scene = _engine->CreateScene(sceneDefinition);
+        result.scene->ClearColor(ColorBackgroundUglyYellow);
+        result.camera = result.scene->Camera2d();
+        return result;
+    }
 };
 
-TEST_F(SpriteTests, GivenSceneWithTwoSprite_NoSpritesVisibleByDefault)
+TEST_F(SpriteTests, GivenSceneWithTwoSprites_NoSpritesVisibleByDefault)
 {
+    auto setup = SetupSceneWithTwoSpritesOnDifferentLayers();
     // Note: scene created by fixture has 2 sprites
-    _camera->Center(glm::vec2(0.0f, 0.0f));
+    setup.camera->Center(glm::vec2(0.0f, 0.0f));
 
     // Set FoV so that 8 units are visible horizontally and due
     // to the aspect ration 6 units will be visible vertically
-    _camera->FieldOfView(ICamera2d::Fov(
+    setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-    _scene->Render();
+    setup.scene->Render();
 
     constexpr unsigned int ColumnCount = 32;
     constexpr unsigned int RowCount = 24;
@@ -80,27 +116,22 @@ TEST_F(SpriteTests, GivenSceneWithTwoSprite_NoSpritesVisibleByDefault)
 
 TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCenteredAtOrigin_EntireSpriteIsVisible)
 {
-    // TODO: Since multiple sprites are loaded now we need to hide them
-    // explicitly because they default to being within the field of view
-    // Can either just move them out of the field of view or can build hiding
-    // abilities into the engine, but still each test will need to hide.
+    auto setup = SetupSceneWithOneSprite();
+    setup.sprite->Show(true);
+    setup.sprite->Position(glm::vec2(0.0f, 0.0f));
+    setup.sprite->Rotation(0.0f);
+    setup.sprite->Size(glm::vec2(3.0f, 3.0f));
+    setup.sprite->AtlasLocation(GridLocation(0, 0));
 
-    ISprite* sprite = _spriteOnLayer0.Get();
-    sprite->Show(true);
-    sprite->Position(glm::vec2(0.0f, 0.0f));
-    sprite->Rotation(0.0f);
-    sprite->Size(glm::vec2(3.0f, 3.0f));
-    sprite->AtlasLocation(GridLocation(0, 0));
-
-    _camera->Center(glm::vec2(0.0f, 0.0f));
+    setup.camera->Center(glm::vec2(0.0f, 0.0f));
 
     // Set FoV so that 8 units are visible horizontally and due
     // to the aspect ration 6 units will be visible vertically
-    _camera->FieldOfView(ICamera2d::Fov(
+    setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-    _scene->Render();
+    setup.scene->Render();
 
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;
@@ -137,22 +168,22 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCent
 
 TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX2Y1_Camera8x6FovCenteredAtOrigin_EntireSpriteIsVisible)
 {
-    ISprite* sprite = _spriteOnLayer0.Get();
-    sprite->Show(true);
-    sprite->Position(glm::vec2(0.0f, 0.0f));
-    sprite->Rotation(0.0f);
-    sprite->Size(glm::vec2(3.0f, 3.0f));
-    sprite->AtlasLocation(GridLocation(2, 1));
+    auto setup = SetupSceneWithOneSprite();
+    setup.sprite->Show(true);
+    setup.sprite->Position(glm::vec2(0.0f, 0.0f));
+    setup.sprite->Rotation(0.0f);
+    setup.sprite->Size(glm::vec2(3.0f, 3.0f));
+    setup.sprite->AtlasLocation(GridLocation(2, 1));
 
-    _camera->Center(glm::vec2(0.0f, 0.0f));
+    setup.camera->Center(glm::vec2(0.0f, 0.0f));
 
     // Set FoV so that 8 units are visible horizontally and due
     // to the aspect ration 6 units will be visible vertically
-    _camera->FieldOfView(ICamera2d::Fov(
+    setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-    _scene->Render();
+    setup.scene->Render();
 
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;
@@ -189,22 +220,22 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX2Y1_Camera8x6FovCent
 
 TEST_F(SpriteTests, Given6x6SpriteAtX30Y60_Camera8x6FovCenteredAtCenterOfSprite_EntireSpriteIsVisible)
 {
-    ISprite* sprite = _spriteOnLayer0.Get();
-    sprite->Show(true);
-    sprite->Position(glm::vec2(30.0f, 60.0f));
-    sprite->Rotation(0.0f);
-    sprite->Size(glm::vec2(6.0f, 6.0f));
-    sprite->AtlasLocation(GridLocation(2, 1));
+    auto setup = SetupSceneWithOneSprite();
+    setup.sprite->Show(true);
+    setup.sprite->Position(glm::vec2(30.0f, 60.0f));
+    setup.sprite->Rotation(0.0f);
+    setup.sprite->Size(glm::vec2(6.0f, 6.0f));
+    setup.sprite->AtlasLocation(GridLocation(2, 1));
 
-    _camera->Center(glm::vec2(33.0f, 63.0f));
+    setup.camera->Center(glm::vec2(33.0f, 63.0f));
 
     // Set FoV so that 8 units are visible horizontally and due
     // to the aspect ration 6 units will be visible vertically
-    _camera->FieldOfView(ICamera2d::Fov(
+    setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-    _scene->Render();
+    setup.scene->Render();
 
     auto scr = _engine->TakeScreenshot();
 
@@ -249,22 +280,22 @@ TEST_F(SpriteTests, Given6x6SpriteAtX30Y60_Camera8x6FovCenteredAtCenterOfSprite_
 
 TEST_F(SpriteTests, Given6x6Sprite_GivenOffCameraAtX4Y0_SpriteIsNotVisible)
 {
-    ISprite* sprite = _spriteOnLayer0.Get();
-    sprite->Show(true);
-    sprite->Position(glm::vec2(30.0f, 60.0f));
-    sprite->Rotation(0.0f);
-    sprite->Size(glm::vec2(6.0f, 6.0f));
-    sprite->AtlasLocation(GridLocation(2, 1));
+    auto setup = SetupSceneWithOneSprite();
+    setup.sprite->Show(true);
+    setup.sprite->Position(glm::vec2(30.0f, 60.0f));
+    setup.sprite->Rotation(0.0f);
+    setup.sprite->Size(glm::vec2(6.0f, 6.0f));
+    setup.sprite->AtlasLocation(GridLocation(2, 1));
 
-    _camera->Center(glm::vec2(0.0f, 0.0f));
+    setup.camera->Center(glm::vec2(0.0f, 0.0f));
 
     // Set FoV so that 8 units are visible horizontally and due
     // to the aspect ration 6 units will be visible vertically
-    _camera->FieldOfView(ICamera2d::Fov(
+    setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-    _scene->Render();
+    setup.scene->Render();
 
     auto scr = _engine->TakeScreenshot();
 
@@ -293,22 +324,22 @@ TEST_F(SpriteTests, Given6x6Sprite_GivenOffCameraAtX4Y0_SpriteIsNotVisible)
 
 TEST_F(SpriteTests, Given3x3SpriteAtOriginRotated45Degrees_Camera8x6FovCenteredOnSprite_EntireSpriteIsVisible)
 {
-    ISprite* sprite = _spriteOnLayer0.Get();
-    sprite->Show(true);
-    sprite->Position(glm::vec2(0.0f, 0.0f));
-    sprite->Rotation(45.0f);
-    sprite->Size(glm::vec2(3.0f, 3.0f));
-    sprite->AtlasLocation(GridLocation(0, 0));
+    auto setup = SetupSceneWithOneSprite();
+    setup.sprite->Show(true);
+    setup.sprite->Position(glm::vec2(0.0f, 0.0f));
+    setup.sprite->Rotation(45.0f);
+    setup.sprite->Size(glm::vec2(3.0f, 3.0f));
+    setup.sprite->AtlasLocation(GridLocation(0, 0));
 
-    _camera->Center(glm::vec2(1.5f, 1.5f));
+    setup.camera->Center(glm::vec2(1.5f, 1.5f));
 
     // Set FoV so that 8 units are visible horizontally and due
     // to the aspect ration 6 units will be visible vertically
-    _camera->FieldOfView(ICamera2d::Fov(
+    setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-    _scene->Render();
+    setup.scene->Render();
 
     auto screenshot = _engine->TakeScreenshot();
 
@@ -367,25 +398,24 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginRotated45Degrees_Camera8x6FovCenteredO
 
 TEST_F(SpriteTests, GivenTwo3x3SpritesOnDifferentLayers_TransparentAreasOfHigherLayerSpriteShowLowerLayerSprite)
 {
-    ISprite* spriteLayer1 = _spriteOnLayer1.Get();
-    spriteLayer1->Show(true);
-    spriteLayer1->Position(glm::vec2(0.0f, 0.0f));
-    spriteLayer1->Rotation(0.0f);
-    spriteLayer1->Size(glm::vec2(3.0f, 3.0f));
-    spriteLayer1->AtlasLocation(GridLocation(0, 0));
+    auto setup = SetupSceneWithTwoSpritesOnDifferentLayers();
+    setup.spriteOnLayer1->Show(true);
+    setup.spriteOnLayer1->Position(glm::vec2(0.0f, 0.0f));
+    setup.spriteOnLayer1->Rotation(0.0f);
+    setup.spriteOnLayer1->Size(glm::vec2(3.0f, 3.0f));
+    setup.spriteOnLayer1->AtlasLocation(GridLocation(0, 0));
 
-    ISprite* spriteLayer0 = _spriteOnLayer0.Get();
-    spriteLayer0->Show(true);
-    spriteLayer0->Position(glm::vec2(-1.0f, 0.0f));
-    spriteLayer0->Rotation(0.0f);
-    spriteLayer0->Size(glm::vec2(3.0f, 3.0f));
-    spriteLayer0->AtlasLocation(GridLocation(1, 0));
+    setup.spriteOnLayer0->Show(true);
+    setup.spriteOnLayer0->Position(glm::vec2(-1.0f, 0.0f));
+    setup.spriteOnLayer0->Rotation(0.0f);
+    setup.spriteOnLayer0->Size(glm::vec2(3.0f, 3.0f));
+    setup.spriteOnLayer0->AtlasLocation(GridLocation(1, 0));
 
-    _camera->Center(glm::vec2(0.0f, 0.0f));
+    setup.camera->Center(glm::vec2(0.0f, 0.0f));
 
     // Set FoV so that 8 units are visible horizontally and due
     // to the aspect ration 6 units will be visible vertically
-    _camera->FieldOfView(ICamera2d::Fov(
+    setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
@@ -394,7 +424,7 @@ TEST_F(SpriteTests, GivenTwo3x3SpritesOnDifferentLayers_TransparentAreasOfHigher
     // this is because the sizes of the tiles in the tile atlas are not
     // evenly divisible into 3 "sub-tiles".  The first two rows and
     // columns are 21 pixels and the last row and column is 22 pixels.
-    _scene->Render();
+    setup.scene->Render();
 
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;
