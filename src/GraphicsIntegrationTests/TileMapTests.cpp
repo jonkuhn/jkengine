@@ -79,6 +79,8 @@ public:
         _engine(std::make_unique<OpenGL::Engine>(_window)),
         _scene(),
         _camera(nullptr),
+        _tileAtlasImageColorTiles4x4(&_libPng, "TestFiles/colortiles4x4.png"),
+        _tileAtlasImageColorTiles4x4EmptyCenters(&_libPng, "TestFiles/colortiles4x4emptycenters.png"),
         _tileMapImage8x4(
             TileMapImage8x4::TileIndicesType({ {
                 { TileYellow, TileGreen, TileCyan, TileRed, TileLightGreen, TilePurple, TileLightPurple, TileSkyBlue },
@@ -160,14 +162,98 @@ protected:
     std::unique_ptr<IEngine> _engine;
     std::unique_ptr<IScene> _scene;
     ICamera2d* _camera;
+    PngImage _tileAtlasImageColorTiles4x4;
+    PngImage _tileAtlasImageColorTiles4x4EmptyCenters;
     TileMapImage8x4 _tileMapImage8x4;
     TileMapImage8x4 _tileMapImage8x4FlippedTopToBottom;
     AfterBuildPtr<ITileMap> _tileMapSolid8x4Layer0;
     AfterBuildPtr<ITileMap> _tileMapEmptyCenters8x4Layer0;
     AfterBuildPtr<ITileMap> _tileMapEmptyCenters8x4Layer1;
     AfterBuildPtr<ITileMap> _tileMapSolid8x4FlippedTopToBottomLayer0;
+
+    struct SceneWithOneTileMap
+    {
+        std::unique_ptr<IScene> scene;
+        ICamera2d* camera;
+        AfterBuildPtr<ITileMap> tileMap;
+    };
+
+    SceneWithOneTileMap SetupSceneWithOneTileMap(
+        const IImage& tileAtlasImage,
+        const IImage& tileMapImage)
+    {
+        SceneWithOneTileMap result{};
+        SceneDefinition sceneDefinition{DrawingLayers};
+
+        TileAtlasDefinition tileAtlas{
+            DrawingLayers,
+            &tileAtlasImage,
+            glm::vec2(4.0f, 4.0f)
+        };
+
+        tileAtlas.AddTileMap(TileMapDefinition{
+            &result.tileMap,
+            0,
+            &tileMapImage
+        });
+        sceneDefinition.AddTileAtlas(tileAtlas);
+
+        result.scene = _engine->CreateScene(sceneDefinition);
+        result.scene->ClearColor(ColorBackgroundUglyYellow);
+        result.camera = result.scene->Camera2d();
+        return result;
+    }
+
+    struct SceneWithTwoTileMapsOnDifferentLayers
+    {
+        std::unique_ptr<IScene> scene;
+        ICamera2d* camera;
+        AfterBuildPtr<ITileMap> tileMapOnLayer0;
+        AfterBuildPtr<ITileMap> tileMapOnLayer1;
+    };
+
+    SceneWithTwoTileMapsOnDifferentLayers SetupSceneWithTwoTileMapsOnDifferentLayers(
+        const IImage& tileAtlasImage0,
+        const IImage& tileMapImage0,
+        const IImage& tileAtlasImage1,
+        const IImage& tileMapImage1)
+    {
+        SceneWithTwoTileMapsOnDifferentLayers result{};
+        SceneDefinition sceneDefinition{DrawingLayers};
+
+        TileAtlasDefinition tileAtlas0{
+            DrawingLayers,
+            &tileAtlasImage0,
+            glm::vec2(4.0f, 4.0f)
+        };
+
+        tileAtlas0.AddTileMap(TileMapDefinition{
+            &result.tileMapOnLayer0,
+            0,
+            &tileMapImage0
+        });
+        sceneDefinition.AddTileAtlas(tileAtlas0);
+
+        TileAtlasDefinition tileAtlas1{
+            DrawingLayers,
+            &tileAtlasImage1,
+            glm::vec2(4.0f, 4.0f)
+        };
+
+        tileAtlas1.AddTileMap(TileMapDefinition{
+            &result.tileMapOnLayer1,
+            1,
+            &tileMapImage1
+        });
+        sceneDefinition.AddTileAtlas(tileAtlas1);
+
+        result.scene = _engine->CreateScene(sceneDefinition);
+        result.scene->ClearColor(ColorBackgroundUglyYellow);
+        result.camera = result.scene->Camera2d();
+        return result;
+    }
     
-    void SetupTileMap8x4InCenterOfCamera8x6Fov(ITileMap* tileMap)
+    void SetupTileMap8x4InCenterOfCamera8x6Fov(ITileMap* tileMap, ICamera2d* camera)
     {
         // Create instance of 8x4 tile map with lower left at origin
         // with no rotation and size in world coordinates set to
@@ -182,11 +268,11 @@ protected:
         // (since lower left of tile map is at origin, taking half
         // of the width and height of the tile map will give the
         // center point)
-        _camera->Center(tileMap->Size() / 2.0f);
+        camera->Center(tileMap->Size() / 2.0f);
 
         // Set FoV so that 8 tiles are visible horizontally and due
         // to the aspect ration 6 tiles will be visible vertically
-        _camera->FieldOfView(ICamera2d::Fov(
+        camera->FieldOfView(ICamera2d::Fov(
             -4.0f, 4.0f,
             -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
     }
@@ -358,16 +444,21 @@ protected:
 
 TEST_F(TileMapTests, GivenSceneWithMultipleTileMaps_NoneVisibleByDefault)
 {
-    // Note: scene created by fixture has 2 sprites
-    _camera->Center(glm::vec2(0.0f, 0.0f));
+    auto setup = SetupSceneWithTwoTileMapsOnDifferentLayers(
+        _tileAtlasImageColorTiles4x4,
+        _tileMapImage8x4FlippedTopToBottom,
+        _tileAtlasImageColorTiles4x4EmptyCenters,
+        _tileMapImage8x4
+    );
+    setup.camera->Center(glm::vec2(0.0f, 0.0f));
 
     // Set FoV so that 8 units are visible horizontally and due
     // to the aspect ration 6 units will be visible vertically
-    _camera->FieldOfView(ICamera2d::Fov(
+    setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
         -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
 
-    _scene->Render();
+    setup.scene->Render();
 
     constexpr unsigned int ColumnCount = 32;
     constexpr unsigned int RowCount = 24;
@@ -379,51 +470,51 @@ TEST_F(TileMapTests, GivenSceneWithMultipleTileMaps_NoneVisibleByDefault)
 
 TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisible)
 {
-    ITileMap* tileMap = _tileMapSolid8x4Layer0.Get();
-    tileMap->Show(true);
-    SetupTileMap8x4InCenterOfCamera8x6Fov(tileMap);
-    _scene->Render();
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
+    setup.tileMap->Show(true);
+    SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
+    setup.scene->Render();
     Expect8x4ColorTilesMapCenteredOnScreen();
 }
 
 
 TEST_F(TileMapTests, Given8x4TileMapOffCamera_Camera8x6FovCenteredAtCenterOfTileMap_EntireAllBackgroundColorOnScreen)
 {
-    ITileMap* tileMap = _tileMapSolid8x4Layer0.Get();
-    tileMap->Show(true);
-    SetupTileMap8x4InCenterOfCamera8x6Fov(tileMap);
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
+    setup.tileMap->Show(true);
+    SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
 
     // Move tile map to an off camera location and expect all background color
-    tileMap->Position(glm::vec2(30.0f, 60.0f));
-    _scene->Render();
+    setup.tileMap->Position(glm::vec2(30.0f, 60.0f));
+    setup.scene->Render();
     ExpectAllBackgroundColorOnScreen();
 }
 
 TEST_F(TileMapTests, Given8x4TileMapAtX30Y60_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisible)
 {
-    ITileMap* tileMap = _tileMapSolid8x4Layer0.Get();
-    tileMap->Show(true);
-    SetupTileMap8x4InCenterOfCamera8x6Fov(tileMap);
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
+    setup.tileMap->Show(true);
+    SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
 
     // Move tile map to an off camera location and expect all background color
-    tileMap->Position(glm::vec2(30.0f, 60.0f));
+    setup.tileMap->Position(glm::vec2(30.0f, 60.0f));
 
     // Move the camera to re-center the tile map in the view and expect
     // to see the tile map as before
-    _camera->Center(tileMap->Position() + glm::vec3(tileMap->Size() / 2.0f, 0.0f));
-    _scene->Render();
+    setup.camera->Center(setup.tileMap->Position() + glm::vec3(setup.tileMap->Size() / 2.0f, 0.0f));
+    setup.scene->Render();
     Expect8x4ColorTilesMapCenteredOnScreen();
 }
 
 TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtOrigin_Left4ColumnsAndBottom3RowsOfTileMapAreVisible)
 {
-    ITileMap* tileMap = _tileMapSolid8x4Layer0.Get();
-    tileMap->Show(true);
-    SetupTileMap8x4InCenterOfCamera8x6Fov(tileMap);
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
+    setup.tileMap->Show(true);
+    SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
 
     // Center the camera at the origin
-    _camera->Center(glm::vec2(0.0f, 0.0f));
-    _scene->Render();
+    setup.camera->Center(glm::vec2(0.0f, 0.0f));
+    setup.scene->Render();
 
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;
@@ -460,13 +551,13 @@ TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtOrigin_Left4C
 
 TEST_F(TileMapTests, Given8x4TileMapAtOriginRotated45Degrees_Camera8x6FovCenteredAtCenterOfTileMap_TODO)
 {
-    ITileMap* tileMap = _tileMapSolid8x4Layer0.Get();
-    tileMap->Show(true);
-    SetupTileMap8x4InCenterOfCamera8x6Fov(tileMap);
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
+    setup.tileMap->Show(true);
+    SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
 
     // Rotate the tile map 45 degrees
-    tileMap->Rotation(45.0f);
-    _scene->Render();
+    setup.tileMap->Rotation(45.0f);
+    setup.scene->Render();
 
     const unsigned int ColumnCount = 6;
     const unsigned int RowCount = 9;
@@ -497,10 +588,10 @@ TEST_F(TileMapTests, Given8x4TileMapAtOriginRotated45Degrees_Camera8x6FovCentere
 
 TEST_F(TileMapTests, Given8x4TileMapEmptyCentersAtOrigin_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisibleAndCentersShowBackground)
 {
-    ITileMap* tileMap = _tileMapEmptyCenters8x4Layer0.Get();
-    tileMap->Show(true);
-    SetupTileMap8x4InCenterOfCamera8x6Fov(tileMap);
-    _scene->Render();
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4EmptyCenters, _tileMapImage8x4);
+    setup.tileMap->Show(true);
+    SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
+    setup.scene->Render();
 
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;
@@ -543,14 +634,19 @@ TEST_F(TileMapTests, Given8x4TileMapEmptyCentersAtOrigin_Camera8x6FovCenteredAtC
 
 TEST_F(TileMapTests, Given8x4TileMapEmptyCentersOnLayer1AndSolidTileMapFlippedTopToBottomOnLayer0_EntireLayer1TileMapIsVisibleAndCentersShowTileMapFromLayer0)
 {
-    ITileMap* tileMapLayer1 = _tileMapEmptyCenters8x4Layer1.Get();
-    tileMapLayer1->Show(true);
-    SetupTileMap8x4InCenterOfCamera8x6Fov(tileMapLayer1);
-    ITileMap* tileMapLayer0 = _tileMapSolid8x4FlippedTopToBottomLayer0.Get();
-    tileMapLayer0->Show(true);
-    SetupTileMap8x4InCenterOfCamera8x6Fov(tileMapLayer0);
+    auto setup = SetupSceneWithTwoTileMapsOnDifferentLayers(
+        _tileAtlasImageColorTiles4x4,
+        _tileMapImage8x4FlippedTopToBottom,
+        _tileAtlasImageColorTiles4x4EmptyCenters,
+        _tileMapImage8x4
+    );
 
-    _scene->Render();
+    SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMapOnLayer1.Get(), setup.camera);
+    SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMapOnLayer0.Get(), setup.camera);
+    setup.tileMapOnLayer1->Show(true);
+    setup.tileMapOnLayer0->Show(true);
+
+    setup.scene->Render();
 
     const unsigned int ColumnCount = 8;
     const unsigned int RowCount = 6;

@@ -95,7 +95,6 @@ protected:
 TEST_F(SpriteTests, GivenSceneWithTwoSprites_NoSpritesVisibleByDefault)
 {
     auto setup = SetupSceneWithTwoSpritesOnDifferentLayers();
-    // Note: scene created by fixture has 2 sprites
     setup.camera->Center(glm::vec2(0.0f, 0.0f));
 
     // Set FoV so that 8 units are visible horizontally and due
