@@ -14,7 +14,7 @@ namespace Graphics
             _ptr = ptr;
         }
 
-        inline T* Get()
+        inline T* Get() const
         {
             assert(_ptr != nullptr);
             return _ptr;
