@@ -8,7 +8,6 @@ target_include_directories(Graphics INTERFACE include)
 target_include_directories(Graphics PRIVATE include/JkEng/Graphics)
 target_sources(Graphics
   PRIVATE
-    include/JkEng/Graphics/AfterBuildPtr.h
     include/JkEng/Graphics/Color.h
     include/JkEng/Graphics/Graphics.h
     include/JkEng/Graphics/GridLocation.h
@@ -63,4 +62,4 @@ target_sources(Graphics
     src/OpenGL/UnitQuadVertexArray.cpp
     src/OpenGL/ViewportCapture.cpp
 )
-target_link_libraries(Graphics Window Shared ${CONAN_LIBS})
+target_link_libraries(Graphics Window JkEng ${CONAN_LIBS})
