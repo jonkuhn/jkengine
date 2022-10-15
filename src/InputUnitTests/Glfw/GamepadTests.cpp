@@ -3,11 +3,11 @@
 
 #include <gtest/gtest.h>
 
-#include <jkengine/Input/Glfw/Gamepad.h>
+#include <JkEng/Input/Glfw/Gamepad.h>
 #include "MockGlfwInputWrapper.h"
 
 using namespace testing;
-using namespace Input::Glfw;
+using namespace JkEng::Input::Glfw;
 
 class GamepadTests : public Test
 {

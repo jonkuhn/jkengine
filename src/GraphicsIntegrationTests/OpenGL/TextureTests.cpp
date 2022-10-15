@@ -4,15 +4,15 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <jkengine/Graphics/PngImage.h>
-#include <jkengine/Graphics/LibPngWrapper.h>
+#include <JkEng/Graphics/PngImage.h>
+#include <JkEng/Graphics/LibPngWrapper.h>
 
-#include <jkengine/Graphics/OpenGL/OpenGLWrapper.h>
-#include <jkengine/Graphics/OpenGL/Shader.h>
-#include <jkengine/Graphics/OpenGL/ShaderProgram.h>
-#include <jkengine/Graphics/OpenGL/Texture.h>
-#include <jkengine/Graphics/OpenGL/VertexArray.h>
-#include <jkengine/Graphics/OpenGL/ViewportCapture.h>
+#include <JkEng/Graphics/OpenGL/OpenGLWrapper.h>
+#include <JkEng/Graphics/OpenGL/Shader.h>
+#include <JkEng/Graphics/OpenGL/ShaderProgram.h>
+#include <JkEng/Graphics/OpenGL/Texture.h>
+#include <JkEng/Graphics/OpenGL/VertexArray.h>
+#include <JkEng/Graphics/OpenGL/ViewportCapture.h>
 
 #include <jkengine/Window/GlfwWindow.h>
 #include <jkengine/Window/GlfwWrapper.h>
@@ -20,9 +20,9 @@
 #include "TestHelpers.h"
 
 using namespace testing;
-using namespace Graphics::OpenGL;
-using LibPngWrapper = Graphics::LibPngWrapper;
-using PngImage = Graphics::PngImage;
+using namespace JkEng::Graphics::OpenGL;
+using LibPngWrapper = JkEng::Graphics::LibPngWrapper;
+using PngImage = JkEng::Graphics::PngImage;
 
 namespace
 {
@@ -122,12 +122,12 @@ protected:
     std::vector<TestTexturedVertex> _testRectangleVertices;
     std::vector<GLuint> _testTriangleElementsOfRectangle;
 
-    const Graphics::Color _blackColor;
-    const Graphics::Color _redColor;
-    const Graphics::Color _greenColor;
-    const Graphics::Color _blueColor;
-    const Graphics::Color _whiteColor;
-    const Graphics::Color _pinkColor;
+    const JkEng::Graphics::Color _blackColor;
+    const JkEng::Graphics::Color _redColor;
+    const JkEng::Graphics::Color _greenColor;
+    const JkEng::Graphics::Color _blueColor;
+    const JkEng::Graphics::Color _whiteColor;
+    const JkEng::Graphics::Color _pinkColor;
 
     void ClearViewportToPink()
     {

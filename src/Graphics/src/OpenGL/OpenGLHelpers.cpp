@@ -1,6 +1,6 @@
 #include "OpenGL/OpenGLHelpers.h"
 
-void Graphics::OpenGL::ThrowIfOpenGlError(IOpenGLWrapper& gl, const std::string& msgPrefix)
+void JkEng::Graphics::OpenGL::ThrowIfOpenGlError(IOpenGLWrapper& gl, const std::string& msgPrefix)
 {
     if (gl.GetError() != GL_NO_ERROR)
     {

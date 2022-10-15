@@ -3,7 +3,7 @@
 #include <Glfw/Engine.h>
 #include <Glfw/Gamepad.h>
 
-using namespace Input::Glfw;
+using namespace JkEng::Input::Glfw;
 
 namespace
 {
@@ -55,7 +55,7 @@ void Engine::Update()
     }
 }
 
-std::vector<Input::IGamepad*> Engine::EnumerateGamepads()
+std::vector<JkEng::Input::IGamepad*> Engine::EnumerateGamepads()
 {
     // The results of this method are only up to date as of the
     // last time Update was called.  Update should be called

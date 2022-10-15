@@ -5,24 +5,24 @@
 
 #include <gtest/gtest.h>
 
-#include <jkengine/Graphics/Color.h>
-#include <jkengine/Graphics/IScreenshot.h>
+#include <JkEng/Graphics/Color.h>
+#include <JkEng/Graphics/IScreenshot.h>
 
 
 template<unsigned int ColumnCount, unsigned int RowCount>
-inline std::array<std::array<Graphics::Color, ColumnCount>, RowCount> OneColorGrid(const Graphics::Color& color)
+inline std::array<std::array<JkEng::Graphics::Color, ColumnCount>, RowCount> OneColorGrid(const JkEng::Graphics::Color& color)
 {
-    std::array<std::array<Graphics::Color, ColumnCount>, RowCount> result;
-    std::array<Graphics::Color, ColumnCount> oneRowOneColor;
+    std::array<std::array<JkEng::Graphics::Color, ColumnCount>, RowCount> result;
+    std::array<JkEng::Graphics::Color, ColumnCount> oneRowOneColor;
     oneRowOneColor.fill(color);
     result.fill(oneRowOneColor);
     return result;
 }
 
 inline void ExpectColorAtScreenPosition(
-    const Graphics::IScreenshot& screenshot,
+    const JkEng::Graphics::IScreenshot& screenshot,
     std::string name,
-    const Graphics::Color& expectedColor,
+    const JkEng::Graphics::Color& expectedColor,
     float x,
     float y,
     unsigned int row,
@@ -36,9 +36,9 @@ inline void ExpectColorAtScreenPosition(
 }
 
 inline void ExpectColorAtScreenPositionIfOnScreen(
-    const Graphics::IScreenshot& screenshot,
+    const JkEng::Graphics::IScreenshot& screenshot,
     std::string name,
-    const Graphics::Color& expectedColor,
+    const JkEng::Graphics::Color& expectedColor,
     float x,
     float y,
     unsigned int row,
@@ -53,8 +53,8 @@ inline void ExpectColorAtScreenPositionIfOnScreen(
 
 template<unsigned int ColumnCount, unsigned int RowCount>
 inline void ExpectTileColorGridOnScreen(
-    const Graphics::IScreenshot& screenshot,
-    std::array<std::array<Graphics::Color, ColumnCount>, RowCount> expectedTileColors)
+    const JkEng::Graphics::IScreenshot& screenshot,
+    std::array<std::array<JkEng::Graphics::Color, ColumnCount>, RowCount> expectedTileColors)
 {
     auto columnWidth = static_cast<float>(screenshot.Width()) / static_cast<float>(ColumnCount);
     auto rowHeight = static_cast<float>(screenshot.Height()) / static_cast<float>(RowCount);

@@ -4,15 +4,15 @@
 #include <gtest/gtest.h>
 
 
-#include <jkengine/Graphics/OpenGL/ShaderProgram.h>
-#include <jkengine/Graphics/OpenGL/Shader.h>
-#include <jkengine/Graphics/OpenGL/OpenGLWrapper.h>
+#include <JkEng/Graphics/OpenGL/ShaderProgram.h>
+#include <JkEng/Graphics/OpenGL/Shader.h>
+#include <JkEng/Graphics/OpenGL/OpenGLWrapper.h>
 #include <jkengine/Window/GlfwWindow.h>
 #include <jkengine/Window/GlfwWrapper.h>
 #include "TestHelpers.h"
 
 using namespace testing;
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 class ShaderProgramTests : public Test
 {

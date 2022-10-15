@@ -12,7 +12,7 @@
 
 #include "OpenGL/IOpenGLWrapper.h"
 
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 ShaderProgram::ShaderProgram(IOpenGLWrapper& gl, const IShader& vertexShader, const IShader& fragmentShader)
     : _gl(&gl),

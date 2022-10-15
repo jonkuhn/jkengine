@@ -9,13 +9,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #pragma clang diagnostic pop
 
-#include <jkengine/Graphics/OpenGL/ShaderProgram.h>
+#include <JkEng/Graphics/OpenGL/ShaderProgram.h>
 #include "MockOpenGLWrapper.h"
 #include "MockShader.h"
 #include "../TestHelpers.h"
 
 using namespace testing;
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 class ShaderProgramTests : public Test
 {

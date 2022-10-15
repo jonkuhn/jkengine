@@ -7,16 +7,16 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <jkengine/Graphics/OpenGL/OpenGLWrapper.h>
-#include <jkengine/Graphics/OpenGL/Shader.h>
-#include <jkengine/Graphics/OpenGL/ShaderProgram.h>
-#include <jkengine/Graphics/OpenGL/VertexArray.h>
-#include <jkengine/Graphics/OpenGL/ViewportCapture.h>
+#include <JkEng/Graphics/OpenGL/OpenGLWrapper.h>
+#include <JkEng/Graphics/OpenGL/Shader.h>
+#include <JkEng/Graphics/OpenGL/ShaderProgram.h>
+#include <JkEng/Graphics/OpenGL/VertexArray.h>
+#include <JkEng/Graphics/OpenGL/ViewportCapture.h>
 #include <jkengine/Window/GlfwWindow.h>
 #include <jkengine/Window/GlfwWrapper.h>
 
 using namespace testing;
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 namespace
 {
@@ -94,8 +94,8 @@ protected:
     std::vector<TestSimpleVertex> _testRectangleVertices;
     std::vector<GLuint> _testTriangleElementsOfRectangle;
 
-    const Graphics::Color _shapeColor;
-    const Graphics::Color _blackColor;
+    const JkEng::Graphics::Color _shapeColor;
+    const JkEng::Graphics::Color _blackColor;
 
     void ClearViewportToBlack()
     {

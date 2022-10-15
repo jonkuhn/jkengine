@@ -8,7 +8,7 @@
 #include "OpenGL/SpriteDrawer.h"
 #include "OpenGL/Sprite.h"
 
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 TileAtlas::TileAtlas(
     IOpenGLWrapper& gl,

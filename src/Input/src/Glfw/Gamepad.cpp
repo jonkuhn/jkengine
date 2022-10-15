@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-using namespace Input::Glfw;
+using namespace JkEng::Input::Glfw;
 
 Gamepad::Gamepad(Window::IGlfwInputWrapper& glfw, int joystickId)
   : _glfw(&glfw),

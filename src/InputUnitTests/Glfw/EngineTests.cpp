@@ -3,12 +3,12 @@
 
 #include <gtest/gtest.h>
 
-#include <jkengine/Input/Glfw/Engine.h>
+#include <JkEng/Input/Glfw/Engine.h>
 #include "FakeGlfwInputWindow.h"
 #include "MockGlfwInputWrapper.h"
 
 using namespace testing;
-using namespace Input::Glfw;
+using namespace JkEng::Input::Glfw;
 
 class EngineTests : public Test
 {
@@ -29,7 +29,7 @@ TEST_F(EngineTests, Update_CallsUpdateForAllJoystickIds)
     // GetGamepadState call is made.  This makes the test depend
     // on an implementation detail of Gamepad, but in this case
     // it seems like a good tradeoff versus going to the trouble
-    // of fully decoupling Gamepad from Input::Glfw::Engine.
+    // of fully decoupling Gamepad from JkEng::Input::Glfw::Engine.
     for(int joystickId = GLFW_JOYSTICK_1; joystickId <= GLFW_JOYSTICK_LAST; joystickId++)
     {
         EXPECT_CALL(_mockGlfw, GetGamepadState(joystickId, _))

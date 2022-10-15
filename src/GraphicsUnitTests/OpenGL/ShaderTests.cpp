@@ -3,12 +3,12 @@
 
 #include <gtest/gtest.h>
 
-#include <jkengine/Graphics/OpenGL/Shader.h>
+#include <JkEng/Graphics/OpenGL/Shader.h>
 #include "../TestHelpers.h"
 #include "MockOpenGLWrapper.h"
 
 using namespace testing;
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 class ShaderTests : public Test
 {

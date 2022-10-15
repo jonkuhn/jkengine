@@ -4,7 +4,7 @@
 #include "OpenGL/TileAtlas.h"
 #include "OpenGL/TileMap.h"
 
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 namespace
 {

@@ -1,11 +1,11 @@
 #pragma once
 #include <gmock/gmock.h>
 
-#include <jkengine/Graphics/OpenGL/IOpenGLWrapper.h>
+#include <JkEng/Graphics/OpenGL/IOpenGLWrapper.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
-class MockOpenGLWrapper : public Graphics::OpenGL::IOpenGLWrapper {
+class MockOpenGLWrapper : public JkEng::Graphics::OpenGL::IOpenGLWrapper {
 public:
     MOCK_METHOD(GLenum, GetError, (), (override));
     MOCK_METHOD(GLuint, CreateShader, (GLenum type), (override));

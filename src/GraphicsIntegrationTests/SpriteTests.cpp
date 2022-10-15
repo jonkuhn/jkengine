@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <jkengine/Graphics/Graphics.h>
+#include <JkEng/Graphics/Graphics.h>
 
 #include <jkengine/Window/GlfwWindow.h>
 #include <jkengine/Window/GlfwWrapper.h>
@@ -9,7 +9,7 @@
 #include "ScreenSampleHelpers.h"
 
 using namespace testing;
-using namespace Graphics;
+using namespace JkEng::Graphics;
 
 class SpriteTests : public Test
 {

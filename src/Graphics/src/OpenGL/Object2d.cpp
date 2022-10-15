@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #pragma clang diagnostic pop
 
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 void Object2d::EnsureModelMatrixIsUpdated() const
 {

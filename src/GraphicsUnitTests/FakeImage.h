@@ -2,11 +2,11 @@
 
 #include <vector>
 
-#include <jkengine/Graphics/IImage.h>
+#include <JkEng/Graphics/IImage.h>
 
-class FakeImage : public ::Graphics::IImage {
+class FakeImage : public ::JkEng::Graphics::IImage {
 public:
-    FakeImage(int width, int height, ::Graphics::IImage::PixelFormat format)
+    FakeImage(int width, int height, ::JkEng::Graphics::IImage::PixelFormat format)
         : _width(width),
           _height(height),
           _format(format),
@@ -30,7 +30,7 @@ public:
         return _height;
     }
 
-    ::Graphics::IImage::PixelFormat Format() const override
+    ::JkEng::Graphics::IImage::PixelFormat Format() const override
     {
         return _format;
     }
@@ -38,17 +38,17 @@ public:
 private:
     int _width;
     int _height;
-    ::Graphics::IImage::PixelFormat _format;
+    ::JkEng::Graphics::IImage::PixelFormat _format;
     std::vector<uint8_t> _data;
 
-    int BytesPerPixel(::Graphics::IImage::PixelFormat format)
+    int BytesPerPixel(::JkEng::Graphics::IImage::PixelFormat format)
     {
         switch(format)
         {
-            case ::Graphics::IImage::PixelFormat::Grayscale: return 1;
-            case ::Graphics::IImage::PixelFormat::GrayscaleAlpha: return 2;
-            case ::Graphics::IImage::PixelFormat::RGB: return 3;
-            case ::Graphics::IImage::PixelFormat::RGBA: return 4;
+            case ::JkEng::Graphics::IImage::PixelFormat::Grayscale: return 1;
+            case ::JkEng::Graphics::IImage::PixelFormat::GrayscaleAlpha: return 2;
+            case ::JkEng::Graphics::IImage::PixelFormat::RGB: return 3;
+            case ::JkEng::Graphics::IImage::PixelFormat::RGBA: return 4;
             default: return 4;
         }
     }

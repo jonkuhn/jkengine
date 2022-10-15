@@ -6,11 +6,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #pragma clang diagnostic pop
 
-#include <jkengine/Graphics/OpenGL/Object2d.h>
+#include <JkEng/Graphics/OpenGL/Object2d.h>
 #include "../TestHelpers.h"
 
 using namespace testing;
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 class Object2dTests : public Test
 {
