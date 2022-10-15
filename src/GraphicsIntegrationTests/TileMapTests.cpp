@@ -167,16 +167,16 @@ protected:
     PngImage _tileAtlasImageColorTiles4x4EmptyCenters;
     TileMapImage8x4 _tileMapImage8x4;
     TileMapImage8x4 _tileMapImage8x4FlippedTopToBottom;
-    AfterBuildPtr<ITileMap> _tileMapSolid8x4Layer0;
-    AfterBuildPtr<ITileMap> _tileMapEmptyCenters8x4Layer0;
-    AfterBuildPtr<ITileMap> _tileMapEmptyCenters8x4Layer1;
-    AfterBuildPtr<ITileMap> _tileMapSolid8x4FlippedTopToBottomLayer0;
+    AfterCreatePtr<ITileMap> _tileMapSolid8x4Layer0;
+    AfterCreatePtr<ITileMap> _tileMapEmptyCenters8x4Layer0;
+    AfterCreatePtr<ITileMap> _tileMapEmptyCenters8x4Layer1;
+    AfterCreatePtr<ITileMap> _tileMapSolid8x4FlippedTopToBottomLayer0;
 
     struct SceneWithOneTileMap
     {
         std::unique_ptr<IScene> scene;
         ICamera2d* camera;
-        AfterBuildPtr<ITileMap> tileMap;
+        AfterCreatePtr<ITileMap> tileMap;
     };
 
     SceneWithOneTileMap SetupSceneWithOneTileMap(
@@ -209,8 +209,8 @@ protected:
     {
         std::unique_ptr<IScene> scene;
         ICamera2d* camera;
-        AfterBuildPtr<ITileMap> tileMapOnLayer0;
-        AfterBuildPtr<ITileMap> tileMapOnLayer1;
+        AfterCreatePtr<ITileMap> tileMapOnLayer0;
+        AfterCreatePtr<ITileMap> tileMapOnLayer1;
     };
 
     SceneWithTwoTileMapsOnDifferentLayers SetupSceneWithTwoTileMapsOnDifferentLayers(

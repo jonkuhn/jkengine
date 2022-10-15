@@ -9,7 +9,7 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
-#include <JkEng/AfterBuildPtr.h>
+#include <JkEng/AfterCreatePtr.h>
 #include "SpriteDefinition.h"
 #include "TileMapDefinition.h"
 

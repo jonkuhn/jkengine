@@ -20,5 +20,5 @@ fi
 
 cd bin
 
-./SharedUnitTests && ./GraphicsUnitTests && ./GraphicsIntegrationTests && ./InputUnitTests && echo "All Tests Passed!"
+./JkEngUnitTests && ./GraphicsUnitTests && ./GraphicsIntegrationTests && ./InputUnitTests && echo "All Tests Passed!"
 

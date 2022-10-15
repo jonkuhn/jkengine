@@ -38,7 +38,7 @@ protected:
     {
         std::unique_ptr<IScene> scene;
         ICamera2d* camera;
-        AfterBuildPtr<ISprite> sprite;
+        AfterCreatePtr<ISprite> sprite;
     };
 
     SceneWithOneSprite SetupSceneWithOneSprite()
@@ -66,8 +66,8 @@ protected:
     {
         std::unique_ptr<IScene> scene;
         ICamera2d* camera;
-        AfterBuildPtr<ISprite> spriteOnLayer0;
-        AfterBuildPtr<ISprite> spriteOnLayer1;
+        AfterCreatePtr<ISprite> spriteOnLayer0;
+        AfterCreatePtr<ISprite> spriteOnLayer1;
     };
 
     SceneWithTwoSpritesOnDifferentLayers SetupSceneWithTwoSpritesOnDifferentLayers()

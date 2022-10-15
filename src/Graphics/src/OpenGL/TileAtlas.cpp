@@ -55,7 +55,7 @@ TileAtlas::TileAtlas(
             // add that many items to it in this loop.
             // TODO: Consider creating a wrapper for std::vector that
             // enforces this.
-            tileMapDefinition.SetAfterBuildPtr(&(_perLayerTileMaps[layer].back()));
+            tileMapDefinition.SetAfterCreatePtr(&(_perLayerTileMaps[layer].back()));
         }
     }
 
@@ -73,7 +73,7 @@ TileAtlas::TileAtlas(
             // add that many items to it in this loop.
             // TODO: Consider creating a wrapper for std::vector that
             // enforces this.
-            spriteDefinition.SetAfterBuildPtr(&(_perLayerSprites[layer].back()));
+            spriteDefinition.SetAfterCreatePtr(&(_perLayerSprites[layer].back()));
         }
     }
 }
