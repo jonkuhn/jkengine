@@ -5,51 +5,51 @@ else()
   target_compile_options(Graphics PRIVATE -Wall -Wextra -pedantic -Werror)
 endif()
 target_include_directories(Graphics INTERFACE include)
-target_include_directories(Graphics PRIVATE include/jkengine/Graphics)
+target_include_directories(Graphics PRIVATE include/JkEng/Graphics)
 target_sources(Graphics
   PRIVATE
-    include/jkengine/Graphics/AfterBuildPtr.h
-    include/jkengine/Graphics/Color.h
-    include/jkengine/Graphics/Graphics.h
-    include/jkengine/Graphics/GridLocation.h
-    include/jkengine/Graphics/ICamera2d.h
-    include/jkengine/Graphics/IEngine.h
-    include/jkengine/Graphics/IImage.h
-    include/jkengine/Graphics/IObject2d.h
-    include/jkengine/Graphics/PngImage.h
-    include/jkengine/Graphics/ILibPngWrapper.h
-    include/jkengine/Graphics/LibPngWrapper.h
-    include/jkengine/Graphics/IScene.h
-    include/jkengine/Graphics/SceneDefinition.h
-    include/jkengine/Graphics/IScreenshot.h
-    include/jkengine/Graphics/ISprite.h
-    include/jkengine/Graphics/SpriteDefinition.h
-    include/jkengine/Graphics/TileAtlasDefinition.h
-    include/jkengine/Graphics/ITileMap.h
-    include/jkengine/Graphics/TileMapDefinition.h
+    include/JkEng/Graphics/AfterBuildPtr.h
+    include/JkEng/Graphics/Color.h
+    include/JkEng/Graphics/Graphics.h
+    include/JkEng/Graphics/GridLocation.h
+    include/JkEng/Graphics/ICamera2d.h
+    include/JkEng/Graphics/IEngine.h
+    include/JkEng/Graphics/IImage.h
+    include/JkEng/Graphics/IObject2d.h
+    include/JkEng/Graphics/PngImage.h
+    include/JkEng/Graphics/ILibPngWrapper.h
+    include/JkEng/Graphics/LibPngWrapper.h
+    include/JkEng/Graphics/IScene.h
+    include/JkEng/Graphics/SceneDefinition.h
+    include/JkEng/Graphics/IScreenshot.h
+    include/JkEng/Graphics/ISprite.h
+    include/JkEng/Graphics/SpriteDefinition.h
+    include/JkEng/Graphics/TileAtlasDefinition.h
+    include/JkEng/Graphics/ITileMap.h
+    include/JkEng/Graphics/TileMapDefinition.h
     src/Color.cpp
     src/PngImage.cpp
-    include/jkengine/Graphics/OpenGL/Camera2d.h
-    include/jkengine/Graphics/OpenGL/Engine.h
-    include/jkengine/Graphics/OpenGL/Object2d.h
-    include/jkengine/Graphics/OpenGL/OpenGLHelpers.h
-    include/jkengine/Graphics/OpenGL/IOpenGLWrapper.h
-    include/jkengine/Graphics/OpenGL/OpenGLWrapper.h
-    include/jkengine/Graphics/OpenGL/Scene.h
-    include/jkengine/Graphics/OpenGL/IShader.h
-    include/jkengine/Graphics/OpenGL/Shader.h
-    include/jkengine/Graphics/OpenGL/ShaderProgram.h
-    include/jkengine/Graphics/OpenGL/Simple3dVertex.h
-    include/jkengine/Graphics/OpenGL/SpriteDrawer.h
-    include/jkengine/Graphics/OpenGL/SpriteShaderProgram.h
-    include/jkengine/Graphics/OpenGL/Texture.h
-    include/jkengine/Graphics/OpenGL/TileAtlas.h
-    include/jkengine/Graphics/OpenGL/TileMapDrawer.h
-    include/jkengine/Graphics/OpenGL/TileMap.h
-    include/jkengine/Graphics/OpenGL/TileMapShaderProgram.h
-    include/jkengine/Graphics/OpenGL/UnitQuadVertexArray.h
-    include/jkengine/Graphics/OpenGL/VertexArray.h
-    include/jkengine/Graphics/OpenGL/ViewportCapture.h
+    include/JkEng/Graphics/OpenGL/Camera2d.h
+    include/JkEng/Graphics/OpenGL/Engine.h
+    include/JkEng/Graphics/OpenGL/Object2d.h
+    include/JkEng/Graphics/OpenGL/OpenGLHelpers.h
+    include/JkEng/Graphics/OpenGL/IOpenGLWrapper.h
+    include/JkEng/Graphics/OpenGL/OpenGLWrapper.h
+    include/JkEng/Graphics/OpenGL/Scene.h
+    include/JkEng/Graphics/OpenGL/IShader.h
+    include/JkEng/Graphics/OpenGL/Shader.h
+    include/JkEng/Graphics/OpenGL/ShaderProgram.h
+    include/JkEng/Graphics/OpenGL/Simple3dVertex.h
+    include/JkEng/Graphics/OpenGL/SpriteDrawer.h
+    include/JkEng/Graphics/OpenGL/SpriteShaderProgram.h
+    include/JkEng/Graphics/OpenGL/Texture.h
+    include/JkEng/Graphics/OpenGL/TileAtlas.h
+    include/JkEng/Graphics/OpenGL/TileMapDrawer.h
+    include/JkEng/Graphics/OpenGL/TileMap.h
+    include/JkEng/Graphics/OpenGL/TileMapShaderProgram.h
+    include/JkEng/Graphics/OpenGL/UnitQuadVertexArray.h
+    include/JkEng/Graphics/OpenGL/VertexArray.h
+    include/JkEng/Graphics/OpenGL/ViewportCapture.h
     src/OpenGL/Engine.cpp
     src/OpenGL/Object2d.cpp
     src/OpenGL/OpenGLHelpers.cpp

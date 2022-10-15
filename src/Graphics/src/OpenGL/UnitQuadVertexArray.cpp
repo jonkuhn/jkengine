@@ -1,7 +1,7 @@
 #include "OpenGL/UnitQuadVertexArray.h"
 #include "OpenGL/VertexArray.h"
 
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 namespace
 {

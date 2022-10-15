@@ -6,12 +6,12 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <jkengine/Graphics/OpenGL/VertexArray.h>
+#include <JkEng/Graphics/OpenGL/VertexArray.h>
 #include "../TestHelpers.h"
 #include "MockOpenGLWrapper.h"
 
 using namespace testing;
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 namespace
 {

@@ -5,13 +5,13 @@ else()
   target_compile_options(Input PRIVATE -Wall -Wextra -pedantic -Werror)
 endif()
 target_include_directories(Input INTERFACE include)
-target_include_directories(Input PRIVATE include/jkengine/Input)
+target_include_directories(Input PRIVATE include/JkEng/Input)
 target_sources(Input
   PRIVATE
-    include/jkengine/Input/IEngine.h
-    include/jkengine/Input/IGamepad.h
-    include/jkengine/Input/Glfw/Engine.h
-    include/jkengine/Input/Glfw/Gamepad.h
+    include/JkEng/Input/IEngine.h
+    include/JkEng/Input/IGamepad.h
+    include/JkEng/Input/Glfw/Engine.h
+    include/JkEng/Input/Glfw/Gamepad.h
     src/Glfw/Engine.cpp
     src/Glfw/Gamepad.cpp
 )

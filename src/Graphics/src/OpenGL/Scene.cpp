@@ -7,7 +7,7 @@
 
 #include "OpenGL/Texture.h"
 
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 Scene::Scene(Window::IOpenGLWindow& window, const SceneDefinition& definition)
     : _window(window),

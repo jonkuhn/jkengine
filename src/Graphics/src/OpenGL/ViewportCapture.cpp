@@ -5,7 +5,7 @@
 
 #include "OpenGL/ViewportCapture.h"
 
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 namespace
 {
@@ -93,7 +93,7 @@ unsigned int ViewportCapture::Height() const
     return _dimensions.height;
 }
 
-Graphics::Color ViewportCapture::GetPixel(unsigned int x, unsigned int y) const
+JkEng::Graphics::Color ViewportCapture::GetPixel(unsigned int x, unsigned int y) const
 {
     if (x < 0 || x >= _dimensions.width)
     {
@@ -125,7 +125,7 @@ void ViewportCapture::SaveToFileAsRaw(const std::string& filename) const
         auto offset = GetPixelDataOffset(x, y);
         file.write(
             reinterpret_cast<const char *>(&_pixelData[offset]),
-            _dimensions.width * sizeof(Graphics::Color));
+            _dimensions.width * sizeof(JkEng::Graphics::Color));
     }
     file.close();
 }

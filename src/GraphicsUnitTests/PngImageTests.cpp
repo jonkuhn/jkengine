@@ -4,12 +4,12 @@
 
 #include <gtest/gtest.h>
 
-#include <jkengine/Graphics/PngImage.h>
+#include <JkEng/Graphics/PngImage.h>
 #include "MockLibPngWrapper.h"
 #include "TestHelpers.h"
 
 using namespace testing;
-using namespace Graphics;
+using namespace JkEng::Graphics;
 
 namespace
 {

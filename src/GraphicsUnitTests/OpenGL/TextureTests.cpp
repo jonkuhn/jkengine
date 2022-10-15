@@ -5,14 +5,14 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <jkengine/Graphics/OpenGL/Texture.h>
+#include <JkEng/Graphics/OpenGL/Texture.h>
 #include "../TestHelpers.h"
 #include "MockOpenGLWrapper.h"
 #include "../FakeImage.h"
 
 using namespace testing;
-using namespace Graphics::OpenGL;
-using PixelFormat=::Graphics::IImage::PixelFormat;
+using namespace JkEng::Graphics::OpenGL;
+using PixelFormat=::JkEng::Graphics::IImage::PixelFormat;
 
 class TextureTests : public Test
 {

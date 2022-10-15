@@ -3,7 +3,7 @@
 #include "OpenGL/ShaderProgram.h"
 #include "OpenGL/TileAtlas.h"
 
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 namespace
 {

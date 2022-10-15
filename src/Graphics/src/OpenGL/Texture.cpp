@@ -2,15 +2,15 @@
 
 #include <sstream>
 
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 namespace
 {
-    GLint getGlFormatFromImage(const ::Graphics::IImage& image)
+    GLint getGlFormatFromImage(const ::JkEng::Graphics::IImage& image)
     {
         switch (image.Format())
         {
-            case ::Graphics::IImage::PixelFormat::RGBA: return GL_RGBA;
+            case ::JkEng::Graphics::IImage::PixelFormat::RGBA: return GL_RGBA;
             default:
                 std::stringstream ss;
                 ss << "Unsupported texture format " << static_cast<int>(image.Format());

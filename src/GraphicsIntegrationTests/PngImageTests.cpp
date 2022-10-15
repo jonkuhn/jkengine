@@ -4,11 +4,11 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <jkengine/Graphics/PngImage.h>
-#include <jkengine/Graphics/LibPngWrapper.h>
+#include <JkEng/Graphics/PngImage.h>
+#include <JkEng/Graphics/LibPngWrapper.h>
 
 using namespace testing;
-using namespace Graphics;
+using namespace JkEng::Graphics;
 
 class PngImageTests : public Test
 {

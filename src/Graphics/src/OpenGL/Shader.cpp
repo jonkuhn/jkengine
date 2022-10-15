@@ -6,11 +6,11 @@
 
 #include "OpenGL/IOpenGLWrapper.h"
 
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 namespace 
 {
-    using namespace Graphics::OpenGL;
+    using namespace JkEng::Graphics::OpenGL;
 
     std::string readAllToString(std::istream& istream)
     {

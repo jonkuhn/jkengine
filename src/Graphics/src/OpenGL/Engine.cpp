@@ -6,7 +6,7 @@
 #include "OpenGL/Texture.h"
 #include "OpenGL/ViewportCapture.h"
 
-using namespace Graphics::OpenGL;
+using namespace JkEng::Graphics::OpenGL;
 
 Engine::Engine(Window::IOpenGLWindow& window)
     : _window(window),
@@ -29,12 +29,12 @@ Engine::Engine(Window::IOpenGLWindow& window)
     _gl.BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-std::unique_ptr<Graphics::IScene> Engine::CreateScene(const SceneDefinition& definition)
+std::unique_ptr<JkEng::Graphics::IScene> Engine::CreateScene(const SceneDefinition& definition)
 {
     return std::make_unique<Scene>(_window, definition);
 }
 
-std::unique_ptr<Graphics::IScreenshot> Engine::TakeScreenshot()
+std::unique_ptr<JkEng::Graphics::IScreenshot> Engine::TakeScreenshot()
 {
     return std::make_unique<ViewportCapture>(_gl);
 }

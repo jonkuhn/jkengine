@@ -3,7 +3,7 @@
 namespace Window
 {
     // Marker interface for a GLFW window that is processing input events
-    // This exists to document Input::Glfw::Engine's dependence on a window
+    // This exists to document JkEng::Input::Glfw::Engine's dependence on a window
     // that processes input events
     class IGlfwInputWindow
     {

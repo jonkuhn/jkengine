@@ -2,11 +2,11 @@
 
 #include <gmock/gmock.h>
 
-#include <jkengine/Graphics/ILibPngWrapper.h>
+#include <JkEng/Graphics/ILibPngWrapper.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
-class MockLibPngWrapper : public Graphics::ILibPngWrapper
+class MockLibPngWrapper : public JkEng::Graphics::ILibPngWrapper
 {
 public:
     MOCK_METHOD(int, png_image_begin_read_from_file, (png_image* image, const char *file_name), (override));

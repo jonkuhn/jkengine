@@ -4,7 +4,7 @@
 
 #include "ILibPngWrapper.h"
 
-using namespace Graphics;
+using namespace JkEng::Graphics;
 
 PngImage::PngImage(ILibPngWrapper* libPng, const std::string& filename)
     : _libPng(libPng),
