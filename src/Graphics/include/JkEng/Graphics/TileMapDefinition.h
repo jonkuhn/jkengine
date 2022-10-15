@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
-#include <JkEng/AfterBuildPtr.h>
+#include <JkEng/AfterCreatePtr.h>
 
 namespace JkEng::Graphics
 {
@@ -15,7 +15,7 @@ namespace JkEng::Graphics
     class TileMapDefinition final
     {
     public:
-        TileMapDefinition(AfterBuildPtr<ITileMap>* tileMapAfterBuild, size_t layer, const IImage* image)
+        TileMapDefinition(AfterCreatePtr<ITileMap>* tileMapAfterBuild, size_t layer, const IImage* image)
             : _tileMapAfterBuild(tileMapAfterBuild),
               _image(image),
               _layer(layer)
@@ -25,13 +25,13 @@ namespace JkEng::Graphics
 
         inline const IImage& Image() const { return *_image; }
         inline size_t Layer() const { return _layer; }
-        inline void SetAfterBuildPtr(ITileMap* tileMap) const
+        inline void SetAfterCreatePtr(ITileMap* tileMap) const
         {
             _tileMapAfterBuild->Initialize(tileMap);
         }
 
     private:
-        AfterBuildPtr<ITileMap>* _tileMapAfterBuild;
+        AfterCreatePtr<ITileMap>* _tileMapAfterBuild;
         const IImage* _image;
         size_t _layer;
     };

@@ -7,7 +7,7 @@ endif()
 target_sources(JkEngUnitTests
   PRIVATE
     main_test.cpp
-    AfterBuildPtrTests.cpp
+    AfterCreatePtrTests.cpp
 )
 target_include_directories(JkEngUnitTests PRIVATE
   ../

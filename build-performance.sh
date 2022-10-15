@@ -20,4 +20,3 @@ fi
 
 cd bin
 
-./SharedPerformanceTests

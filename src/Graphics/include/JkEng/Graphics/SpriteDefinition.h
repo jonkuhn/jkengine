@@ -1,6 +1,6 @@
 #pragma once
 
-#include <JkEng/AfterBuildPtr.h>
+#include <JkEng/AfterCreatePtr.h>
 
 namespace JkEng::Graphics
 {
@@ -9,7 +9,7 @@ namespace JkEng::Graphics
     class SpriteDefinition final
     {
     public:
-        SpriteDefinition(AfterBuildPtr<ISprite>* spriteAfterBuild, size_t layer)
+        SpriteDefinition(AfterCreatePtr<ISprite>* spriteAfterBuild, size_t layer)
             : _spriteAfterBuild(spriteAfterBuild),
               _layer(layer)
         {
@@ -18,13 +18,13 @@ namespace JkEng::Graphics
 
         inline size_t Layer() const { return _layer; }
 
-        inline void SetAfterBuildPtr(ISprite* sprite) const
+        inline void SetAfterCreatePtr(ISprite* sprite) const
         {
             _spriteAfterBuild->Initialize(sprite);
         }
 
     private:
-        AfterBuildPtr<ISprite>* _spriteAfterBuild;
+        AfterCreatePtr<ISprite>* _spriteAfterBuild;
         size_t _layer;
     };
 }
