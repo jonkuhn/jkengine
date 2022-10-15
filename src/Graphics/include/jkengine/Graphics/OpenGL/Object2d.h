@@ -90,7 +90,7 @@ namespace Graphics::OpenGL
         float _rotationDegrees;
         mutable glm::mat4 _model;  
         mutable bool _modelNeedsUpdated;
-        bool _show : 1 = false;
+        bool _show : 1 = true;
 
         void EnsureModelMatrixIsUpdated() const;
     };

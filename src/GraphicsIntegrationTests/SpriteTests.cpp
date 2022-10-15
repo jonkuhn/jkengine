@@ -92,9 +92,15 @@ protected:
     }
 };
 
-TEST_F(SpriteTests, GivenSceneWithTwoSprites_NoSpritesVisibleByDefault)
+TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCenteredAtOriginAndShowCalledWithFalse_NothingVisible)
 {
-    auto setup = SetupSceneWithTwoSpritesOnDifferentLayers();
+    auto setup = SetupSceneWithOneSprite();
+    setup.sprite->Show(false);
+    setup.sprite->Position(glm::vec2(0.0f, 0.0f));
+    setup.sprite->Rotation(0.0f);
+    setup.sprite->Size(glm::vec2(3.0f, 3.0f));
+    setup.sprite->AtlasLocation(GridLocation(0, 0));
+
     setup.camera->Center(glm::vec2(0.0f, 0.0f));
 
     // Set FoV so that 8 units are visible horizontally and due
@@ -116,7 +122,6 @@ TEST_F(SpriteTests, GivenSceneWithTwoSprites_NoSpritesVisibleByDefault)
 TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCenteredAtOrigin_EntireSpriteIsVisible)
 {
     auto setup = SetupSceneWithOneSprite();
-    setup.sprite->Show(true);
     setup.sprite->Position(glm::vec2(0.0f, 0.0f));
     setup.sprite->Rotation(0.0f);
     setup.sprite->Size(glm::vec2(3.0f, 3.0f));
@@ -168,7 +173,6 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCent
 TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX2Y1_Camera8x6FovCenteredAtOrigin_EntireSpriteIsVisible)
 {
     auto setup = SetupSceneWithOneSprite();
-    setup.sprite->Show(true);
     setup.sprite->Position(glm::vec2(0.0f, 0.0f));
     setup.sprite->Rotation(0.0f);
     setup.sprite->Size(glm::vec2(3.0f, 3.0f));
@@ -220,7 +224,6 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX2Y1_Camera8x6FovCent
 TEST_F(SpriteTests, Given6x6SpriteAtX30Y60_Camera8x6FovCenteredAtCenterOfSprite_EntireSpriteIsVisible)
 {
     auto setup = SetupSceneWithOneSprite();
-    setup.sprite->Show(true);
     setup.sprite->Position(glm::vec2(30.0f, 60.0f));
     setup.sprite->Rotation(0.0f);
     setup.sprite->Size(glm::vec2(6.0f, 6.0f));
@@ -280,7 +283,6 @@ TEST_F(SpriteTests, Given6x6SpriteAtX30Y60_Camera8x6FovCenteredAtCenterOfSprite_
 TEST_F(SpriteTests, Given6x6Sprite_GivenOffCameraAtX4Y0_SpriteIsNotVisible)
 {
     auto setup = SetupSceneWithOneSprite();
-    setup.sprite->Show(true);
     setup.sprite->Position(glm::vec2(30.0f, 60.0f));
     setup.sprite->Rotation(0.0f);
     setup.sprite->Size(glm::vec2(6.0f, 6.0f));
@@ -324,7 +326,6 @@ TEST_F(SpriteTests, Given6x6Sprite_GivenOffCameraAtX4Y0_SpriteIsNotVisible)
 TEST_F(SpriteTests, Given3x3SpriteAtOriginRotated45Degrees_Camera8x6FovCenteredOnSprite_EntireSpriteIsVisible)
 {
     auto setup = SetupSceneWithOneSprite();
-    setup.sprite->Show(true);
     setup.sprite->Position(glm::vec2(0.0f, 0.0f));
     setup.sprite->Rotation(45.0f);
     setup.sprite->Size(glm::vec2(3.0f, 3.0f));
@@ -398,13 +399,11 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginRotated45Degrees_Camera8x6FovCenteredO
 TEST_F(SpriteTests, GivenTwo3x3SpritesOnDifferentLayers_TransparentAreasOfHigherLayerSpriteShowLowerLayerSprite)
 {
     auto setup = SetupSceneWithTwoSpritesOnDifferentLayers();
-    setup.spriteOnLayer1->Show(true);
     setup.spriteOnLayer1->Position(glm::vec2(0.0f, 0.0f));
     setup.spriteOnLayer1->Rotation(0.0f);
     setup.spriteOnLayer1->Size(glm::vec2(3.0f, 3.0f));
     setup.spriteOnLayer1->AtlasLocation(GridLocation(0, 0));
 
-    setup.spriteOnLayer0->Show(true);
     setup.spriteOnLayer0->Position(glm::vec2(-1.0f, 0.0f));
     setup.spriteOnLayer0->Rotation(0.0f);
     setup.spriteOnLayer0->Size(glm::vec2(3.0f, 3.0f));
