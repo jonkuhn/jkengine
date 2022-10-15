@@ -1,11 +1,11 @@
 #pragma once
 #include <gmock/gmock.h>
 
-#include <jkengine/Window/IGlfwWrapper.h>
+#include <JkEng/Window/IGlfwWrapper.h>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
-class MockGlfwWrapper : public Window::IGlfwWrapper {
+class MockGlfwWrapper : public JkEng::Window::IGlfwWrapper {
 public:
     MOCK_METHOD(void, WindowHint, (int hint, int value), (override));
     MOCK_METHOD(GLFWwindow*, CreateWindow, (int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share), (override));

@@ -5,7 +5,7 @@
 
 #include "IGlfwWrapper.h"
 
-namespace Window 
+namespace JkEng::Window 
 {
     class GlfwException final : public std::runtime_error
     {

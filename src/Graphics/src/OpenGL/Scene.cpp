@@ -1,6 +1,6 @@
 #include "OpenGL/Scene.h"
 
-#include <jkengine/Window/IOpenGLWindow.h>
+#include <JkEng/Window/IOpenGLWindow.h>
 
 #include "Color.h"
 #include "SceneDefinition.h"
@@ -9,7 +9,7 @@
 
 using namespace JkEng::Graphics::OpenGL;
 
-Scene::Scene(Window::IOpenGLWindow& window, const SceneDefinition& definition)
+Scene::Scene(JkEng::Window::IOpenGLWindow& window, const SceneDefinition& definition)
     : _window(window),
       _gl(_window),
       _tileMapShaderProgram(_gl),

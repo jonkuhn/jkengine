@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <jkengine/Window/IOpenGLWindow.h>
+#include <JkEng/Window/IOpenGLWindow.h>
 
 #include "../IEngine.h"
 #include "Camera2d.h"
@@ -13,7 +13,7 @@ namespace JkEng::Graphics::OpenGL
     class Engine : public IEngine
     {
     public:
-        Engine(Window::IOpenGLWindow& window);
+        Engine(JkEng::Window::IOpenGLWindow& window);
 
         // There is need to copy or move this class.
         Engine(const Engine&) = delete;
@@ -26,7 +26,7 @@ namespace JkEng::Graphics::OpenGL
         std::unique_ptr<IScreenshot> TakeScreenshot() override;
 
     private:
-        Window::IOpenGLWindow& _window;
+        JkEng::Window::IOpenGLWindow& _window;
         OpenGLWrapper _gl;
     };
 }

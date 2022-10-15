@@ -2,14 +2,14 @@
 #include <string>
 
 #include "../IGamepad.h"
-#include <jkengine/Window/IGlfwInputWrapper.h>
+#include <JkEng/Window/IGlfwInputWrapper.h>
 
 namespace JkEng::Input::Glfw
 {
     class Gamepad final : public IGamepad
     {
     public:
-        Gamepad(Window::IGlfwInputWrapper& glfw, int joystickId);
+        Gamepad(JkEng::Window::IGlfwInputWrapper& glfw, int joystickId);
 
         // There is need to copy this class.
         Gamepad(const Gamepad&) = delete;
@@ -54,7 +54,7 @@ namespace JkEng::Input::Glfw
         void Update();
 
     private:
-        Window::IGlfwInputWrapper* _glfw;
+        JkEng::Window::IGlfwInputWrapper* _glfw;
         int _joystickId;
         bool _isConnected;
         GLFWgamepadstate _gamepadState;

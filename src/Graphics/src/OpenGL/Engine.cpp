@@ -8,7 +8,7 @@
 
 using namespace JkEng::Graphics::OpenGL;
 
-Engine::Engine(Window::IOpenGLWindow& window)
+Engine::Engine(JkEng::Window::IOpenGLWindow& window)
     : _window(window),
       _gl(_window)
 {

@@ -2,7 +2,7 @@
 
 #include "GlfwWrapper.h"
 
-using namespace Window;
+using namespace JkEng::Window;
 
 class GlfwWrapper::GlfwInit
 {

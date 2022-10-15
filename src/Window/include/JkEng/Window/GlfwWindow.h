@@ -7,7 +7,7 @@
 #include "IOpenGLWindow.h"
 #include "IGlfwInputWindow.h"
 
-namespace Window 
+namespace JkEng::Window 
 {
     class GlfwWindow final : public IOpenGLWindow, public IGlfwInputWindow
     {

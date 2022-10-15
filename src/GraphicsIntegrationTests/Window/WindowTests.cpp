@@ -4,11 +4,11 @@
 
 #include <gtest/gtest.h>
 
-#include <jkengine/Window/GlfwWindow.h>
-#include <jkengine/Window/GlfwWrapper.h>
+#include <JkEng/Window/GlfwWindow.h>
+#include <JkEng/Window/GlfwWrapper.h>
 
 using namespace testing;
-using namespace Window;
+using namespace JkEng::Window;
 
 namespace
 {

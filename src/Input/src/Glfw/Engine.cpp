@@ -8,7 +8,7 @@ using namespace JkEng::Input::Glfw;
 namespace
 {
     template<int GamepadCount>
-    std::array<Gamepad, GamepadCount> CreateGamepads(Window::IGlfwInputWrapper& glfw)
+    std::array<Gamepad, GamepadCount> CreateGamepads(JkEng::Window::IGlfwInputWrapper& glfw)
     {
         return std::array<Gamepad, GamepadCount>({{
             Gamepad(glfw, GLFW_JOYSTICK_1),
@@ -31,7 +31,7 @@ namespace
     }
 }
 
-Engine::Engine(Window::IGlfwInputWrapper& glfw, Window::IGlfwInputWindow& inputWindow)
+Engine::Engine(JkEng::Window::IGlfwInputWrapper& glfw, JkEng::Window::IGlfwInputWindow& inputWindow)
   : _glfw(glfw),
     _inputWindow(inputWindow),
     _gamepads(CreateGamepads<MaxGamepadCount>(_glfw)),

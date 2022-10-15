@@ -7,8 +7,8 @@
 #include <JkEng/Graphics/OpenGL/ShaderProgram.h>
 #include <JkEng/Graphics/OpenGL/Shader.h>
 #include <JkEng/Graphics/OpenGL/OpenGLWrapper.h>
-#include <jkengine/Window/GlfwWindow.h>
-#include <jkengine/Window/GlfwWrapper.h>
+#include <JkEng/Window/GlfwWindow.h>
+#include <JkEng/Window/GlfwWrapper.h>
 #include "TestHelpers.h"
 
 using namespace testing;
@@ -26,8 +26,8 @@ public:
         _gl.GetError();
     }
 protected:
-    Window::GlfwWrapper _glfw;
-    Window::GlfwWindow _window;
+    JkEng::Window::GlfwWrapper _glfw;
+    JkEng::Window::GlfwWindow _window;
     OpenGLWrapper _gl;
 };
 

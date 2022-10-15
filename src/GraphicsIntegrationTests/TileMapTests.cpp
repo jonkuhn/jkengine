@@ -11,8 +11,8 @@
 #include <gtest/gtest.h>
 
 #include <JkEng/Graphics/Graphics.h>
-#include <jkengine/Window/GlfwWindow.h>
-#include <jkengine/Window/GlfwWrapper.h>
+#include <JkEng/Window/GlfwWindow.h>
+#include <JkEng/Window/GlfwWrapper.h>
 
 #include "ColorTiles4x4.h"
 #include "ScreenSampleHelpers.h"
@@ -157,8 +157,8 @@ public:
     }
 protected:
     LibPngWrapper _libPng;
-    Window::GlfwWrapper _glfw;
-    Window::GlfwWindow _window;
+    JkEng::Window::GlfwWrapper _glfw;
+    JkEng::Window::GlfwWindow _window;
     std::unique_ptr<IEngine> _engine;
     std::unique_ptr<IScene> _scene;
     ICamera2d* _camera;

@@ -3,8 +3,8 @@
 #include <array>
 #include <vector>
 
-#include <jkengine/Window/IGlfwInputWindow.h>
-#include <jkengine/Window/IGlfwInputWrapper.h>
+#include <JkEng/Window/IGlfwInputWindow.h>
+#include <JkEng/Window/IGlfwInputWrapper.h>
 #include "../IEngine.h"
 
 #include "Gamepad.h"
@@ -14,7 +14,7 @@ namespace JkEng::Input::Glfw
     class Engine : public IEngine
     {
     public:
-        Engine(Window::IGlfwInputWrapper& glfw, Window::IGlfwInputWindow& inputWindow);
+        Engine(JkEng::Window::IGlfwInputWrapper& glfw, JkEng::Window::IGlfwInputWindow& inputWindow);
 
         // There is need to copy or move this class.
         Engine(const Engine&) = delete;
@@ -28,13 +28,13 @@ namespace JkEng::Input::Glfw
     private:
         static constexpr unsigned int MaxGamepadCount = GLFW_JOYSTICK_LAST + 1;
 
-        Window::IGlfwInputWrapper& _glfw;
+        JkEng::Window::IGlfwInputWrapper& _glfw;
 
         // Unused, but exists to document dependence on a window that polls input events
         // (May not be true for gamepad input but as this class is expanded it will be true)
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wunused-private-field"
-        Window::IGlfwInputWindow& _inputWindow;
+        JkEng::Window::IGlfwInputWindow& _inputWindow;
         #pragma clang diagnostic pop
 
         std::array<Gamepad, MaxGamepadCount> _gamepads;
