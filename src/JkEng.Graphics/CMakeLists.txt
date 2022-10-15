@@ -1,12 +1,12 @@
-add_library(Graphics STATIC)
+add_library(JkEng.Graphics STATIC)
 if(MSVC)
-  target_compile_options(Graphics PRIVATE /W4 /WX)
+  target_compile_options(JkEng.Graphics PRIVATE /W4 /WX)
 else()
-  target_compile_options(Graphics PRIVATE -Wall -Wextra -pedantic -Werror)
+  target_compile_options(JkEng.Graphics PRIVATE -Wall -Wextra -pedantic -Werror)
 endif()
-target_include_directories(Graphics INTERFACE include)
-target_include_directories(Graphics PRIVATE include/JkEng/Graphics)
-target_sources(Graphics
+target_include_directories(JkEng.Graphics INTERFACE include)
+target_include_directories(JkEng.Graphics PRIVATE include/JkEng/Graphics)
+target_sources(JkEng.Graphics
   PRIVATE
     include/JkEng/Graphics/Color.h
     include/JkEng/Graphics/Graphics.h
@@ -62,4 +62,4 @@ target_sources(Graphics
     src/OpenGL/UnitQuadVertexArray.cpp
     src/OpenGL/ViewportCapture.cpp
 )
-target_link_libraries(Graphics Window JkEng ${CONAN_LIBS})
+target_link_libraries(JkEng.Graphics JkEng.Window JkEng ${CONAN_LIBS})
