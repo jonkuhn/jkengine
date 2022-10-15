@@ -9,6 +9,7 @@
 #include "ScreenSampleHelpers.h"
 
 using namespace testing;
+using namespace JkEng;
 using namespace JkEng::Graphics;
 
 class SpriteTests : public Test

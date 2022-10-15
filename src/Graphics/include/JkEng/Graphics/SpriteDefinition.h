@@ -1,6 +1,6 @@
 #pragma once
 
-#include "AfterBuildPtr.h"
+#include <JkEng/AfterBuildPtr.h>
 
 namespace JkEng::Graphics
 {

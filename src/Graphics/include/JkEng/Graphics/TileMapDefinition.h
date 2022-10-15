@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
-#include "AfterBuildPtr.h"
+#include <JkEng/AfterBuildPtr.h>
 
 namespace JkEng::Graphics
 {
