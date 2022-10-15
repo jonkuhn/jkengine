@@ -7,7 +7,6 @@ endif()
 target_sources(SharedUnitTests
   PRIVATE
     main_test.cpp
-    PoolTests.cpp
 )
 target_include_directories(SharedUnitTests PRIVATE
   ../
