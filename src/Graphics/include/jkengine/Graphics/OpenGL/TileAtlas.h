@@ -7,8 +7,6 @@
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 
-#include <jkengine/Shared/Pool.h>
-
 #include "Texture.h"
 #include "TileMap.h"
 #include "Sprite.h"
