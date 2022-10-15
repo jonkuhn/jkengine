@@ -418,46 +418,16 @@ protected:
         const unsigned int RowCount = 6;
         ExpectTileColorGridOnScreen<ColumnCount, RowCount>(
             *(_engine->TakeScreenshot()),
-            std::array<std::array<Color, ColumnCount>, RowCount>(
-            { {
-                { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
-                ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
-
-                { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
-                ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
-
-                { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
-                ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
-
-                { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
-                ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
-
-                { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
-                ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
-
-                { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
-                ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow }
-            } })
+            OneColorGrid<ColumnCount, RowCount>(ColorBackgroundUglyYellow)
         );
     }
 };
 
-TEST_F(TileMapTests, GivenSceneWithMultipleTileMaps_NoneVisibleByDefault)
+TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtCenterOfTileMapAndShowCalledWithFalse_NothingVisible)
 {
-    auto setup = SetupSceneWithTwoTileMapsOnDifferentLayers(
-        _tileAtlasImageColorTiles4x4,
-        _tileMapImage8x4FlippedTopToBottom,
-        _tileAtlasImageColorTiles4x4EmptyCenters,
-        _tileMapImage8x4
-    );
-    setup.camera->Center(glm::vec2(0.0f, 0.0f));
-
-    // Set FoV so that 8 units are visible horizontally and due
-    // to the aspect ration 6 units will be visible vertically
-    setup.camera->FieldOfView(ICamera2d::Fov(
-        -4.0f, 4.0f,
-        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
-
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
+    setup.tileMap->Show(false);
+    SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
     setup.scene->Render();
 
     constexpr unsigned int ColumnCount = 32;
@@ -471,7 +441,6 @@ TEST_F(TileMapTests, GivenSceneWithMultipleTileMaps_NoneVisibleByDefault)
 TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisible)
 {
     auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
-    setup.tileMap->Show(true);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
     setup.scene->Render();
     Expect8x4ColorTilesMapCenteredOnScreen();
@@ -481,7 +450,6 @@ TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtCenterOfTileM
 TEST_F(TileMapTests, Given8x4TileMapOffCamera_Camera8x6FovCenteredAtCenterOfTileMap_EntireAllBackgroundColorOnScreen)
 {
     auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
-    setup.tileMap->Show(true);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
 
     // Move tile map to an off camera location and expect all background color
@@ -493,7 +461,6 @@ TEST_F(TileMapTests, Given8x4TileMapOffCamera_Camera8x6FovCenteredAtCenterOfTile
 TEST_F(TileMapTests, Given8x4TileMapAtX30Y60_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisible)
 {
     auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
-    setup.tileMap->Show(true);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
 
     // Move tile map to an off camera location and expect all background color
@@ -509,7 +476,6 @@ TEST_F(TileMapTests, Given8x4TileMapAtX30Y60_Camera8x6FovCenteredAtCenterOfTileM
 TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtOrigin_Left4ColumnsAndBottom3RowsOfTileMapAreVisible)
 {
     auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
-    setup.tileMap->Show(true);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
 
     // Center the camera at the origin
@@ -552,7 +518,6 @@ TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtOrigin_Left4C
 TEST_F(TileMapTests, Given8x4TileMapAtOriginRotated45Degrees_Camera8x6FovCenteredAtCenterOfTileMap_TODO)
 {
     auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
-    setup.tileMap->Show(true);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
 
     // Rotate the tile map 45 degrees
@@ -589,7 +554,6 @@ TEST_F(TileMapTests, Given8x4TileMapAtOriginRotated45Degrees_Camera8x6FovCentere
 TEST_F(TileMapTests, Given8x4TileMapEmptyCentersAtOrigin_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisibleAndCentersShowBackground)
 {
     auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4EmptyCenters, _tileMapImage8x4);
-    setup.tileMap->Show(true);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
     setup.scene->Render();
 
@@ -643,8 +607,6 @@ TEST_F(TileMapTests, Given8x4TileMapEmptyCentersOnLayer1AndSolidTileMapFlippedTo
 
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMapOnLayer1.Get(), setup.camera);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMapOnLayer0.Get(), setup.camera);
-    setup.tileMapOnLayer1->Show(true);
-    setup.tileMapOnLayer0->Show(true);
 
     setup.scene->Render();
 
