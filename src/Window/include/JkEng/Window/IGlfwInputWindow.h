@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Window
+namespace JkEng::Window
 {
     // Marker interface for a GLFW window that is processing input events
     // This exists to document JkEng::Input::Glfw::Engine's dependence on a window

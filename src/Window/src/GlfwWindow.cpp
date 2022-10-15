@@ -1,7 +1,7 @@
 #include "GlfwWindow.h"
 #include "GlfwException.h"
 
-using namespace Window;
+using namespace JkEng::Window;
 
 GlfwWindow* GlfwWindow::s_singleInstance = nullptr;
 

@@ -4,13 +4,13 @@
 
 #include <gtest/gtest.h>
 
-#include <jkengine/Window/GlfwWindow.h>
-#include <jkengine/Window/GlfwException.h>
+#include <JkEng/Window/GlfwWindow.h>
+#include <JkEng/Window/GlfwException.h>
 #include "MockGlfwWrapper.h"
 #include "../TestHelpers.h"
 
 using namespace testing;
-using namespace Window;
+using namespace JkEng::Window;
 
 class WindowTests : public Test
 {

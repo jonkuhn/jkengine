@@ -1,7 +1,7 @@
 #pragma once
 #include "IOpenGLWrapper.h"
 
-#include <jkengine/Window/IOpenGLWindow.h>
+#include <JkEng/Window/IOpenGLWindow.h>
 
 #include <mutex>
 #include <sstream>
@@ -11,7 +11,7 @@ namespace JkEng::Graphics::OpenGL
     class OpenGLWrapper final : public IOpenGLWrapper
     {
     public:
-        OpenGLWrapper(Window::IOpenGLWindow& window)
+        OpenGLWrapper(JkEng::Window::IOpenGLWindow& window)
             : _window(window)
         {
 
@@ -254,7 +254,7 @@ namespace JkEng::Graphics::OpenGL
         // Unused, but exists to document dependence on a window to draw in
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Wunused-private-field"
-        Window::IOpenGLWindow& _window;
+        JkEng::Window::IOpenGLWindow& _window;
         #pragma clang diagnostic pop
     };
 }

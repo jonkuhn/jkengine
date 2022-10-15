@@ -17,7 +17,7 @@
 #include "UnitQuadVertexArray.h"
 #include "VertexArray.h"
 
-namespace Window
+namespace JkEng::Window
 {
     class IOpenGLWindow;
 }
@@ -33,7 +33,7 @@ namespace JkEng::Graphics::OpenGL
     {
     public:
 
-        Scene(Window::IOpenGLWindow& window, const SceneDefinition& definition);
+        Scene(JkEng::Window::IOpenGLWindow& window, const SceneDefinition& definition);
 
         // There is need to copy or move this class.
         Scene(const Scene&) = delete;
@@ -51,7 +51,7 @@ namespace JkEng::Graphics::OpenGL
         void Render() override;
 
     private:
-        Window::IOpenGLWindow& _window;
+        JkEng::Window::IOpenGLWindow& _window;
         OpenGLWrapper _gl;
         TileMapShaderProgram _tileMapShaderProgram;
         SpriteShaderProgram _spriteShaderProgram;

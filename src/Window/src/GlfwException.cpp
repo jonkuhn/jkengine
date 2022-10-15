@@ -3,7 +3,7 @@
 
 #include "GlfwException.h"
 
-using namespace Window;
+using namespace JkEng::Window;
 
 namespace
 {

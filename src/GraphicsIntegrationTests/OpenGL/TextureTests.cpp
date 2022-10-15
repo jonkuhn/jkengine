@@ -14,8 +14,8 @@
 #include <JkEng/Graphics/OpenGL/VertexArray.h>
 #include <JkEng/Graphics/OpenGL/ViewportCapture.h>
 
-#include <jkengine/Window/GlfwWindow.h>
-#include <jkengine/Window/GlfwWrapper.h>
+#include <JkEng/Window/GlfwWindow.h>
+#include <JkEng/Window/GlfwWrapper.h>
 
 #include "TestHelpers.h"
 
@@ -114,8 +114,8 @@ public:
     }
 protected:
     LibPngWrapper _libpng;
-    Window::GlfwWrapper _glfw;
-    Window::GlfwWindow _window;
+    JkEng::Window::GlfwWrapper _glfw;
+    JkEng::Window::GlfwWindow _window;
     OpenGLWrapper _gl;
 
     std::unique_ptr<ShaderProgram> _shaderProgram;

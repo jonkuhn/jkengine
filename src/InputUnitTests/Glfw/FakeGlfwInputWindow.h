@@ -1,7 +1,7 @@
 #pragma once
-#include <jkengine/Window/IGlfwInputWindow.h>
+#include <JkEng/Window/IGlfwInputWindow.h>
 
-class FakeGlfwInputWindow : public Window::IGlfwInputWindow
+class FakeGlfwInputWindow : public JkEng::Window::IGlfwInputWindow
 {
 
 };

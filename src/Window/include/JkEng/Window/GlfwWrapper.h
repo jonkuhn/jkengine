@@ -5,7 +5,7 @@
 #include "IGlfwWrapper.h"
 #include "IGlfwInputWrapper.h"
 
-namespace Window
+namespace JkEng::Window
 {
     class GlfwWrapper final : public IGlfwWrapper, public IGlfwInputWrapper
     {
