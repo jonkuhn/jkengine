@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "GraphicsUnitTests",
+            "name": "JkEng.Graphics.UnitTests",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/GraphicsUnitTests",
+            "program": "${workspaceFolder}/build/bin/JkEng.Graphics.UnitTests",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/bin",
@@ -17,10 +17,10 @@
             "MIMode": "lldb"
         },
         {
-            "name": "GraphicsIntegrationTests",
+            "name": "JkEng.Graphics.IntegrationTests",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/GraphicsIntegrationTests",
+            "program": "${workspaceFolder}/build/bin/JkEng.Graphics.IntegrationTests",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/bin",
@@ -29,10 +29,10 @@
             "MIMode": "lldb"
         },
         {
-            "name": "InputUnitTests",
+            "name": "JkEng.Input.UnitTests",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/InputUnitTests",
+            "program": "${workspaceFolder}/build/bin/JkEng.Input.UnitTests",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/bin",
@@ -41,10 +41,10 @@
             "MIMode": "lldb"
         },
         {
-            "name": "SharedUnitTests",
+            "name": "JkEng.UnitTests",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/SharedUnitTests",
+            "program": "${workspaceFolder}/build/bin/JkEng.UnitTests",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/bin",

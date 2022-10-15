@@ -1,10 +1,10 @@
-add_executable(GraphicsUnitTests)
+add_executable(JkEng.Graphics.UnitTests)
 if(MSVC)
-  target_compile_options(GraphicsUnitTests PRIVATE /W4 /WX)
+  target_compile_options(JkEng.Graphics.UnitTests PRIVATE /W4 /WX)
 else()
-  target_compile_options(GraphicsUnitTests PRIVATE -Wall -Wextra -pedantic -Werror)
+  target_compile_options(JkEng.Graphics.UnitTests PRIVATE -Wall -Wextra -pedantic -Werror)
 endif()
-target_sources(GraphicsUnitTests
+target_sources(JkEng.Graphics.UnitTests
   PRIVATE
     main_test.cpp
     FakeImage.h
@@ -21,7 +21,7 @@ target_sources(GraphicsUnitTests
     Window/WindowTests.cpp
     MockLibPngWrapper.h
 )
-target_include_directories(GraphicsUnitTests PRIVATE
+target_include_directories(JkEng.Graphics.UnitTests PRIVATE
   ../
 )
-target_link_libraries(GraphicsUnitTests Graphics ${CONAN_LIBS})
+target_link_libraries(JkEng.Graphics.UnitTests JkEng.Graphics ${CONAN_LIBS})

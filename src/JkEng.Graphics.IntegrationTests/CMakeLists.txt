@@ -1,10 +1,10 @@
-add_executable(GraphicsIntegrationTests)
+add_executable(JkEng.Graphics.IntegrationTests)
 if(MSVC)
-  target_compile_options(GraphicsIntegrationTests PRIVATE /W4 /WX)
+  target_compile_options(JkEng.Graphics.IntegrationTests PRIVATE /W4 /WX)
 else()
-  target_compile_options(GraphicsIntegrationTests PRIVATE -Wall -Wextra -pedantic -Werror)
+  target_compile_options(JkEng.Graphics.IntegrationTests PRIVATE -Wall -Wextra -pedantic -Werror)
 endif()
-target_sources(GraphicsIntegrationTests
+target_sources(JkEng.Graphics.IntegrationTests
   PRIVATE
     main_test.cpp
     ColorTiles4x4.h
@@ -20,10 +20,10 @@ target_sources(GraphicsIntegrationTests
     OpenGL/VertexArrayTests.cpp
     Window/WindowTests.cpp
 )
-target_include_directories(GraphicsIntegrationTests PRIVATE
+target_include_directories(JkEng.Graphics.IntegrationTests PRIVATE
   ../
 )
-target_link_libraries(GraphicsIntegrationTests Graphics ${CONAN_LIBS})
+target_link_libraries(JkEng.Graphics.IntegrationTests JkEng.Graphics ${CONAN_LIBS})
 
 file(COPY ./TestFiles/test31x47.png DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)
 file(COPY ./TestFiles/test31x47.jpg DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)
