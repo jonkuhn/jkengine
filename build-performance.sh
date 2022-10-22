@@ -19,4 +19,5 @@ if [ $? -ne 0 ]; then
 fi
 
 cd bin
+./JkEng.Physics.PerformanceTests
 
