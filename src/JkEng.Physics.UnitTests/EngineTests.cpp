@@ -17,6 +17,22 @@ protected:
     Engine _engine;
 };
 
+TEST_F(EngineTests, CreateScene_GivenNullAfterCreatePtr_DoesNotAbortOrThrow)
+{
+    SceneDefinition sceneDefinition;
+    sceneDefinition.AddMovableAabb2d(
+        MovableAabb2dDefinition(
+            nullptr,
+            glm::vec2(50.0f, 25.0f),
+            glm::vec2(5.0f, 10.0f),
+            [&](const IReadOnlyAabb2d&) { },
+            std::any()
+        )
+    );
+
+    ASSERT_NO_THROW(_engine.CreateScene(sceneDefinition));
+}
+
 TEST_F(EngineTests, Update_GivenSingleMovableAabb2d_CollisionHandlerIsNotCalledForCollisionWithSelf)
 {
     bool collisionHandler0WasCalled = false;
@@ -39,7 +55,7 @@ TEST_F(EngineTests, Update_GivenSingleMovableAabb2d_CollisionHandlerIsNotCalledF
     auto scene = _engine.CreateScene(sceneDefinition);
     scene->Update();
 
-    EXPECT_FALSE(collisionHandler0WasCalled);
+    ASSERT_FALSE(collisionHandler0WasCalled);
 }
 
 TEST_F(EngineTests, Update_GivenTwoNonOverlappingMovableAabb2d_NoCollisionHandlerIsCalled)
@@ -89,8 +105,8 @@ TEST_F(EngineTests, Update_GivenTwoNonOverlappingMovableAabb2d_NoCollisionHandle
     auto scene = _engine.CreateScene(sceneDefinition);
     scene->Update();
 
-    EXPECT_FALSE(collisionHandler0WasCalled);
-    EXPECT_FALSE(collisionHandler1WasCalled);
+    ASSERT_FALSE(collisionHandler0WasCalled);
+    ASSERT_FALSE(collisionHandler1WasCalled);
 }
 
 TEST_F(EngineTests, Update_GivenTwoOverlappingMovableAabb2d_BothCollisionHandlersAreCalledExactlyOnce)
@@ -140,8 +156,8 @@ TEST_F(EngineTests, Update_GivenTwoOverlappingMovableAabb2d_BothCollisionHandler
     auto scene = _engine.CreateScene(sceneDefinition);
     scene->Update();
 
-    EXPECT_EQ(collisionHandler0CallCount, 1);
-    EXPECT_EQ(collisionHandler1CallCount, 1);
+    ASSERT_EQ(collisionHandler0CallCount, 1);
+    ASSERT_EQ(collisionHandler1CallCount, 1);
 }
 
 TEST_F(EngineTests, Update_GivenTwoOverlappingMovableAabb2d_CollisionHandlersPassedArgumentWithOppositeAabbSizeAndPositionBeforeCallbackSideEffects)
@@ -211,10 +227,10 @@ TEST_F(EngineTests, Update_GivenTwoOverlappingMovableAabb2d_CollisionHandlersPas
     scene->Update();
 
     // aabb0's callback will get the position and size of aabb1
-    EXPECT_EQ(aabb0CallbackArgPosition, position1);
-    EXPECT_EQ(aabb0CallbackArgSize, size1);
+    ASSERT_EQ(aabb0CallbackArgPosition, position1);
+    ASSERT_EQ(aabb0CallbackArgSize, size1);
 
     // aabb1's callback will get the position and size of aabb0
-    EXPECT_EQ(aabb1CallbackArgPosition, position0);
-    EXPECT_EQ(aabb1CallbackArgSize, size0);
+    ASSERT_EQ(aabb1CallbackArgPosition, position0);
+    ASSERT_EQ(aabb1CallbackArgSize, size0);
 }
