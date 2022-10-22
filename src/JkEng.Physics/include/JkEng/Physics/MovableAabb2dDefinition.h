@@ -54,7 +54,10 @@ namespace JkEng::Physics
 
         inline void SetAfterCreatePtr(IMovableAabb2d* movableAabb) const
         {
-            _aabbAfterCreate->Initialize(movableAabb);
+            if (_aabbAfterCreate != nullptr)
+            {
+                _aabbAfterCreate->Initialize(movableAabb);
+            }
         }
 
     private:
