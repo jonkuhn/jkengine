@@ -26,7 +26,10 @@ namespace JkEng::Physics
           : _aabbAfterCreate(aabbAfterCreate),
             _position(std::move(position)),
             _size(std::move(size)),
-            _collisionHandler(std::move(collisionHandler)),
+            _collisionHandler(
+                collisionHandler != nullptr
+                    ? std::move(collisionHandler)
+                    : [](const IReadOnlyAabb2d&){}),
             _objectInfo(std::move(objectInfo))
         {
 
