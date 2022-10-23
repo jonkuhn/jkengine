@@ -82,6 +82,13 @@ namespace JkEng::Physics
         }
 
     private:
+        // Performance Note:  By moving _collisionHandler and _objectInfo
+        // to a separate buffer the Aabb object ends up being 32 bytes
+        // instead of 112 bytes (when building with clang on my mid-2014
+        // Intel MacBook Pro anyway).  The time to check collisions for 1000
+        // non-overlapping Aabbs was ~3% faster, but it was the same or
+        // slower for 1000 Aabbs with 1998 collisions.
+
         float _leftXMin;
         float _rightXMax;
         float _bottomYMin;
