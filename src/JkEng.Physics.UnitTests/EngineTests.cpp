@@ -234,3 +234,46 @@ TEST_F(EngineTests, Update_GivenTwoOverlappingMovableAabb2d_CollisionHandlersPas
     ASSERT_EQ(aabb1CallbackArgPosition, position0);
     ASSERT_EQ(aabb1CallbackArgSize, size0);
 }
+
+TEST_F(EngineTests, Update_GivenTwoOverlappingMovableAabb2dAndNullptrCollisionHandlers_DoesNotThrowOrAbort)
+{
+    SceneDefinition sceneDefinition;
+
+    glm::vec2 position0(50.0f, 25.0f);
+    glm::vec2 size0(5.0f, 10.0f);
+
+    AfterCreatePtr<IMovableAabb2d> movableAabb0;
+    sceneDefinition.AddMovableAabb2d(
+        MovableAabb2dDefinition(
+            &movableAabb0,
+            position0,
+            size0,
+            nullptr,
+            std::any()
+        )
+    );
+
+    // moveableAabb0 collides with moveableAabb1 because
+    // we set the position of "1" to be the position of "0" plus
+    // only half the size of "0" in both the x and y dimensions.
+    glm::vec2 position1(
+        position0.x + size0.x / 2.0f,
+        position0.y + size0.y / 2.0f);
+    glm::vec2 size1(
+        size0.x + 10.0f,
+        size0.y + 10.0f);
+
+    AfterCreatePtr<IMovableAabb2d> movableAabb1;
+    sceneDefinition.AddMovableAabb2d(
+        MovableAabb2dDefinition(
+            &movableAabb1,
+            position1,
+            size1,
+            nullptr,
+            std::any()
+        )
+    );
+
+    auto scene = _engine.CreateScene(sceneDefinition);
+    ASSERT_NO_THROW(scene->Update());
+}
