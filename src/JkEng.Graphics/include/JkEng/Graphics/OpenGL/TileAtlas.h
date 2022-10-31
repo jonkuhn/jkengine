@@ -47,6 +47,11 @@ namespace JkEng::Graphics::OpenGL
             return _atlasSizeInTiles;
         }
 
+        inline const glm::vec2& EachTileBorderThicknessInTiles() const
+        {
+            return _eachTileBorderThicknessInTiles;
+        }
+
         void DrawAllOnLayer(unsigned int layer);
 
     private:
@@ -55,6 +60,7 @@ namespace JkEng::Graphics::OpenGL
         SpriteDrawer* _spriteDrawer;
         Texture _atlasTexture;
         glm::vec2 _atlasSizeInTiles;
+        glm::vec2 _eachTileBorderThicknessInTiles;
         std::vector<std::vector<TileMap>> _perLayerTileMaps;
         std::vector<std::vector<Sprite>> _perLayerSprites;
     };

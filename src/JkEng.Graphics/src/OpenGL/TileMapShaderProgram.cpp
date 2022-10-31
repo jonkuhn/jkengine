@@ -54,10 +54,32 @@ namespace
 
     const char *fragmentShaderSource = R"GLSL(
         #version 330 core
+
+        // The size of the tile *map* in both the x and y dimensions in units of tiles.
         uniform vec2 tileMapSizeInTiles;
+
+        // The tile map texture index
         uniform sampler2D tileMap;
+
+        // The tile atlas texture index
         uniform sampler2D tileAtlas;
+
+        // The size of the tile *atlas* in both the x an y dimensions in units of tiles.
         uniform vec2 tileAtlasSizeInTiles;
+
+        // Thickness of the border of each tile in the tile *atlas* in both the x and y dimension
+        // expressed in numbers of tiles.  Because it is expressed in numbers of tiles it can be
+        // thought of as the thickness of the border as a percentage of the size of the tile.
+        // The value provided for the X component is assumed to be the thickness
+        // of a border that exists on both the left and right of the tile.
+        // The value provided for the Y component is assumed to be the thickness
+        // of a border that exists on both the top and bottom of the tile.
+        //
+        // It is recommended to set this to the equivalent of 1 pixel in both the x and y dimensions.
+        // The border pixels in each tile should duplicate the values of the adjacent pixels
+        // that are on the edge of the actual tile itself.  This will avoid artifacts due to
+        // overscanning/bleeding across the boundaries of a tile.
+        uniform vec2 tileAtlasEachTileBorderThicknessInTiles;
 
         in vec2 tileMapLocation;
 
@@ -68,8 +90,11 @@ namespace
             // Note that the y axis of the atlas location does not need inverted
             // because it is intended to represent the tile's x and y offset from
             // the upper left of the tile atlas image.
-            vec2 tileAtlasLocation = texture(tileMap, tileMapLocation / tileMapSizeInTiles).xy * 255;
-            FragColor = texture(tileAtlas, (tileAtlasLocation + fract(tileMapLocation)) / tileAtlasSizeInTiles);
+
+            vec2 sizeOfDisplayPortionOfAtlasTile = vec2(1.0f, 1.0f) - 2.0f * tileAtlasEachTileBorderThicknessInTiles;
+            vec2 locationOfCornerOfTileInTiles = texture(tileMap, floor(tileMapLocation) / tileMapSizeInTiles).xy * 255;
+            vec2 locationWithinTileInTiles = tileAtlasEachTileBorderThicknessInTiles + fract(tileMapLocation) * sizeOfDisplayPortionOfAtlasTile;
+            FragColor = texture(tileAtlas, (locationOfCornerOfTileInTiles + locationWithinTileInTiles) / tileAtlasSizeInTiles);
         }
     )GLSL";
 
@@ -126,4 +151,5 @@ void TileMapShaderProgram::Atlas(const TileAtlas& atlas)
     atlas.AtlasTexture().Bind(atlasTextureIndex);
     _shaderProgram.SetUniform("tileAtlas", atlasTextureIndex);
     _shaderProgram.SetUniform("tileAtlasSizeInTiles", atlas.SizeInTiles());
+    _shaderProgram.SetUniform("tileAtlasEachTileBorderThicknessInTiles", atlas.EachTileBorderThicknessInTiles());
 }
