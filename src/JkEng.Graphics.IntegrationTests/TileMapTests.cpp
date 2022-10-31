@@ -78,8 +78,6 @@ public:
         _glfw(),
         _window(_glfw, WindowWidth, WindowHeight, "TileMapTests"),
         _engine(std::make_unique<OpenGL::Engine>(_window)),
-        _scene(),
-        _camera(nullptr),
         _tileAtlasImageColorTiles4x4(&_libPng, "TestFiles/colortiles4x4.png"),
         _tileAtlasImageColorTiles4x4EmptyCenters(&_libPng, "TestFiles/colortiles4x4emptycenters.png"),
         _tileMapImage8x4(
@@ -111,66 +109,16 @@ public:
             } })
         )
     {
-        SceneDefinition sceneDefinition{DrawingLayers};
-
-        PngImage colorTiles4x4(&_libPng, "TestFiles/colortiles4x4.png");
-        TileAtlasDefinition atlasColorTiles4x4{
-            DrawingLayers,
-            &colorTiles4x4,
-            glm::vec2(4.0f, 4.0f)
-        };
-        atlasColorTiles4x4.AddTileMap(TileMapDefinition{
-            &_tileMapSolid8x4Layer0,
-            0,
-            &_tileMapImage8x4
-        });
-        atlasColorTiles4x4.AddTileMap(TileMapDefinition{
-            &_tileMapSolid8x4FlippedTopToBottomLayer0,
-            0,
-            &_tileMapImage8x4FlippedTopToBottom
-        });
-
-        sceneDefinition.AddTileAtlas(atlasColorTiles4x4);
-
-        PngImage colorTiles4x4EmptyCenters(&_libPng, "TestFiles/colortiles4x4emptycenters.png");
-        TileAtlasDefinition atlasColorTilesEmptyCenters4x4{
-            DrawingLayers,
-            &colorTiles4x4EmptyCenters,
-            glm::vec2(4.0f, 4.0f)
-        };
-        atlasColorTilesEmptyCenters4x4.AddTileMap(TileMapDefinition{
-            &_tileMapEmptyCenters8x4Layer0,
-            0,
-            &_tileMapImage8x4
-        });
-
-        atlasColorTilesEmptyCenters4x4.AddTileMap(TileMapDefinition{
-            &_tileMapEmptyCenters8x4Layer1,
-            1,
-            &_tileMapImage8x4
-        });
-
-        sceneDefinition.AddTileAtlas(atlasColorTilesEmptyCenters4x4);
-
-        _scene = _engine->CreateScene(sceneDefinition);
-        _scene->ClearColor(ColorBackgroundUglyYellow);
-        _camera = _scene->Camera2d();
     }
 protected:
     LibPngWrapper _libPng;
     JkEng::Window::GlfwWrapper _glfw;
     JkEng::Window::GlfwWindow _window;
     std::unique_ptr<IEngine> _engine;
-    std::unique_ptr<IScene> _scene;
-    ICamera2d* _camera;
     PngImage _tileAtlasImageColorTiles4x4;
     PngImage _tileAtlasImageColorTiles4x4EmptyCenters;
     TileMapImage8x4 _tileMapImage8x4;
     TileMapImage8x4 _tileMapImage8x4FlippedTopToBottom;
-    AfterCreatePtr<ITileMap> _tileMapSolid8x4Layer0;
-    AfterCreatePtr<ITileMap> _tileMapEmptyCenters8x4Layer0;
-    AfterCreatePtr<ITileMap> _tileMapEmptyCenters8x4Layer1;
-    AfterCreatePtr<ITileMap> _tileMapSolid8x4FlippedTopToBottomLayer0;
 
     struct SceneWithOneTileMap
     {
