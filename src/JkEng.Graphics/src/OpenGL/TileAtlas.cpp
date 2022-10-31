@@ -27,6 +27,7 @@ TileAtlas::TileAtlas(
             .MinFilter(Texture::MinFilterMode::Nearest)
             .MagFilter(Texture::MagFilterMode::Nearest)),
     _atlasSizeInTiles(definition.AtlasSizeInTiles()),
+    _eachTileBorderThicknessInTiles(definition.EachTileBorderThicknessInTiles()),
     _perLayerTileMaps(definition.NumberOfDrawingLayers()),
     _perLayerSprites(definition.NumberOfDrawingLayers())
 {

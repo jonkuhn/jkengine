@@ -20,9 +20,10 @@ namespace JkEng::Graphics
     class TileAtlasDefinition final
     {
     public:
-        TileAtlasDefinition(size_t numberOfDrawingLayers, const IImage* image, glm::vec2 atlasSizeInTiles)
+        TileAtlasDefinition(size_t numberOfDrawingLayers, const IImage* image, glm::vec2 atlasSizeInTiles, glm::vec2 eachTileBorderThicknessInTiles)
             : _image(image),
               _atlasSizeInTiles(std::move(atlasSizeInTiles)),
+              _eachTileBorderThicknessInTiles(std::move(eachTileBorderThicknessInTiles)),
               _perLayerTileMapDefinitions(numberOfDrawingLayers),
               _perLayerSpriteDefinitions(numberOfDrawingLayers)
         {
@@ -59,6 +60,7 @@ namespace JkEng::Graphics
 
         inline const IImage& Image() const { return *_image; }
         inline const glm::vec2& AtlasSizeInTiles() const { return _atlasSizeInTiles; }
+        inline const glm::vec2& EachTileBorderThicknessInTiles() const { return _eachTileBorderThicknessInTiles; }
         inline size_t NumberOfDrawingLayers() const { return _perLayerSpriteDefinitions.size(); }
 
         inline const std::vector<TileMapDefinition>& TileMapDefinitionsForLayer(size_t layer) const
@@ -74,6 +76,7 @@ namespace JkEng::Graphics
     private:
         const IImage* _image;
         glm::vec2 _atlasSizeInTiles;
+        glm::vec2 _eachTileBorderThicknessInTiles;
         std::vector<std::vector<TileMapDefinition>> _perLayerTileMapDefinitions;
         std::vector<std::vector<SpriteDefinition>> _perLayerSpriteDefinitions;
     };

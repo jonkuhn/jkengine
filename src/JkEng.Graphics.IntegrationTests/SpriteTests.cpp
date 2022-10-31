@@ -49,7 +49,8 @@ protected:
         TileAtlasDefinition tileAtlas{
             DrawingLayers,
             &imageColorTiles4x4EmptyCenters,
-            glm::vec2(4.0f, 4.0f)
+            glm::vec2(4.0f, 4.0f),
+            glm::vec2(0.0f, 0.0f)
         };
 
         tileAtlas.AddSprite(SpriteDefinition{&result.sprite, 0});
@@ -78,7 +79,8 @@ protected:
         TileAtlasDefinition tileAtlas{
             DrawingLayers,
             &imageColorTiles4x4EmptyCenters,
-            glm::vec2(4.0f, 4.0f)
+            glm::vec2(4.0f, 4.0f),
+            glm::vec2(0.0f, 0.0f)
         };
 
         tileAtlas.AddSprite(SpriteDefinition{&result.spriteOnLayer0, 0});
