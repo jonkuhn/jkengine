@@ -1,6 +1,8 @@
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <memory>
+#include <vector>
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
@@ -62,6 +64,41 @@ namespace
         TileColorsType TileColors;
     };
 
+    class TileMapImageAllTileAtIndexX0Y0 : public IImage
+    {
+    public:
+        static constexpr int WIDTH = 16;
+        static constexpr int HEIGHT = 16;
+
+        TileMapImageAllTileAtIndexX0Y0()
+            : _tiles(WIDTH * HEIGHT * 4, 0)
+        {
+
+        }
+
+        const uint8_t* Data() const override
+        {
+            return &_tiles[0];
+        }
+
+        int Width() const override
+        {
+            return WIDTH;
+        }
+
+        int Height() const override
+        {
+            return HEIGHT;
+        }
+
+        PixelFormat Format() const override
+        {
+            return PixelFormat::RGBA;
+        }
+
+    private:
+        std::vector<uint8_t> _tiles;
+    };
 }
 
 class TileMapTests : public Test
@@ -80,6 +117,8 @@ public:
         _engine(std::make_unique<OpenGL::Engine>(_window)),
         _tileAtlasImageColorTiles4x4(&_libPng, "TestFiles/colortiles4x4.png"),
         _tileAtlasImageColorTiles4x4EmptyCenters(&_libPng, "TestFiles/colortiles4x4emptycenters.png"),
+        _tileAtlasImageCheckerBoard2TilesBy2Tiles16x16(&_libPng, "TestFiles/BlackAndWhiteCheckerBoard2TilesBy2Tiles16x16.png"),
+        _tileAtlasImageCheckerBoard2TilesBy2Tiles64x64(&_libPng, "TestFiles/BlackAndWhiteCheckerBoard2TilesBy2Tiles64x64.png"),
         _tileMapImage8x4(
             TileMapImage8x4::TileIndicesType({ {
                 { TileYellow, TileGreen, TileCyan, TileRed, TileLightGreen, TilePurple, TileLightPurple, TileSkyBlue },
@@ -117,6 +156,8 @@ protected:
     std::unique_ptr<IEngine> _engine;
     PngImage _tileAtlasImageColorTiles4x4;
     PngImage _tileAtlasImageColorTiles4x4EmptyCenters;
+    PngImage _tileAtlasImageCheckerBoard2TilesBy2Tiles16x16;
+    PngImage _tileAtlasImageCheckerBoard2TilesBy2Tiles64x64;
     TileMapImage8x4 _tileMapImage8x4;
     TileMapImage8x4 _tileMapImage8x4FlippedTopToBottom;
 
@@ -129,6 +170,7 @@ protected:
 
     SceneWithOneTileMap SetupSceneWithOneTileMap(
         const IImage& tileAtlasImage,
+        const glm::vec2& tileAtlasSize,
         const IImage& tileMapImage)
     {
         SceneWithOneTileMap result{};
@@ -137,7 +179,7 @@ protected:
         TileAtlasDefinition tileAtlas{
             DrawingLayers,
             &tileAtlasImage,
-            glm::vec2(4.0f, 4.0f)
+            tileAtlasSize
         };
 
         tileAtlas.AddTileMap(TileMapDefinition{
@@ -374,7 +416,7 @@ protected:
 
 TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtCenterOfTileMapAndShowCalledWithFalse_NothingVisible)
 {
-    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, glm::vec2(4.0f, 4.0f), _tileMapImage8x4);
     setup.tileMap->Show(false);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
     setup.scene->Render();
@@ -387,9 +429,103 @@ TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtCenterOfTileM
     );
 }
 
+TEST_F(TileMapTests, GivenAllBlackTileMapFromCheckerBoard16x16TileAtlasAtOrigin_CameraShowingOnlyTilesAtProblematicOffset_ScreenIsAllBlack)
+{
+    TileMapImageAllTileAtIndexX0Y0 tileMapImage;
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageCheckerBoard2TilesBy2Tiles16x16, glm::vec2(2.0f, 2.0f), tileMapImage);
+
+    setup.tileMap->Position(glm::vec2(-1.0f, -1.0f));
+    setup.tileMap->Rotation(0.0f);
+    setup.tileMap->Size(glm::vec2(
+        static_cast<float>(tileMapImage.Width()),
+        static_cast<float>(tileMapImage.Height())));
+
+    setup.camera->FieldOfView(Graphics::ICamera2d::Fov(
+            0.0f, 8.0f,
+            0.0f, 6.0f));
+
+    // These values were determined to cause the issue on
+    // my mid-2014 13" MacBook Pro running Big Sur 11.6.8
+    // with an Intel Iris 1536 MB.  On this machine the
+    // 800x600 window is really 1600 by 1200 on screen.
+    // See docs/notes/TileMapOverscanBugNotes.md for more notes.
+    //
+    // The problem seems to be caused by having many screen pixels
+    // per texture pixel and scrolling to an offset the right amount
+    // just below or just above an integer number of texture pixels
+    // from the origin.
+    //
+    // These values are approximately in the middle of the range of
+    // values that had the problem.
+    setup.camera->Center(glm::vec2(0x1.p-4 - 68 * 0x1.p-20, 0x1.p-4 + 73 * 0x1.p-20));
+
+    setup.scene->Render();
+
+    auto screenshot = _engine->TakeScreenshot();
+
+    for (unsigned int y = 0; y < screenshot->Height(); y++)
+    {
+        for (unsigned int x = 0; x < screenshot->Width(); x++)
+        {
+            screenshot->GetPixel(x, y);
+
+            ExpectColorAtScreenPosition(
+                *screenshot, "", Color(0, 0, 0, 255), x, y, 0, 0);
+        }
+    }
+}
+
+TEST_F(TileMapTests, GivenAllBlackTileMapFromCheckerBoard64x64TileAtlasAtOrigin_CameraShowingOnlyTilesAtProblematicOffset_ScreenIsAllBlack)
+{
+    TileMapImageAllTileAtIndexX0Y0 tileMapImage;
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageCheckerBoard2TilesBy2Tiles64x64, glm::vec2(2.0f, 2.0f), tileMapImage);
+
+    setup.tileMap->Position(glm::vec2(-1.0f, -1.0f));
+    setup.tileMap->Rotation(0.0f);
+    setup.tileMap->Size(glm::vec2(
+        static_cast<float>(tileMapImage.Width()),
+        static_cast<float>(tileMapImage.Height())));
+
+    // This field of view was zoomed in by 4x from that used
+    // for the 16x16 test to make up for the fact that this is 64x64
+    setup.camera->FieldOfView(Graphics::ICamera2d::Fov(
+            0.0f, 2.0f,
+            0.0f, 1.5f));
+
+    // These values were determined to cause the issue on
+    // my mid-2014 13" MacBook Pro running Big Sur 11.6.8
+    // with an Intel Iris 1536 MB.  On this machine the
+    // 800x600 window is really 1600 by 1200 on screen.
+    // See docs/notes/TileMapOverscanBugNotes.md for more notes.
+    //
+    // The problem seems to be caused by having many screen pixels
+    // per texture pixel and scrolling to an offset the right amount
+    // just below or just above an integer number of texture pixels
+    // from the origin.
+    //
+    // These values are the same as those used for the 16x16 test but
+    // they were all multiplied by 2^-2.
+    setup.camera->Center(glm::vec2(0x1.p-6 - 68 * 0x1.p-22, 0x1.p-6 + 73 * 0x1.p-22));
+
+    setup.scene->Render();
+
+    auto screenshot = _engine->TakeScreenshot();
+
+    for (unsigned int y = 0; y < screenshot->Height(); y++)
+    {
+        for (unsigned int x = 0; x < screenshot->Width(); x++)
+        {
+            screenshot->GetPixel(x, y);
+
+            ExpectColorAtScreenPosition(
+                *screenshot, "", Color(0, 0, 0, 255), x, y, 0, 0);
+        }
+    }
+}
+
 TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisible)
 {
-    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, glm::vec2(4.0f, 4.0f), _tileMapImage8x4);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
     setup.scene->Render();
     Expect8x4ColorTilesMapCenteredOnScreen();
@@ -398,7 +534,7 @@ TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtCenterOfTileM
 
 TEST_F(TileMapTests, Given8x4TileMapOffCamera_Camera8x6FovCenteredAtCenterOfTileMap_EntireAllBackgroundColorOnScreen)
 {
-    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, glm::vec2(4.0f, 4.0f), _tileMapImage8x4);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
 
     // Move tile map to an off camera location and expect all background color
@@ -409,7 +545,7 @@ TEST_F(TileMapTests, Given8x4TileMapOffCamera_Camera8x6FovCenteredAtCenterOfTile
 
 TEST_F(TileMapTests, Given8x4TileMapAtX30Y60_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisible)
 {
-    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, glm::vec2(4.0f, 4.0f), _tileMapImage8x4);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
 
     // Move tile map to an off camera location and expect all background color
@@ -424,7 +560,7 @@ TEST_F(TileMapTests, Given8x4TileMapAtX30Y60_Camera8x6FovCenteredAtCenterOfTileM
 
 TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtOrigin_Left4ColumnsAndBottom3RowsOfTileMapAreVisible)
 {
-    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, glm::vec2(4.0f, 4.0f), _tileMapImage8x4);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
 
     // Center the camera at the origin
@@ -466,7 +602,7 @@ TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtOrigin_Left4C
 
 TEST_F(TileMapTests, Given8x4TileMapAtOriginRotated45Degrees_Camera8x6FovCenteredAtCenterOfTileMap_TODO)
 {
-    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, _tileMapImage8x4);
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4, glm::vec2(4.0f, 4.0f), _tileMapImage8x4);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
 
     // Rotate the tile map 45 degrees
@@ -502,7 +638,7 @@ TEST_F(TileMapTests, Given8x4TileMapAtOriginRotated45Degrees_Camera8x6FovCentere
 
 TEST_F(TileMapTests, Given8x4TileMapEmptyCentersAtOrigin_Camera8x6FovCenteredAtCenterOfTileMap_EntireTileMapIsVisibleAndCentersShowBackground)
 {
-    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4EmptyCenters, _tileMapImage8x4);
+    auto setup = SetupSceneWithOneTileMap(_tileAtlasImageColorTiles4x4EmptyCenters, glm::vec2(4.0f, 4.0f), _tileMapImage8x4);
     SetupTileMap8x4InCenterOfCamera8x6Fov(setup.tileMap.Get(), setup.camera);
     setup.scene->Render();
 
