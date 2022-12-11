@@ -17,7 +17,6 @@ class SpriteTests : public Test
 public:
     static constexpr int WindowWidth = 800;
     static constexpr int WindowHeight = 600;
-    static constexpr float AspectRatio = static_cast<float>(WindowWidth) / static_cast<float>(WindowHeight);
     static constexpr size_t DrawingLayers = 3;
 
     SpriteTests()
@@ -108,7 +107,7 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCent
     // to the aspect ration 6 units will be visible vertically
     setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
-        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+        -3.0f, 3.0f));
 
     setup.scene->Render();
 
@@ -134,7 +133,7 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX0Y0_Camera8x6FovCent
     // to the aspect ration 6 units will be visible vertically
     setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
-        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+        -3.0f, 3.0f));
 
     setup.scene->Render();
 
@@ -185,7 +184,7 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginWithAtlasLocationX2Y1_Camera8x6FovCent
     // to the aspect ration 6 units will be visible vertically
     setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
-        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+        -3.0f, 3.0f));
 
     setup.scene->Render();
 
@@ -236,7 +235,7 @@ TEST_F(SpriteTests, Given6x6SpriteAtX30Y60_Camera8x6FovCenteredAtCenterOfSprite_
     // to the aspect ration 6 units will be visible vertically
     setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
-        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+        -3.0f, 3.0f));
 
     setup.scene->Render();
 
@@ -295,7 +294,7 @@ TEST_F(SpriteTests, Given6x6Sprite_GivenOffCameraAtX4Y0_SpriteIsNotVisible)
     // to the aspect ration 6 units will be visible vertically
     setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
-        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+        -3.0f, 3.0f));
 
     setup.scene->Render();
 
@@ -338,7 +337,7 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginRotated45Degrees_Camera8x6FovCenteredO
     // to the aspect ration 6 units will be visible vertically
     setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
-        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+        -3.0f, 3.0f));
 
     setup.scene->Render();
 
@@ -399,6 +398,14 @@ TEST_F(SpriteTests, Given3x3SpriteAtOriginRotated45Degrees_Camera8x6FovCenteredO
 
 TEST_F(SpriteTests, GivenTwo3x3SpritesOnDifferentLayers_TransparentAreasOfHigherLayerSpriteShowLowerLayerSprite)
 {
+    // Note: when watching this test run it looks a bit odd visually because there
+    // is a vertical red line showing between blocks of two other colors.
+    // This is okay and just because there is a narrow bit of the
+    // center "sub-tiles" from the layer0 sprite visible left of center.
+    // this is because the sizes of the tiles in the tile atlas are not
+    // evenly divisible into 3 "sub-tiles".  The first two rows and
+    // columns are 21 pixels and the last row and column is 22 pixels.
+
     auto setup = SetupSceneWithTwoSpritesOnDifferentLayers();
     setup.spriteOnLayer1->Position(glm::vec2(0.0f, 0.0f));
     setup.spriteOnLayer1->Rotation(0.0f);
@@ -416,13 +423,8 @@ TEST_F(SpriteTests, GivenTwo3x3SpritesOnDifferentLayers_TransparentAreasOfHigher
     // to the aspect ration 6 units will be visible vertically
     setup.camera->FieldOfView(ICamera2d::Fov(
         -4.0f, 4.0f,
-        -4.0f * (1 / AspectRatio), 4.0f * (1 / AspectRatio)));
+        -3.0f, 3.0f));
 
-    // Note if you look at this manually, there is a narrow bit of the
-    // center "sub-tiles" from the layer0 sprite visible left of center.
-    // this is because the sizes of the tiles in the tile atlas are not
-    // evenly divisible into 3 "sub-tiles".  The first two rows and
-    // columns are 21 pixels and the last row and column is 22 pixels.
     setup.scene->Render();
 
     const unsigned int ColumnCount = 8;
