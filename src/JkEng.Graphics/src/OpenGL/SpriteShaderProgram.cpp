@@ -14,13 +14,34 @@ namespace
         uniform mat4 model;
         uniform mat4 view;
         uniform mat4 projection;
+
+        // The size of the tile atlas in both the x an y dimensions in units of tiles.
         uniform vec2 tileAtlasSizeInTiles;
+
+        // Thickness of the border of each tile in the tile atlas in both the x and y dimension
+        // expressed in numbers of tiles.  Because it is expressed in numbers of tiles it can be
+        // thought of as the thickness of the border as a percentage of the size of the tile.
+        // The value provided for the X component is assumed to be the thickness
+        // of a border that exists on both the left and right of the tile.
+        // The value provided for the Y component is assumed to be the thickness
+        // of a border that exists on both the top and bottom of the tile.
+        //
+        // It is recommended to set this to the equivalent of 1 pixel in both the x and y dimensions.
+        // The border pixels in each tile should duplicate the values of the adjacent pixels
+        // that are on the edge of the actual tile itself.  This will avoid artifacts due to
+        // overscanning/bleeding across the boundaries of a tile.
+        uniform vec2 tileAtlasEachTileBorderThicknessInTiles;
+
+        // Location within the atlas of the tile to draw
         uniform vec2 atlasLocation;
 
         out vec2 textureCoordinate;
 
         void main()
         {
+            vec2 sizeOfDisplayPortionOfAtlasTile = vec2(1.0f, 1.0f) - 2.0f * tileAtlasEachTileBorderThicknessInTiles;
+            vec2 locationWithinTileInTiles = vec2(0.0f, 0.0f);
+
             // Calculate the texture coordinate:
             // - Start with the vertex x and y coordinates.  These will range from
             //   0.0 to 1.0 due to this being intended for use with UnitQuadVertexArray.
@@ -38,8 +59,7 @@ namespace
             // - The size of the tile atlas is used (along with the knowledge that
             //   texture space coordinates span from 0.0 to 1.0) is used to convert
             //   the coordinates into texture space.
-            vec2 tileSize = 1.0 / tileAtlasSizeInTiles;
-            textureCoordinate.x = (vertex.x + atlasLocation.x) * tileSize.x;
+            locationWithinTileInTiles.x = (tileAtlasEachTileBorderThicknessInTiles.x + vertex.x) * sizeOfDisplayPortionOfAtlasTile.x;
 
             // Invert Y so that top left of the tile in the tile atlas image is
             // in the top left of the displayed sprite.  This is because the
@@ -60,7 +80,9 @@ namespace
             // Note that the y axis of the atlas location does not need inverted
             // because it is intended to represent the tile's x and y offset from
             // the upper left of the tile atlas image.
-            textureCoordinate.y = ((1.0 - vertex.y) + atlasLocation.y) * tileSize.y;
+            locationWithinTileInTiles.y = (1.0 - (tileAtlasEachTileBorderThicknessInTiles.y + vertex.y)) * sizeOfDisplayPortionOfAtlasTile.y;
+
+            textureCoordinate = (atlasLocation + locationWithinTileInTiles) / tileAtlasSizeInTiles;
             gl_Position = projection * view * model * vec4(vertex.xy, 1.0, 1.0);
         }
     )GLSL";
@@ -124,6 +146,7 @@ void SpriteShaderProgram::Atlas(const TileAtlas& atlas)
     atlas.AtlasTexture().Bind(atlasTextureIndex);
     _shaderProgram.SetUniform("tileAtlas", atlasTextureIndex);
     _shaderProgram.SetUniform("tileAtlasSizeInTiles", atlas.SizeInTiles());
+    _shaderProgram.SetUniform("tileAtlasEachTileBorderThicknessInTiles", atlas.EachTileBorderThicknessInTiles());
 }
 
 void SpriteShaderProgram::AtlasLocation(const glm::vec2& atlasLocation)
