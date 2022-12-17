@@ -522,6 +522,9 @@ TEST_F(SpriteTests, GivenTwo3x3SpritesOnDifferentLayers_TransparentAreasOfHigher
 
 TEST_F(SpriteTests, GivenAllBlackSpriteFrom16x16CheckerBoardTileAtlasWith1PixelBorderThickness_CameraAtProblematicOffset_ScreenIsAllBlack)
 {
+    // Note to validate that this test would fail on some particular hardware
+    // if the overscanning problem is present, zero out the border in the
+    // TileAtlasDefinition in the setup method.
     auto setup = SetupSceneWithOneAllBlackSpriteFrom16x16CheckerBoardAtlasWith1PixelBorder();
   
     // All Black Background so we can assert that the entire window to be black
@@ -573,6 +576,9 @@ TEST_F(SpriteTests, GivenAllBlackSpriteFrom16x16CheckerBoardTileAtlasWith1PixelB
 
 TEST_F(SpriteTests, GivenAllBlackSpriteFrom64x64CheckerBoardTileAtlasWith1PixelBorderThickness_CameraAtProblematicOffset_ScreenIsAllBlack)
 {
+    // Note to validate that this test would fail on some particular hardware
+    // if the overscanning problem is present, zero out the border in the
+    // TileAtlasDefinition in the setup method.
     auto setup = SetupSceneWithOneAllBlackSpriteFrom64x64CheckerBoardAtlasWith1PixelBorder();
   
     // All Black Background so we can assert that the entire window to be black

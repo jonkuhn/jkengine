@@ -440,6 +440,8 @@ TEST_F(TileMapTests, Given8x4TileMapAtOrigin_Camera8x6FovCenteredAtCenterOfTileM
 TEST_F(TileMapTests, GivenAllBlackTileMapFromCheckerBoard16x16TileAtlasWith1PixelBorderThickness_CameraAtProblematicOffset_ScreenIsAllBlack)
 {
     // Border size is 1 pixel on each edge of each of the 16x16 pixel tiles
+    // Note to validate that this test would fail on some particular hardware
+    // if the overscanning problem is present, zero out the border below.
     constexpr glm::vec2 eachTileBorderThicknessInTiles(1.0f / 16.0f, 1.0f / 16.0f);
 
     TileMapImageAllTileAtIndexX0Y0 tileMapImage;
@@ -495,6 +497,8 @@ TEST_F(TileMapTests, GivenAllBlackTileMapFromCheckerBoard16x16TileAtlasWith1Pixe
 TEST_F(TileMapTests, GivenAllBlackTileMapFromCheckerBoard64x64TileAtlas_CameraAtProblematicOffset_ScreenIsAllBlack)
 {
     // Border size is 1 pixel on each edge of each of the 64x64 pixel tiles
+    // Note to validate that this test would fail on some particular hardware
+    // if the overscanning problem is present, zero out the border below.
     constexpr glm::vec2 eachTileBorderThicknessInTiles(1.0f / 64.0f, 1.0f / 64.0f);
 
     TileMapImageAllTileAtIndexX0Y0 tileMapImage;
