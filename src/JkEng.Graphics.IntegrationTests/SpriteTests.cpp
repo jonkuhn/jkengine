@@ -62,6 +62,58 @@ protected:
         return result;
     }
 
+    SceneWithOneSprite SetupSceneWithOneAllBlackSpriteFrom16x16CheckerBoardAtlasWith1PixelBorder()
+    {
+        // Border size is 1 pixel on each edge of each of the 16x16 pixel tiles
+        constexpr glm::vec2 eachTileBorderThicknessInTiles(1.0f / 16.0f, 1.0f / 16.0f);
+
+        SceneWithOneSprite result{};
+        SceneDefinition sceneDefinition{DrawingLayers};
+
+        PngImage imageBlackAndWhiteCheckerBoard16x16(
+            &_libPng,
+            "TestFiles/BlackAndWhiteCheckerBoard2TilesBy2Tiles16x16.png");
+        TileAtlasDefinition tileAtlas{
+            DrawingLayers,
+            &imageBlackAndWhiteCheckerBoard16x16,
+            glm::vec2(2.0f, 2.0f),
+            eachTileBorderThicknessInTiles
+        };
+
+        tileAtlas.AddSprite(SpriteDefinition{&result.sprite, 0});
+        sceneDefinition.AddTileAtlas(tileAtlas);
+
+        result.scene = _engine->CreateScene(sceneDefinition);
+        result.camera = result.scene->Camera2d();
+        return result;
+    }
+
+    SceneWithOneSprite SetupSceneWithOneAllBlackSpriteFrom64x64CheckerBoardAtlasWith1PixelBorder()
+    {
+        // Border size is 1 pixel on each edge of each of the 64x64 pixel tiles
+        constexpr glm::vec2 eachTileBorderThicknessInTiles(1.0f / 64.0f, 1.0f / 64.0f);
+
+        SceneWithOneSprite result{};
+        SceneDefinition sceneDefinition{DrawingLayers};
+
+        PngImage imageBlackAndWhiteCheckerBoard64x64(
+            &_libPng,
+            "TestFiles/BlackAndWhiteCheckerBoard2TilesBy2Tiles64x64.png");
+        TileAtlasDefinition tileAtlas{
+            DrawingLayers,
+            &imageBlackAndWhiteCheckerBoard64x64,
+            glm::vec2(2.0f, 2.0f),
+            eachTileBorderThicknessInTiles
+        };
+
+        tileAtlas.AddSprite(SpriteDefinition{&result.sprite, 0});
+        sceneDefinition.AddTileAtlas(tileAtlas);
+
+        result.scene = _engine->CreateScene(sceneDefinition);
+        result.camera = result.scene->Camera2d();
+        return result;
+    }
+
     struct SceneWithTwoSpritesOnDifferentLayers
     {
         std::unique_ptr<IScene> scene;
@@ -466,4 +518,106 @@ TEST_F(SpriteTests, GivenTwo3x3SpritesOnDifferentLayers_TransparentAreasOfHigher
             ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow }
         } })
     );
+}
+
+TEST_F(SpriteTests, GivenAllBlackSpriteFrom16x16CheckerBoardTileAtlasWith1PixelBorderThickness_CameraAtProblematicOffset_ScreenIsAllBlack)
+{
+    auto setup = SetupSceneWithOneAllBlackSpriteFrom16x16CheckerBoardAtlasWith1PixelBorder();
+  
+    // All Black Background so we can assert that the entire window to be black
+    setup.scene->ClearColor(ColorBlack);
+
+    setup.sprite->Position(glm::vec2(1.0f, 1.0f));
+    setup.sprite->Rotation(0.0f);
+    setup.sprite->Size(glm::vec2(1.0f, 1.0f));
+    setup.sprite->AtlasLocation(Graphics::GridLocation(0, 0));
+
+    setup.camera->FieldOfView(Graphics::ICamera2d::Fov(
+            -4.0f, 4.0f,
+            -3.0f, 3.0f));
+
+    // What does the "Problematic Offset" mean?
+    //
+    // These values were determined to cause the issue on
+    // my mid-2014 13" MacBook Pro running Big Sur 11.6.8
+    // with an Intel Iris 1536 MB.  On this machine the
+    // 800x600 window is really 1600 by 1200 on screen.
+    // See docs/notes/TileMapOverscanBugNotes.md for more notes.
+    //
+    // The problem seems to be caused by having many screen pixels
+    // per texture pixel and scrolling to an offset the right amount
+    // just below or just above an integer number of texture pixels
+    // from the origin.
+    //
+    // These values are approximately in the middle of the range of
+    // values that had the problem.
+    setup.camera->Center(glm::vec2(
+        0x1.p-4 - 68 * 0x1.p-20,
+        0x1.p-4 + 73 * 0x1.p-20));
+
+    setup.scene->Render();
+
+    auto screenshot = _engine->TakeScreenshot();
+
+    for (unsigned int y = 0; y < screenshot->Height(); y++)
+    {
+        for (unsigned int x = 0; x < screenshot->Width(); x++)
+        {
+            screenshot->GetPixel(x, y);
+
+            ExpectColorAtScreenPosition(
+                *screenshot, "", Color(0, 0, 0, 255), x, y, 0, 0);
+        }
+    }
+}
+
+TEST_F(SpriteTests, GivenAllBlackSpriteFrom64x64CheckerBoardTileAtlasWith1PixelBorderThickness_CameraAtProblematicOffset_ScreenIsAllBlack)
+{
+    auto setup = SetupSceneWithOneAllBlackSpriteFrom64x64CheckerBoardAtlasWith1PixelBorder();
+  
+    // All Black Background so we can assert that the entire window to be black
+    setup.scene->ClearColor(ColorBlack);
+
+    setup.sprite->Position(glm::vec2(1.0f, 1.0f));
+    setup.sprite->Rotation(0.0f);
+    setup.sprite->Size(glm::vec2(1.0f, 1.0f));
+    setup.sprite->AtlasLocation(Graphics::GridLocation(0, 0));
+
+    setup.camera->FieldOfView(Graphics::ICamera2d::Fov(
+            -1.0f, 1.0f,
+            -0.75f, 0.75f));
+
+    // What does the "Problematic Offset" mean?
+    //
+    // These values were determined to cause the issue on
+    // my mid-2014 13" MacBook Pro running Big Sur 11.6.8
+    // with an Intel Iris 1536 MB.  On this machine the
+    // 800x600 window is really 1600 by 1200 on screen.
+    // See docs/notes/TileMapOverscanBugNotes.md for more notes.
+    //
+    // The problem seems to be caused by having many screen pixels
+    // per texture pixel and scrolling to an offset the right amount
+    // just below or just above an integer number of texture pixels
+    // from the origin.
+    //
+    // These values are approximately in the middle of the range of
+    // values that had the problem.
+    setup.camera->Center(glm::vec2(
+        1.5f + 0x1.p-6 - 68 * 0x1.p-22,
+        1.5f + 0x1.p-6 + 73 * 0x1.p-22));
+
+    setup.scene->Render();
+
+    auto screenshot = _engine->TakeScreenshot();
+
+    for (unsigned int y = 0; y < screenshot->Height(); y++)
+    {
+        for (unsigned int x = 0; x < screenshot->Width(); x++)
+        {
+            screenshot->GetPixel(x, y);
+
+            ExpectColorAtScreenPosition(
+                *screenshot, "", Color(0, 0, 0, 255), x, y, 0, 0);
+        }
+    }
 }
