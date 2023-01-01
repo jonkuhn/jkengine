@@ -59,7 +59,7 @@ namespace
             // - The size of the tile atlas is used (along with the knowledge that
             //   texture space coordinates span from 0.0 to 1.0) is used to convert
             //   the coordinates into texture space.
-            locationWithinTileInTiles.x = (tileAtlasEachTileBorderThicknessInTiles.x + vertex.x) * sizeOfDisplayPortionOfAtlasTile.x;
+            locationWithinTileInTiles.x = tileAtlasEachTileBorderThicknessInTiles.x + (vertex.x * sizeOfDisplayPortionOfAtlasTile.x);
 
             // Invert Y so that top left of the tile in the tile atlas image is
             // in the top left of the displayed sprite.  This is because the
@@ -77,11 +77,14 @@ namespace
             // to the top of the tile in the image.  And in the image (and texture)
             // "top" has lower y values than "bottom"
             //
+            // Note that the y axis of the border thickness does not need inverted
+            // because it is intended to represent the tile's x and y offset from
+            // the upper left of the tile atlas image.
+            locationWithinTileInTiles.y = tileAtlasEachTileBorderThicknessInTiles.y + (1.0 - vertex.y) * sizeOfDisplayPortionOfAtlasTile.y;
+
             // Note that the y axis of the atlas location does not need inverted
             // because it is intended to represent the tile's x and y offset from
             // the upper left of the tile atlas image.
-            locationWithinTileInTiles.y = (1.0 - (tileAtlasEachTileBorderThicknessInTiles.y + vertex.y)) * sizeOfDisplayPortionOfAtlasTile.y;
-
             textureCoordinate = (atlasLocation + locationWithinTileInTiles) / tileAtlasSizeInTiles;
             gl_Position = projection * view * model * vec4(vertex.xy, 1.0, 1.0);
         }
