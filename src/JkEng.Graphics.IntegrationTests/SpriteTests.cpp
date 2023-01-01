@@ -114,6 +114,32 @@ protected:
         return result;
     }
 
+    SceneWithOneSprite SetupSceneWithOneTestPatternSpriteFrom16x16AtlasWith1PixelBorder()
+    {
+        // Border size is 1 pixel on each edge of each of the 16x16 pixel tiles
+        constexpr glm::vec2 eachTileBorderThicknessInTiles(1.0f / 16.0f, 1.0f / 16.0f);
+
+        SceneWithOneSprite result{};
+        SceneDefinition sceneDefinition{DrawingLayers};
+
+        PngImage imageTestPatternWithBorder(
+            &_libPng,
+            "TestFiles/16x16WithBorderTestPatterns.png");
+        TileAtlasDefinition tileAtlas{
+            DrawingLayers,
+            &imageTestPatternWithBorder,
+            glm::vec2(2.0f, 2.0f),
+            eachTileBorderThicknessInTiles
+        };
+
+        tileAtlas.AddSprite(SpriteDefinition{&result.sprite, 0});
+        sceneDefinition.AddTileAtlas(tileAtlas);
+
+        result.scene = _engine->CreateScene(sceneDefinition);
+        result.camera = result.scene->Camera2d();
+        return result;
+    }
+
     struct SceneWithTwoSpritesOnDifferentLayers
     {
         std::unique_ptr<IScene> scene;
@@ -626,4 +652,108 @@ TEST_F(SpriteTests, GivenAllBlackSpriteFrom64x64CheckerBoardTileAtlasWith1PixelB
                 *screenshot, "", Color(0, 0, 0, 255), x, y, 0, 0);
         }
     }
+}
+
+TEST_F(SpriteTests, GivenTestPatternSpriteWithOnePixelBorder_CorrectPortionIsVisible)
+{
+    auto setup = SetupSceneWithOneTestPatternSpriteFrom16x16AtlasWith1PixelBorder();
+  
+    // All white background so black sprite border is clearly defined
+    setup.scene->ClearColor(ColorWhite);
+
+    setup.sprite->Position(glm::vec2(0.0f, 0.0f));
+    setup.sprite->Rotation(0.0f);
+    setup.sprite->Size(glm::vec2(1.0f, 1.0f));
+    setup.sprite->AtlasLocation(Graphics::GridLocation(1, 1));
+
+    setup.camera->FieldOfView(Graphics::ICamera2d::Fov(
+            -12.0f / 14.0f, 12.0f / 14.0f,
+            -9.0f / 14.0f, 9.0f / 14.0f));
+
+    setup.camera->Center(glm::vec2( -1.0f / 14.0f + 12.0f / 14.0f, -3.0f / 14.0f + 9.0f / 14.0f ));
+    setup.scene->Render();
+
+    auto screenshot = _engine->TakeScreenshot();
+    screenshot->SaveToFileAsRaw("testPattern.data");
+
+    const unsigned int ColumnCount = 24;
+    const unsigned int RowCount = 18;
+    ExpectTileColorGridOnScreen<ColumnCount, RowCount>(
+        *(_engine->TakeScreenshot()),
+        std::array<std::array<Color, ColumnCount>, RowCount>(
+        { {
+            { ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlack, ColorBlack, ColorBlack, ColorBlack,
+              ColorBlack, ColorBlack, ColorBlack, ColorBlack, ColorBlack, ColorBlack,
+              ColorBlack, ColorBlack, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorRed, ColorRed, ColorRed, ColorRed,
+              ColorRed, ColorRed, ColorRed, ColorRed, ColorRed, ColorRed,
+              ColorRed, ColorRed, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlue, ColorBlue, ColorBlue, ColorBlue,
+              ColorBlue, ColorBlue, ColorBlue, ColorBlue, ColorBlue, ColorBlue,
+              ColorBlue, ColorBlue, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlue, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlue, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlue, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlue, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorBlue, ColorBlack, ColorBlue,
+              ColorBlack, ColorBlue, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlue, ColorBlue, ColorBlue, ColorBlue,
+              ColorBlue, ColorBlue, ColorBlue, ColorBlue, ColorBlue, ColorBlue,
+              ColorBlue, ColorBlue, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorBlack, ColorBlack, ColorBlack, ColorBlack, ColorBlack,
+              ColorBlack, ColorBlack, ColorBlack, ColorBlack, ColorBlack, ColorBlack,
+              ColorBlack, ColorBlack, ColorBlack, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+            { ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
+              ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+        } })
+    );
 }

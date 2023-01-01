@@ -28,3 +28,4 @@ file(COPY ./TestFiles/colortiles4x4.png DESTINATION ${CMAKE_BINARY_DIR}/bin/Test
 file(COPY ./TestFiles/colortiles4x4emptycenters.png DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)
 file(COPY ./TestFiles/BlackAndWhiteCheckerBoard2TilesBy2Tiles16x16.png DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)
 file(COPY ./TestFiles/BlackAndWhiteCheckerBoard2TilesBy2Tiles64x64.png DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)
+file(COPY ./TestFiles/16x16WithBorderTestPatterns.png DESTINATION ${CMAKE_BINARY_DIR}/bin/TestFiles)
