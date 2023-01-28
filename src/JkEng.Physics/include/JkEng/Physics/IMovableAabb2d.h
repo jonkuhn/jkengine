@@ -18,15 +18,15 @@ namespace JkEng::Physics
 
         using IReadOnlyAabb2d::Size;
         using IReadOnlyAabb2d::Position;
-        //using IReadOnlyAabb2d::Velocity;
-        //using IReadOnlyAabb2d::Acceleration;
+        using IReadOnlyAabb2d::Velocity;
+        using IReadOnlyAabb2d::Acceleration;
         using IReadOnlyAabb2d::ObjectInfo;
         using IReadOnlyAabb2d::ObjectInfoAs;
 
         virtual void Size(const glm::vec2& size) = 0;
         virtual void Position(const glm::vec2& position) = 0;
-        //virtual void Velocity(const glm::vec2& velocity) = 0;
-        //virtual void Acceleration(const glm::vec2& acceleration) = 0;
+        virtual void Velocity(const glm::vec2 velocity) = 0;
+        virtual void Acceleration(const glm::vec2 acceleration) = 0;
         virtual std::any& ObjectInfo() = 0;
 
         template<typename T>

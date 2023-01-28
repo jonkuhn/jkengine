@@ -73,31 +73,31 @@ namespace JkEng::Physics
         inline float BottomYMin() const { return _bottomYMin; }
         inline float TopYMax() const { return _topYMax; }
 
-        virtual glm::vec2 Size() const { return glm::vec2(_rightXMax - _leftXMin, _topYMax - _bottomYMin); }
-        virtual glm::vec2 Position() const { return glm::vec2(_leftXMin, _bottomYMin); }
+        virtual glm::vec2 Size() const override { return glm::vec2(_rightXMax - _leftXMin, _topYMax - _bottomYMin); }
+        virtual glm::vec2 Position() const override { return glm::vec2(_leftXMin, _bottomYMin); }
 
-        virtual glm::vec2 Velocity() const { return _velocity; }
-        virtual glm::vec2 Acceleration() const { return _acceleration; }
+        virtual glm::vec2 Velocity() const override { return _velocity; }
+        virtual glm::vec2 Acceleration() const override { return _acceleration; }
 
-        virtual const std::any& ObjectInfo() const { return _objectInfo; }
-        virtual std::any& ObjectInfo() { return _objectInfo; }
+        virtual const std::any& ObjectInfo() const override { return _objectInfo; }
+        virtual std::any& ObjectInfo() override { return _objectInfo; }
 
-        virtual void Size(const glm::vec2& size)
+        virtual void Size(const glm::vec2& size) override
         {
             SetPositionAndSize(Position(), size);
         }
 
-        virtual void Position(const glm::vec2& position)
+        virtual void Position(const glm::vec2& position) override
         {
             SetPositionAndSize(position, Size());
         }
 
-        virtual void Velocity(const glm::vec2 velocity)
+        virtual void Velocity(const glm::vec2 velocity) override
         {
             _velocity = velocity;
         }
 
-        virtual void Acceleration(const glm::vec2 acceleration)
+        virtual void Acceleration(const glm::vec2 acceleration) override
         {
             _acceleration = acceleration;
         }

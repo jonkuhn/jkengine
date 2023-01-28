@@ -15,6 +15,8 @@ namespace JkEng::Physics
         SnapshotOfReadOnlyAabb2d(const IReadOnlyAabb2d& aabb)
             : _position(aabb.Position()),
               _size(aabb.Size()),
+              _velocity(aabb.Velocity()),
+              _acceleration(aabb.Acceleration()),
               _objectInfo(aabb.ObjectInfo())
         {
 
@@ -30,8 +32,15 @@ namespace JkEng::Physics
             return _size;
         }
 
-        //glm::vec2 Velocity() const override
-        //glm::vec2 Acceleration() const override
+        glm::vec2 Velocity() const override
+        {
+            return _velocity;
+        }
+
+        glm::vec2 Acceleration() const override
+        {
+            return _acceleration;
+        }
 
         const std::any& ObjectInfo() const override
         {
@@ -41,6 +50,8 @@ namespace JkEng::Physics
     private:
         glm::vec2 _position;
         glm::vec2 _size;
+        glm::vec2 _velocity;
+        glm::vec2 _acceleration;
         std::any _objectInfo;
     };
 }
