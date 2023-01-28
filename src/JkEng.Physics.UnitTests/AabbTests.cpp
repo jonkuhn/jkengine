@@ -42,8 +42,11 @@ TEST_F(AabbTests, Constructor_GivenConstructedWithPositionAndSize_VerifyAllPrope
 {
     glm::vec2 position(50.0f, 25.0f);
     glm::vec2 size(5.0f, 10.0f);
+    glm::vec2 velocity(1.0f, 2.0f);
+    glm::vec2 acceleration(-0.5f, -0.2f);
     TestObjectInfo objectInfo(123, "test-string");
-    Aabb a(position, size, DoNothingCollisionHandler, objectInfo);
+    Aabb a(position, size, velocity, acceleration,
+        DoNothingCollisionHandler, objectInfo);
 
     EXPECT_EQ(a.LeftXMin(), position.x);
     EXPECT_EQ(a.RightXMax(), position.x + size.x);
@@ -51,6 +54,8 @@ TEST_F(AabbTests, Constructor_GivenConstructedWithPositionAndSize_VerifyAllPrope
     EXPECT_EQ(a.TopYMax(), position.y + size.y);
     EXPECT_EQ(a.Position(), position);
     EXPECT_EQ(a.Size(), size);
+    EXPECT_EQ(a.Velocity(), velocity);
+    EXPECT_EQ(a.Acceleration(), acceleration);
 
     // Note: not comparing CollisionHandler() because std::function does not
     // implement operator== and comparing using target was more trouble than
@@ -69,8 +74,11 @@ TEST_F(AabbTests, Constructor_GivenConstructedWithXMinMaxYMinMax_VerifyAllProper
     float rightXMax = 100.0f;
     float bottomYMin = 10.0f;
     float topYMax = 11.0f;
+    glm::vec2 velocity(1.0f, 2.0f);
+    glm::vec2 acceleration(-0.5f, -0.2f);
     TestObjectInfo objectInfo(123, "test-string");
-    Aabb a(leftXMin, rightXMax, bottomYMin, topYMax, DoNothingCollisionHandler, objectInfo);
+    Aabb a(leftXMin, rightXMax, bottomYMin, topYMax,
+        velocity, acceleration, DoNothingCollisionHandler, objectInfo);
 
     EXPECT_EQ(a.LeftXMin(), leftXMin);
     EXPECT_EQ(a.RightXMax(), rightXMax);
@@ -78,6 +86,8 @@ TEST_F(AabbTests, Constructor_GivenConstructedWithXMinMaxYMinMax_VerifyAllProper
     EXPECT_EQ(a.TopYMax(), topYMax);
     EXPECT_EQ(a.Position(), glm::vec2(leftXMin, bottomYMin));
     EXPECT_EQ(a.Size(), glm::vec2(rightXMax - leftXMin, topYMax - bottomYMin));
+    EXPECT_EQ(a.Velocity(), velocity);
+    EXPECT_EQ(a.Acceleration(), acceleration);
 
     // Note: not comparing CollisionHandler() because std::function does not
     // implement operator== and comparing using target was more trouble than
@@ -96,10 +106,15 @@ TEST_F(AabbTests, Constructors_GivenEquivalentObjectsMadeWithDifferentConstructo
     float rightXMax = 100.0f;
     float bottomYMin = 10.0f;
     float topYMax = 11.0f;
-    Aabb a(leftXMin, rightXMax, bottomYMin, topYMax, DoNothingCollisionHandler, TestObjectInfo());
+    glm::vec2 velocity(1.0f, 2.0f);
+    glm::vec2 acceleration(-0.5f, -0.2f);
+    Aabb a(leftXMin, rightXMax, bottomYMin, topYMax,
+        velocity, acceleration, DoNothingCollisionHandler, TestObjectInfo());
     Aabb b(
         glm::vec2(leftXMin, bottomYMin),
         glm::vec2(rightXMax - leftXMin, topYMax - bottomYMin),
+        velocity,
+        acceleration,
         DoNothingCollisionHandler,
         TestObjectInfo());
 
@@ -113,13 +128,15 @@ TEST_F(AabbTests, Constructors_GivenEquivalentObjectsMadeWithDifferentConstructo
     EXPECT_EQ(a.TopYMax(), b.TopYMax());
     EXPECT_EQ(a.Position(), b.Position());
     EXPECT_EQ(a.Size(), b.Size());
+    EXPECT_EQ(a.Velocity(), b.Velocity());
+    EXPECT_EQ(a.Acceleration(), b.Acceleration());
 }
 
 TEST_F(AabbTests, IsColliding_XOverlapYNoOverlap_ReturnsFalse)
 {
     // Use leftXMin, rightXMax, bottomYMin, topYMax constructor
-    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, DoNothingCollisionHandler, TestObjectInfo());
-    Aabb b(99.9f, 150.0f, 9.0f, 9.9f, DoNothingCollisionHandler, TestObjectInfo());
+    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
+    Aabb b(99.9f, 150.0f, 9.0f, 9.9f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
     EXPECT_FALSE(a.IsColliding(b));
     EXPECT_FALSE(b.IsColliding(a));
 }
@@ -127,8 +144,8 @@ TEST_F(AabbTests, IsColliding_XOverlapYNoOverlap_ReturnsFalse)
 TEST_F(AabbTests, IsColliding_XNoOverlapYOverlap_ReturnsFalse)
 {
     // Use leftXMin, rightXMax, bottomYMin, topYMax constructor
-    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, DoNothingCollisionHandler, TestObjectInfo());
-    Aabb b(100.1f, 150.0f, 9.0f, 10.1f, DoNothingCollisionHandler, TestObjectInfo());
+    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
+    Aabb b(100.1f, 150.0f, 9.0f, 10.1f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
     EXPECT_FALSE(a.IsColliding(b));
     EXPECT_FALSE(b.IsColliding(a));
 }
@@ -136,8 +153,8 @@ TEST_F(AabbTests, IsColliding_XNoOverlapYOverlap_ReturnsFalse)
 TEST_F(AabbTests, IsColliding_XTouchingYOverlap_ReturnsTrue)
 {
     // Use leftXMin, rightXMax, bottomYMin, topYMax constructor
-    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, DoNothingCollisionHandler, TestObjectInfo());
-    Aabb b(100.0f, 150.0f, 9.0f, 10.1f, DoNothingCollisionHandler, TestObjectInfo());
+    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
+    Aabb b(100.0f, 150.0f, 9.0f, 10.1f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
     EXPECT_TRUE(a.IsColliding(b));
     EXPECT_TRUE(b.IsColliding(a));
 }
@@ -145,8 +162,8 @@ TEST_F(AabbTests, IsColliding_XTouchingYOverlap_ReturnsTrue)
 TEST_F(AabbTests, IsColliding_XOverlapYTouching_ReturnsTrue)
 {
     // Use leftXMin, rightXMax, bottomYMin, topYMax constructor
-    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, DoNothingCollisionHandler, TestObjectInfo());
-    Aabb b(99.9f, 150.0f, 9.0f, 10.0f, DoNothingCollisionHandler, TestObjectInfo());
+    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
+    Aabb b(99.9f, 150.0f, 9.0f, 10.0f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
     EXPECT_TRUE(a.IsColliding(b));
     EXPECT_TRUE(b.IsColliding(a));
 }
@@ -154,8 +171,8 @@ TEST_F(AabbTests, IsColliding_XOverlapYTouching_ReturnsTrue)
 TEST_F(AabbTests, IsColliding_XOverlapYOverlap_ReturnsTrue)
 {
     // Use leftXMin, rightXMax, bottomYMin, topYMax constructor
-    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, DoNothingCollisionHandler, TestObjectInfo());
-    Aabb b(99.9f, 150.0f, 9.0f, 10.1f, DoNothingCollisionHandler, TestObjectInfo());
+    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
+    Aabb b(99.9f, 150.0f, 9.0f, 10.1f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
     EXPECT_TRUE(a.IsColliding(b));
     EXPECT_TRUE(b.IsColliding(a));
 }
@@ -163,8 +180,8 @@ TEST_F(AabbTests, IsColliding_XOverlapYOverlap_ReturnsTrue)
 TEST_F(AabbTests, IsColliding_ACompletelyInsideB_ReturnsTrue)
 {
     // Use leftXMin, rightXMax, bottomYMin, topYMax constructor
-    Aabb a(75.0f, 80.0f, 60.0f, 65.0f, DoNothingCollisionHandler, TestObjectInfo());
-    Aabb b(60.0f, 90.0f, 30.0f, 70.0f, DoNothingCollisionHandler, TestObjectInfo());
+    Aabb a(75.0f, 80.0f, 60.0f, 65.0f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
+    Aabb b(60.0f, 90.0f, 30.0f, 70.0f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
     EXPECT_TRUE(a.IsColliding(b));
     EXPECT_TRUE(b.IsColliding(a));
 }
@@ -172,8 +189,8 @@ TEST_F(AabbTests, IsColliding_ACompletelyInsideB_ReturnsTrue)
 TEST_F(AabbTests, IsColliding_XOverlapYAligned_ReturnsTrue)
 {
     // Use leftXMin, rightXMax, bottomYMin, topYMax constructor
-    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, DoNothingCollisionHandler, TestObjectInfo());
-    Aabb b(0.0f, 150.1f, 10.0f, 11.0f, DoNothingCollisionHandler, TestObjectInfo());
+    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
+    Aabb b(0.0f, 150.1f, 10.0f, 11.0f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
     EXPECT_TRUE(a.IsColliding(b));
     EXPECT_TRUE(b.IsColliding(a));
 }
@@ -181,8 +198,8 @@ TEST_F(AabbTests, IsColliding_XOverlapYAligned_ReturnsTrue)
 TEST_F(AabbTests, IsColliding_XAlignedYOverlap_ReturnsTrue)
 {
     // Use leftXMin, rightXMax, bottomYMin, topYMax constructor
-    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, DoNothingCollisionHandler, TestObjectInfo());
-    Aabb b(50.0f, 100.0f, 10.9, 12.0f, DoNothingCollisionHandler, TestObjectInfo());
+    Aabb a(50.0f, 100.0f, 10.0f, 11.0f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
+    Aabb b(50.0f, 100.0f, 10.9, 12.0f, glm::vec2(), glm::vec2(), DoNothingCollisionHandler, TestObjectInfo());
     EXPECT_TRUE(a.IsColliding(b));
     EXPECT_TRUE(b.IsColliding(a));
 }
@@ -190,7 +207,7 @@ TEST_F(AabbTests, IsColliding_XAlignedYOverlap_ReturnsTrue)
 TEST_F(AabbTests, ObjectInfoAs_GivenCalledWithWrongType_ThrowsBadAnyCast)
 {
     TestObjectInfo objectInfo(123, "test-string");
-    Aabb a(glm::vec2(50.0f, 25.0f), glm::vec2(5.0f, 10.0f), DoNothingCollisionHandler, objectInfo);
+    Aabb a(glm::vec2(50.0f, 25.0f), glm::vec2(5.0f, 10.0f), glm::vec2(), glm::vec2(), DoNothingCollisionHandler, objectInfo);
 
     ASSERT_THROW(
         a.ObjectInfoAs<std::string>(),
@@ -201,7 +218,7 @@ TEST_F(AabbTests, ObjectInfoAs_GivenCalledWithWrongType_ThrowsBadAnyCast)
 TEST_F(AabbTests, ObjectInfoAs_GivenConstReference_ReturnsExpectedInfo)
 {
     TestObjectInfo objectInfo(123, "test-string");
-    Aabb a(glm::vec2(50.0f, 25.0f), glm::vec2(5.0f, 10.0f), DoNothingCollisionHandler, objectInfo);
+    Aabb a(glm::vec2(50.0f, 25.0f), glm::vec2(5.0f, 10.0f), glm::vec2(), glm::vec2(), DoNothingCollisionHandler, objectInfo);
 
     const Aabb& constRefA = a;
 
@@ -214,7 +231,7 @@ TEST_F(AabbTests, ObjectInfoAs_GivenConstReference_ReturnsExpectedInfo)
 TEST_F(AabbTests, ObjectInfoAs_GivenModifiedViaReference_ConstObjectInfoAsReflectsChanges)
 {
     TestObjectInfo objectInfo(123, "test-string");
-    Aabb a(glm::vec2(50.0f, 25.0f), glm::vec2(5.0f, 10.0f), DoNothingCollisionHandler, objectInfo);
+    Aabb a(glm::vec2(50.0f, 25.0f), glm::vec2(5.0f, 10.0f), glm::vec2(), glm::vec2(), DoNothingCollisionHandler, objectInfo);
     const Aabb& constRefA = a;
 
     // modify one value via non-const ObjectInfoAs

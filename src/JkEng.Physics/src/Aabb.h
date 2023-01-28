@@ -15,12 +15,16 @@ namespace JkEng::Physics
 
         Aabb(const glm::vec2& position,
             const glm::vec2& size,
+            glm::vec2 velocity,
+            glm::vec2 acceleration,
             IReadOnlyAabb2d::CollisionHandler collisionHandler,
             std::any objectInfo)
           : _leftXMin(position.x),
             _rightXMax(position.x + size.x),
             _bottomYMin(position.y),
             _topYMax(position.y + size.y),
+            _velocity(velocity),
+            _acceleration(acceleration),
             _collisionHandler(collisionHandler),
             _objectInfo(std::move(objectInfo))
         {
@@ -31,12 +35,16 @@ namespace JkEng::Physics
             float rightXMax,
             float bottomYMin,
             float topYMax,
+            glm::vec2 velocity,
+            glm::vec2 acceleration,
             IReadOnlyAabb2d::CollisionHandler collisionHandler,
             std::any objectInfo)
           : _leftXMin(leftXMin),
             _rightXMax(rightXMax),
             _bottomYMin(bottomYMin),
             _topYMax(topYMax),
+            _velocity(velocity),
+            _acceleration(acceleration),
             _collisionHandler(collisionHandler),
             _objectInfo(objectInfo)
         {
@@ -68,6 +76,9 @@ namespace JkEng::Physics
         virtual glm::vec2 Size() const { return glm::vec2(_rightXMax - _leftXMin, _topYMax - _bottomYMin); }
         virtual glm::vec2 Position() const { return glm::vec2(_leftXMin, _bottomYMin); }
 
+        virtual glm::vec2 Velocity() const { return _velocity; }
+        virtual glm::vec2 Acceleration() const { return _acceleration; }
+
         virtual const std::any& ObjectInfo() const { return _objectInfo; }
         virtual std::any& ObjectInfo() { return _objectInfo; }
 
@@ -79,6 +90,16 @@ namespace JkEng::Physics
         virtual void Position(const glm::vec2& position)
         {
             SetPositionAndSize(position, Size());
+        }
+
+        virtual void Velocity(const glm::vec2 velocity)
+        {
+            _velocity = velocity;
+        }
+
+        virtual void Acceleration(const glm::vec2 acceleration)
+        {
+            _acceleration = acceleration;
         }
 
     private:
@@ -93,6 +114,8 @@ namespace JkEng::Physics
         float _rightXMax;
         float _bottomYMin;
         float _topYMax;
+        glm::vec2 _velocity;
+        glm::vec2 _acceleration;
         IReadOnlyAabb2d::CollisionHandler _collisionHandler;
         std::any _objectInfo;
 

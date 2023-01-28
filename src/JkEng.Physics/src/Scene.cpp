@@ -16,6 +16,8 @@ Scene::Scene(const SceneDefinition& definition)
         _aabbs.emplace_back(
             movableAabb2dDefinition.Position(),
             movableAabb2dDefinition.Size(),
+            glm::vec2(),
+            glm::vec2(),
             movableAabb2dDefinition.CollisionHandler(),
             movableAabb2dDefinition.ObjectInfo());
 
