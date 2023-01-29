@@ -5,7 +5,8 @@ namespace JkEng::Physics
     class IScene
     {
     public:
+        static constexpr float StepTime = 1.0f / 60.0f;
         virtual ~IScene() = default;
-        virtual void Update() = 0;
+        virtual void Update(float deltaTime) = 0;
     };
 }

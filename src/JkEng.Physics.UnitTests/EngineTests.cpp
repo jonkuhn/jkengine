@@ -53,7 +53,7 @@ TEST_F(EngineTests, Update_GivenSingleMovableAabb2d_CollisionHandlerIsNotCalledF
     );
 
     auto scene = _engine.CreateScene(sceneDefinition);
-    scene->Update();
+    scene->Update(0.0f);
 
     ASSERT_FALSE(collisionHandler0WasCalled);
 }
@@ -103,7 +103,7 @@ TEST_F(EngineTests, Update_GivenTwoNonOverlappingMovableAabb2d_NoCollisionHandle
     );
 
     auto scene = _engine.CreateScene(sceneDefinition);
-    scene->Update();
+    scene->Update(0.0f);
 
     ASSERT_FALSE(collisionHandler0WasCalled);
     ASSERT_FALSE(collisionHandler1WasCalled);
@@ -154,7 +154,7 @@ TEST_F(EngineTests, Update_GivenTwoOverlappingMovableAabb2d_BothCollisionHandler
     );
 
     auto scene = _engine.CreateScene(sceneDefinition);
-    scene->Update();
+    scene->Update(0.0f);
 
     ASSERT_EQ(collisionHandler0CallCount, 1);
     ASSERT_EQ(collisionHandler1CallCount, 1);
@@ -224,7 +224,7 @@ TEST_F(EngineTests, Update_GivenTwoOverlappingMovableAabb2d_CollisionHandlersPas
     );
 
     auto scene = _engine.CreateScene(sceneDefinition);
-    scene->Update();
+    scene->Update(0.0f);
 
     // aabb0's callback will get the position and size of aabb1
     ASSERT_EQ(aabb0CallbackArgPosition, position1);
@@ -275,5 +275,89 @@ TEST_F(EngineTests, Update_GivenTwoOverlappingMovableAabb2dAndNullptrCollisionHa
     );
 
     auto scene = _engine.CreateScene(sceneDefinition);
-    ASSERT_NO_THROW(scene->Update());
+    ASSERT_NO_THROW(scene->Update(0.0f));
 }
+
+TEST_F(EngineTests, Update_GivenSingleStepDeltaTimeAndMovableAabb2dWithVelocityAndAcceleration_ChangesVelocityAndPositionBasedOnAccelerationAndDeltaTime)
+{
+    SceneDefinition sceneDefinition;
+
+    glm::vec2 position(50.0f, 25.0f);
+    glm::vec2 size(5.0f, 10.0f);
+    glm::vec2 velocity(2.0f, 1.0f);
+    glm::vec2 acceleration(-0.5f, -0.2f);
+
+    AfterCreatePtr<IMovableAabb2d> movableAabb;
+    sceneDefinition.AddMovableAabb2d(
+        MovableAabb2dDefinition(
+            &movableAabb,
+            position,
+            size,
+            nullptr,
+            std::any()
+        )
+    );
+
+    auto scene = _engine.CreateScene(sceneDefinition);
+
+    movableAabb->Acceleration(acceleration);
+    movableAabb->Velocity(velocity);
+
+    scene->Update(IScene::StepTime);
+
+    glm::vec2 expectedVelocity = velocity + acceleration * IScene::StepTime;
+    ASSERT_FLOAT_EQ(expectedVelocity.x, movableAabb->Velocity().x);
+    ASSERT_FLOAT_EQ(expectedVelocity.y, movableAabb->Velocity().y);
+
+    glm::vec2 expectedPosition = position + movableAabb->Velocity() * IScene::StepTime;
+    ASSERT_FLOAT_EQ(expectedPosition.x, movableAabb->Position().x);
+    ASSERT_FLOAT_EQ(expectedPosition.y, movableAabb->Position().y);
+}
+
+TEST_F(EngineTests, Update_GivenMultipleStepDeltaTimeAndMovableAabb2dWithVelocityAndAcceleration_ChangesVelocityAndPositionBasedOnAccelerationInSingleFrameSteps)
+{
+    SceneDefinition sceneDefinition;
+
+    float tenStepDeltaTime = 10.0f * IScene::StepTime;
+    glm::vec2 position(50.0f, 25.0f);
+    glm::vec2 size(5.0f, 10.0f);
+    glm::vec2 velocity(2.0f, 1.0f);
+    glm::vec2 acceleration(-0.5f, -0.2f);
+
+    AfterCreatePtr<IMovableAabb2d> movableAabb;
+    sceneDefinition.AddMovableAabb2d(
+        MovableAabb2dDefinition(
+            &movableAabb,
+            position,
+            size,
+            nullptr,
+            std::any()
+        )
+    );
+
+    auto scene = _engine.CreateScene(sceneDefinition);
+
+    movableAabb->Acceleration(acceleration);
+    movableAabb->Velocity(velocity);
+
+    scene->Update(tenStepDeltaTime);
+
+    glm::vec2 expectedVelocity = velocity;
+    glm::vec2 expectedPosition = position;
+    for (float t = 0.0f; t < tenStepDeltaTime; t += IScene::StepTime)
+    {
+        expectedVelocity += acceleration * IScene::StepTime;
+        expectedPosition += expectedVelocity * IScene::StepTime;
+    }
+    ASSERT_FLOAT_EQ(expectedVelocity.x, movableAabb->Velocity().x);
+    ASSERT_FLOAT_EQ(expectedVelocity.y, movableAabb->Velocity().y);
+    ASSERT_FLOAT_EQ(expectedPosition.x, movableAabb->Position().x);
+    ASSERT_FLOAT_EQ(expectedPosition.y, movableAabb->Position().y);
+}
+
+// TODO: Next tests to write:
+// - Ensure collisions are checked each step
+// - Test what happens with deltaTime just under and just over
+//   the step time (to test for accumulation of remainder)
+// - Figure out how to test blending between previous state and
+//   current state

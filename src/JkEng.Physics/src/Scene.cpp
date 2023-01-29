@@ -31,8 +31,17 @@ Scene::Scene(const SceneDefinition& definition)
     }
 }
 
-void Scene::Update()
+void Scene::Update(float deltaTime)
 {
+    for (float t = 0.0f; t < deltaTime; t += IScene::StepTime)
+    {
+        for (auto& aabb : _aabbs)
+        {
+            aabb.Velocity(aabb.Velocity() + aabb.Acceleration() * IScene::StepTime);
+            aabb.Position(aabb.Position() + aabb.Velocity() * IScene::StepTime);
+        }
+    }
+
     size_t aabbCount = _aabbs.size();
     for (size_t outerIndex = 0; outerIndex < aabbCount; outerIndex++)
     {

@@ -14,7 +14,7 @@ namespace JkEng::Physics
     {
     public:
         Scene(const SceneDefinition& definition);
-        void Update() override;
+        void Update(float deltaTime) override;
 
     private:
         // Performance Note: It is substantially faster to keep all Aabbs
