@@ -56,7 +56,7 @@ TEST_F(MovableAabb2dTests, Update_1000NonOverlappingMovableAabb2ds)
     start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < updateCount; i++)
     {
-        scene->Update(0.0f);
+        scene->Update(IScene::StepTime);
     }
     end = std::chrono::high_resolution_clock::now();
     std::cout << "Update " << updateCount << " times: "
@@ -95,7 +95,7 @@ TEST_F(MovableAabb2dTests, Update_1000OverlappingMovableAabb2dsWith1998Collision
     start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < updateCount; i++)
     {
-        scene->Update(0.0f);
+        scene->Update(IScene::StepTime);
     }
     end = std::chrono::high_resolution_clock::now();
     std::cout << "Update " << updateCount << " times: "

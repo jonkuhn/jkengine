@@ -40,21 +40,21 @@ void Scene::Update(float deltaTime)
             aabb.Velocity(aabb.Velocity() + aabb.Acceleration() * IScene::StepTime);
             aabb.Position(aabb.Position() + aabb.Velocity() * IScene::StepTime);
         }
-    }
 
-    size_t aabbCount = _aabbs.size();
-    for (size_t outerIndex = 0; outerIndex < aabbCount; outerIndex++)
-    {
-        auto& aabb0 = _aabbs[outerIndex];
-        for (size_t innerIndex = outerIndex + 1; innerIndex < aabbCount; innerIndex++)
+        size_t aabbCount = _aabbs.size();
+        for (size_t outerIndex = 0; outerIndex < aabbCount; outerIndex++)
         {
-            auto& aabb1 = _aabbs[innerIndex];
-            if (aabb0.IsColliding(aabb1))
+            auto& aabb0 = _aabbs[outerIndex];
+            for (size_t innerIndex = outerIndex + 1; innerIndex < aabbCount; innerIndex++)
             {
-                SnapshotOfReadOnlyAabb2d snapshotOfAabb0(aabb0);
-                SnapshotOfReadOnlyAabb2d snapshotOfAabb1(aabb1);
-                aabb0.CollisionHandler()(snapshotOfAabb1);
-                aabb1.CollisionHandler()(snapshotOfAabb0);
+                auto& aabb1 = _aabbs[innerIndex];
+                if (aabb0.IsColliding(aabb1))
+                {
+                    SnapshotOfReadOnlyAabb2d snapshotOfAabb0(aabb0);
+                    SnapshotOfReadOnlyAabb2d snapshotOfAabb1(aabb1);
+                    aabb0.CollisionHandler()(snapshotOfAabb1);
+                    aabb1.CollisionHandler()(snapshotOfAabb0);
+                }
             }
         }
     }

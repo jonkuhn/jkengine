@@ -53,7 +53,7 @@ TEST_F(EngineTests, Update_GivenSingleMovableAabb2d_CollisionHandlerIsNotCalledF
     );
 
     auto scene = _engine.CreateScene(sceneDefinition);
-    scene->Update(0.0f);
+    scene->Update(IScene::StepTime);
 
     ASSERT_FALSE(collisionHandler0WasCalled);
 }
@@ -103,7 +103,7 @@ TEST_F(EngineTests, Update_GivenTwoNonOverlappingMovableAabb2d_NoCollisionHandle
     );
 
     auto scene = _engine.CreateScene(sceneDefinition);
-    scene->Update(0.0f);
+    scene->Update(IScene::StepTime);
 
     ASSERT_FALSE(collisionHandler0WasCalled);
     ASSERT_FALSE(collisionHandler1WasCalled);
@@ -154,7 +154,7 @@ TEST_F(EngineTests, Update_GivenTwoOverlappingMovableAabb2d_BothCollisionHandler
     );
 
     auto scene = _engine.CreateScene(sceneDefinition);
-    scene->Update(0.0f);
+    scene->Update(IScene::StepTime);
 
     ASSERT_EQ(collisionHandler0CallCount, 1);
     ASSERT_EQ(collisionHandler1CallCount, 1);
@@ -224,7 +224,7 @@ TEST_F(EngineTests, Update_GivenTwoOverlappingMovableAabb2d_CollisionHandlersPas
     );
 
     auto scene = _engine.CreateScene(sceneDefinition);
-    scene->Update(0.0f);
+    scene->Update(IScene::StepTime);
 
     // aabb0's callback will get the position and size of aabb1
     ASSERT_EQ(aabb0CallbackArgPosition, position1);
@@ -275,7 +275,7 @@ TEST_F(EngineTests, Update_GivenTwoOverlappingMovableAabb2dAndNullptrCollisionHa
     );
 
     auto scene = _engine.CreateScene(sceneDefinition);
-    ASSERT_NO_THROW(scene->Update(0.0f));
+    ASSERT_NO_THROW(scene->Update(IScene::StepTime));
 }
 
 TEST_F(EngineTests, Update_GivenSingleStepDeltaTimeAndMovableAabb2dWithVelocityAndAcceleration_ChangesVelocityAndPositionBasedOnAccelerationAndDeltaTime)
@@ -353,6 +353,69 @@ TEST_F(EngineTests, Update_GivenMultipleStepDeltaTimeAndMovableAabb2dWithVelocit
     ASSERT_FLOAT_EQ(expectedVelocity.y, movableAabb->Velocity().y);
     ASSERT_FLOAT_EQ(expectedPosition.x, movableAabb->Position().x);
     ASSERT_FLOAT_EQ(expectedPosition.y, movableAabb->Position().y);
+}
+
+TEST_F(EngineTests, Update_GivenFastObjectsAndLargeDeltaTime_CollisionIsDetected)
+{
+    // If physics and collision detection is not done per-step (and
+    // instead the full 10 steps of time is applied all at once)
+    // these two small fast moving objects will clip through each other
+    // with no collisions being detected
+    float tenStepDeltaTime = 10.0f * IScene::StepTime;
+
+    AfterCreatePtr<IMovableAabb2d> movableAabb0;
+    int obj0CollisionCount = 0;
+    glm::vec2 position0(50.0f, 0.0f);
+    glm::vec2 size0(0.5f, 10.0f);
+    glm::vec2 velocity0(4.0f, 0.0f);
+
+    AfterCreatePtr<IMovableAabb2d> movableAabb1;
+    int obj1CollisionCount = 0;
+    glm::vec2 position1(50.51f, 0.0f);
+    glm::vec2 size1(0.5f, 10.0f);
+    glm::vec2 velocity1(-4.0f, 0.0f);
+
+    SceneDefinition sceneDefinition;
+    sceneDefinition.AddMovableAabb2d(
+        MovableAabb2dDefinition(
+            &movableAabb0,
+            position0,
+            size0,
+            [&obj0CollisionCount](const Physics::IReadOnlyAabb2d&)
+            {
+                obj0CollisionCount++;
+            },
+            std::any()
+        )
+    );
+
+    sceneDefinition.AddMovableAabb2d(
+        MovableAabb2dDefinition(
+            &movableAabb1,
+            position1,
+            size1,
+            [&obj1CollisionCount](const Physics::IReadOnlyAabb2d&)
+            {
+                obj1CollisionCount++;
+            },
+            std::any()
+        )
+    );
+
+    auto scene = _engine.CreateScene(sceneDefinition);
+
+    movableAabb0->Velocity(velocity0);
+    movableAabb1->Velocity(velocity1);
+
+    scene->Update(tenStepDeltaTime);
+
+    // A real implementation would react to the collision in the
+    // collision handler, but for this test just make sure we
+    // called the handler the expected number of times (7 because
+    // on the first 7 of the IScene::StepTime steps the AABBs will
+    // be overlapping)
+    ASSERT_EQ(7, obj0CollisionCount);
+    ASSERT_EQ(7, obj1CollisionCount);
 }
 
 // TODO: Next tests to write:
