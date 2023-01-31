@@ -53,6 +53,7 @@ TEST_F(AabbTests, Constructor_GivenConstructedWithPositionAndSize_VerifyAllPrope
     EXPECT_EQ(a.BottomYMin(), position.y);
     EXPECT_EQ(a.TopYMax(), position.y + size.y);
     EXPECT_EQ(a.Position(), position);
+    EXPECT_EQ(a.PreviousPosition(), position);
     EXPECT_EQ(a.Size(), size);
     EXPECT_EQ(a.Velocity(), velocity);
     EXPECT_EQ(a.Acceleration(), acceleration);
@@ -85,6 +86,7 @@ TEST_F(AabbTests, Constructor_GivenConstructedWithXMinMaxYMinMax_VerifyAllProper
     EXPECT_EQ(a.BottomYMin(), bottomYMin);
     EXPECT_EQ(a.TopYMax(), topYMax);
     EXPECT_EQ(a.Position(), glm::vec2(leftXMin, bottomYMin));
+    EXPECT_EQ(a.PreviousPosition(), glm::vec2(leftXMin, bottomYMin));
     EXPECT_EQ(a.Size(), glm::vec2(rightXMax - leftXMin, topYMax - bottomYMin));
     EXPECT_EQ(a.Velocity(), velocity);
     EXPECT_EQ(a.Acceleration(), acceleration);
@@ -241,4 +243,22 @@ TEST_F(AabbTests, ObjectInfoAs_GivenModifiedViaReference_ConstObjectInfoAsReflec
 
     EXPECT_EQ(retrievedInfo.i, objectInfo.i);
     EXPECT_EQ(retrievedInfo.s, "modified");
+}
+
+TEST_F(AabbTests, Position_GivenNewPositionSet_OldPositionSavedInPreviousPosition)
+{
+    glm::vec2 initialPosition(50.0f, 25.0f);
+    Aabb a(initialPosition, glm::vec2(5.0f, 10.0f), glm::vec2(), glm::vec2(), DoNothingCollisionHandler, nullptr);
+
+    glm::vec2 newPosition1(51.0f, 26.0f);
+    a.Position(newPosition1);
+
+    // We need to change position twice since the Aabb is constructed
+    // with previous position set to the same as the position passed
+    // to the constructor
+    glm::vec2 newPosition2(52.0f, 27.0f);
+    a.Position(newPosition2);
+
+    EXPECT_EQ(newPosition2, a.Position());
+    EXPECT_EQ(newPosition1, a.PreviousPosition());
 }

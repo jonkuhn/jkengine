@@ -23,6 +23,7 @@ namespace JkEng::Physics
             _rightXMax(position.x + size.x),
             _bottomYMin(position.y),
             _topYMax(position.y + size.y),
+            _previousPosition(position),
             _velocity(velocity),
             _acceleration(acceleration),
             _collisionHandler(collisionHandler),
@@ -43,6 +44,7 @@ namespace JkEng::Physics
             _rightXMax(rightXMax),
             _bottomYMin(bottomYMin),
             _topYMax(topYMax),
+            _previousPosition(leftXMin, bottomYMin),
             _velocity(velocity),
             _acceleration(acceleration),
             _collisionHandler(collisionHandler),
@@ -75,6 +77,7 @@ namespace JkEng::Physics
 
         virtual glm::vec2 Size() const override { return glm::vec2(_rightXMax - _leftXMin, _topYMax - _bottomYMin); }
         virtual glm::vec2 Position() const override { return glm::vec2(_leftXMin, _bottomYMin); }
+        virtual const glm::vec2& PreviousPosition() const override { return _previousPosition; }
 
         virtual glm::vec2 Velocity() const override { return _velocity; }
         virtual glm::vec2 Acceleration() const override { return _acceleration; }
@@ -89,6 +92,7 @@ namespace JkEng::Physics
 
         virtual void Position(const glm::vec2& position) override
         {
+            _previousPosition = Position();
             SetPositionAndSize(position, Size());
         }
 
@@ -114,6 +118,7 @@ namespace JkEng::Physics
         float _rightXMax;
         float _bottomYMin;
         float _topYMax;
+        glm::vec2 _previousPosition;
         glm::vec2 _velocity;
         glm::vec2 _acceleration;
         IReadOnlyAabb2d::CollisionHandler _collisionHandler;

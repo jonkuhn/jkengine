@@ -8,6 +8,7 @@
 using namespace JkEng::Physics;
 
 Scene::Scene(const SceneDefinition& definition)
+  : _timeNotYetSimulated(0.0f)
 {
     auto& movableAabbDefinitions = definition.MovableAabb2dDefinitions();
     _aabbs.reserve(movableAabbDefinitions.size());
@@ -33,8 +34,17 @@ Scene::Scene(const SceneDefinition& definition)
 
 void Scene::Update(float deltaTime)
 {
-    for (float t = 0.0f; t < deltaTime; t += IScene::StepTime)
+    // TODO: Need to have 2 different copies of state in class
+    // members to swap between previous and current state
+    // need exposed state to be updated at the end based on
+    // interpolation.
+    // Maybe having the state just be positions is all that is
+    // needed.
+    // How will updates from client code get into current state?
+    _timeNotYetSimulated += deltaTime;
+    while(_timeNotYetSimulated >= IScene::StepTime)
     {
+        _timeNotYetSimulated -= IScene::StepTime;
         for (auto& aabb : _aabbs)
         {
             aabb.Velocity(aabb.Velocity() + aabb.Acceleration() * IScene::StepTime);

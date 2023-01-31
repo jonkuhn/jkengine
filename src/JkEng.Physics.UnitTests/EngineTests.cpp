@@ -418,9 +418,92 @@ TEST_F(EngineTests, Update_GivenFastObjectsAndLargeDeltaTime_CollisionIsDetected
     ASSERT_EQ(7, obj1CollisionCount);
 }
 
-// TODO: Next tests to write:
-// - Ensure collisions are checked each step
-// - Test what happens with deltaTime just under and just over
-//   the step time (to test for accumulation of remainder)
-// - Figure out how to test blending between previous state and
-//   current state
+TEST_F(EngineTests, Update_Given4UpdatesWithDeltaTimeHalfOfStepTime_PositionChangesEveryOtherUpdate)
+{
+    // Arrange
+    SceneDefinition sceneDefinition;
+
+    float deltaTimeHalfOfStepTime = 0.5f * IScene::StepTime;
+    glm::vec2 position(50.0f, 25.0f);
+    glm::vec2 size(5.0f, 10.0f);
+    glm::vec2 velocity(2.0f, 1.0f);
+
+    AfterCreatePtr<IMovableAabb2d> movableAabb;
+    sceneDefinition.AddMovableAabb2d(
+        MovableAabb2dDefinition(
+            &movableAabb,
+            position,
+            size,
+            nullptr,
+            std::any()
+        )
+    );
+
+    auto scene = _engine.CreateScene(sceneDefinition);
+    movableAabb->Velocity(velocity);
+
+    // Act
+    scene->Update(deltaTimeHalfOfStepTime);
+    glm::vec2 positionAfter1stUpdate = movableAabb->Position();
+
+    scene->Update(deltaTimeHalfOfStepTime);
+    glm::vec2 positionAfter2ndUpdate = movableAabb->Position();
+
+    scene->Update(deltaTimeHalfOfStepTime);
+    glm::vec2 positionAfter3rdUpdate = movableAabb->Position();
+
+    scene->Update(deltaTimeHalfOfStepTime);
+    glm::vec2 positionAfter4thUpdate = movableAabb->Position();
+
+    
+    // Assert
+    glm::vec2 expectedPosition = position;
+    EXPECT_FLOAT_EQ(expectedPosition.x, positionAfter1stUpdate.x);
+    EXPECT_FLOAT_EQ(expectedPosition.y, positionAfter1stUpdate.y);
+
+    expectedPosition += velocity * IScene::StepTime;
+    EXPECT_FLOAT_EQ(expectedPosition.x, positionAfter2ndUpdate.x);
+    EXPECT_FLOAT_EQ(expectedPosition.y, positionAfter2ndUpdate.y);
+
+    EXPECT_FLOAT_EQ(expectedPosition.x, positionAfter3rdUpdate.x);
+    EXPECT_FLOAT_EQ(expectedPosition.y, positionAfter3rdUpdate.y);
+
+    expectedPosition += velocity * IScene::StepTime;
+    EXPECT_FLOAT_EQ(expectedPosition.x, positionAfter4thUpdate.x);
+    EXPECT_FLOAT_EQ(expectedPosition.y, positionAfter4thUpdate.y);
+}
+
+TEST_F(EngineTests, Update_GivenUpdatesWithDeltaTimeEqualStepTime_PreviousPositionIsSaved)
+{
+    // Arrange
+    SceneDefinition sceneDefinition;
+
+    glm::vec2 initialPosition(50.0f, 25.0f);
+    glm::vec2 size(5.0f, 10.0f);
+    glm::vec2 velocity(2.0f, 1.0f);
+
+    AfterCreatePtr<IMovableAabb2d> movableAabb;
+    sceneDefinition.AddMovableAabb2d(
+        MovableAabb2dDefinition(
+            &movableAabb,
+            initialPosition,
+            size,
+            nullptr,
+            std::any()
+        )
+    );
+
+    auto scene = _engine.CreateScene(sceneDefinition);
+    movableAabb->Velocity(velocity);
+
+    // Act
+    scene->Update(IScene::StepTime);
+
+    // Assert
+    glm::vec2 expectedPosition = initialPosition + velocity * IScene::StepTime;
+    EXPECT_FLOAT_EQ(expectedPosition.x, movableAabb->Position().x);
+    EXPECT_FLOAT_EQ(expectedPosition.y, movableAabb->Position().y);
+    glm::vec2 expectedPreviousPosition = initialPosition;
+    EXPECT_FLOAT_EQ(expectedPreviousPosition.x, movableAabb->PreviousPosition().x);
+    EXPECT_FLOAT_EQ(expectedPreviousPosition.y, movableAabb->PreviousPosition().y);
+}
