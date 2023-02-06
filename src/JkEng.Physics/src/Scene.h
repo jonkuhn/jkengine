@@ -15,6 +15,7 @@ namespace JkEng::Physics
     public:
         Scene(const SceneDefinition& definition);
         void Update(float deltaTime) override;
+        float TimeNotYetSimulated() override { return _timeNotYetSimulated; }
 
     private:
         float _timeNotYetSimulated;

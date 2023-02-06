@@ -507,3 +507,34 @@ TEST_F(EngineTests, Update_GivenUpdatesWithDeltaTimeEqualStepTime_PreviousPositi
     EXPECT_FLOAT_EQ(expectedPreviousPosition.x, movableAabb->PreviousPosition().x);
     EXPECT_FLOAT_EQ(expectedPreviousPosition.y, movableAabb->PreviousPosition().y);
 }
+
+TEST_F(EngineTests, Update_Given3UpdatesWithDeltaTimeOverStepTime_SceneNotSimulatedTimeEqualsTotalExcessTime)
+{
+    // Arrange
+    SceneDefinition sceneDefinition;
+
+    float deltaTime10PercentOverStepTime = 1.1f * IScene::StepTime;
+    glm::vec2 velocity(2.0f, 1.0f);
+
+    AfterCreatePtr<IMovableAabb2d> movableAabb;
+    sceneDefinition.AddMovableAabb2d(
+        MovableAabb2dDefinition(
+            &movableAabb,
+            glm::vec2(50.0f, 25.0f),
+            glm::vec2(5.0f, 10.0f),
+            nullptr,
+            std::any()
+        )
+    );
+
+    auto scene = _engine.CreateScene(sceneDefinition);
+    movableAabb->Velocity(velocity);
+
+    // Act
+    scene->Update(deltaTime10PercentOverStepTime);
+    scene->Update(deltaTime10PercentOverStepTime);
+    scene->Update(deltaTime10PercentOverStepTime);
+
+    // Assert
+    EXPECT_FLOAT_EQ(scene->TimeNotYetSimulated(), 0.3 * IScene::StepTime);
+}
