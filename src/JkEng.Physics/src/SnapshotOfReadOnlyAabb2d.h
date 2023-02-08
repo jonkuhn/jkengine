@@ -23,7 +23,7 @@ namespace JkEng::Physics
 
         }
 
-        glm::vec2 Position() const override
+        const glm::vec2& Position() const override
         {
             return _position;
         }
@@ -38,12 +38,12 @@ namespace JkEng::Physics
             return _size;
         }
 
-        glm::vec2 Velocity() const override
+        const glm::vec2& Velocity() const override
         {
             return _velocity;
         }
 
-        glm::vec2 Acceleration() const override
+        const glm::vec2& Acceleration() const override
         {
             return _acceleration;
         }

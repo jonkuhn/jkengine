@@ -19,10 +19,8 @@ namespace JkEng::Physics
             glm::vec2 acceleration,
             IReadOnlyAabb2d::CollisionHandler collisionHandler,
             std::any objectInfo)
-          : _leftXMin(position.x),
-            _rightXMax(position.x + size.x),
-            _bottomYMin(position.y),
-            _topYMax(position.y + size.y),
+          : _bottomLeft(position),
+            _topRight(position + size),
             _previousPosition(position),
             _velocity(velocity),
             _acceleration(acceleration),
@@ -40,10 +38,8 @@ namespace JkEng::Physics
             glm::vec2 acceleration,
             IReadOnlyAabb2d::CollisionHandler collisionHandler,
             std::any objectInfo)
-          : _leftXMin(leftXMin),
-            _rightXMax(rightXMax),
-            _bottomYMin(bottomYMin),
-            _topYMax(topYMax),
+          : _bottomLeft(leftXMin, bottomYMin),
+            _topRight(rightXMax, topYMax),
             _previousPosition(leftXMin, bottomYMin),
             _velocity(velocity),
             _acceleration(acceleration),
@@ -61,8 +57,8 @@ namespace JkEng::Physics
 
         inline bool IsColliding(const Aabb &other) const
         {
-            return _leftXMin <= other._rightXMax && _rightXMax >= other._leftXMin
-                && _bottomYMin <= other._topYMax && _topYMax >= other._bottomYMin;
+            return _bottomLeft.x <= other._topRight.x && _topRight.x >= other._bottomLeft.x
+                && _bottomLeft.y <= other._topRight.y && _topRight.y >= other._bottomLeft.y;
         }
 
         inline IReadOnlyAabb2d::CollisionHandler CollisionHandler() const
@@ -70,17 +66,17 @@ namespace JkEng::Physics
             return _collisionHandler;
         }
 
-        inline float LeftXMin() const { return _leftXMin; }
-        inline float RightXMax() const { return _rightXMax; }
-        inline float BottomYMin() const { return _bottomYMin; }
-        inline float TopYMax() const { return _topYMax; }
+        inline float LeftXMin() const { return _bottomLeft.x; }
+        inline float RightXMax() const { return _topRight.x; }
+        inline float BottomYMin() const { return _bottomLeft.y; }
+        inline float TopYMax() const { return _topRight.y; }
 
-        virtual glm::vec2 Size() const override { return glm::vec2(_rightXMax - _leftXMin, _topYMax - _bottomYMin); }
-        virtual glm::vec2 Position() const override { return glm::vec2(_leftXMin, _bottomYMin); }
+        virtual glm::vec2 Size() const override { return glm::vec2(_topRight.x - _bottomLeft.x, _topRight.y - _bottomLeft.y); }
+        virtual const glm::vec2& Position() const override { return _bottomLeft; }
         virtual const glm::vec2& PreviousPosition() const override { return _previousPosition; }
 
-        virtual glm::vec2 Velocity() const override { return _velocity; }
-        virtual glm::vec2 Acceleration() const override { return _acceleration; }
+        virtual const glm::vec2& Velocity() const override { return _velocity; }
+        virtual const glm::vec2& Acceleration() const override { return _acceleration; }
 
         virtual const std::any& ObjectInfo() const override { return _objectInfo; }
         virtual std::any& ObjectInfo() override { return _objectInfo; }
@@ -114,10 +110,8 @@ namespace JkEng::Physics
         // non-overlapping Aabbs was ~3% faster, but it was the same or
         // slower for 1000 Aabbs with 1998 collisions.
 
-        float _leftXMin;
-        float _rightXMax;
-        float _bottomYMin;
-        float _topYMax;
+        glm::vec2 _bottomLeft;
+        glm::vec2 _topRight;
         glm::vec2 _previousPosition;
         glm::vec2 _velocity;
         glm::vec2 _acceleration;
