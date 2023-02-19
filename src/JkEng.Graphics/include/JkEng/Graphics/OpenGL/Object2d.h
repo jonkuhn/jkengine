@@ -17,8 +17,7 @@ namespace JkEng::Graphics::OpenGL
         : _position(0.0f, 0.0f, 0.0f),
           _size(1.0f, 1.0f),
           _rotationDegrees(0.0f),
-          _model(),
-          _modelNeedsUpdated(true)
+          _model()
         {
 
         }
@@ -78,6 +77,13 @@ namespace JkEng::Graphics::OpenGL
             return _rotationDegrees;
         }
 
+        virtual void Mirror(bool mirrorX, bool mirrorY) override
+        {
+            _mirrorX = mirrorX;
+            _mirrorY = mirrorY;
+            _modelNeedsUpdated = true;
+        }
+
         inline const glm::mat4& ModelMatrix() const
         {
             EnsureModelMatrixIsUpdated();
@@ -89,7 +95,9 @@ namespace JkEng::Graphics::OpenGL
         glm::vec2 _size;
         float _rotationDegrees;
         mutable glm::mat4 _model;  
-        mutable bool _modelNeedsUpdated;
+        mutable bool _modelNeedsUpdated : 1 = true;
+        bool _mirrorX : 1 = false;
+        bool _mirrorY : 1 = false;
         bool _show : 1 = true;
 
         void EnsureModelMatrixIsUpdated() const;
