@@ -62,6 +62,28 @@ protected:
         return result;
     }
 
+    SceneWithOneSprite SetupSceneWithBlackRedWhiteBlueSquare()
+    {
+        SceneWithOneSprite result{};
+        SceneDefinition sceneDefinition{DrawingLayers};
+
+        PngImage image(&_libPng, "TestFiles/SingleTileBlackRedWhiteBlue.png");
+        TileAtlasDefinition tileAtlas{
+            DrawingLayers,
+            &image,
+            glm::vec2(1.0f, 1.0f),
+            glm::vec2(1.0f / 16.0f, 1.0f / 16.0f)
+        };
+
+        tileAtlas.AddSprite(SpriteDefinition{&result.sprite, 0});
+        sceneDefinition.AddTileAtlas(tileAtlas);
+
+        result.scene = _engine->CreateScene(sceneDefinition);
+        result.scene->ClearColor(ColorBackgroundUglyYellow);
+        result.camera = result.scene->Camera2d();
+        return result;
+    }
+
     SceneWithOneSprite SetupSceneWithOneAllBlackSpriteFrom16x16CheckerBoardAtlasWith1PixelBorder()
     {
         // Border size is 1 pixel on each edge of each of the 16x16 pixel tiles
@@ -754,6 +776,112 @@ TEST_F(SpriteTests, GivenTestPatternSpriteWithOnePixelBorder_CorrectPortionIsVis
               ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
               ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite,
               ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite, ColorWhite },
+        } })
+    );
+}
+
+TEST_F(SpriteTests, Sprite4x4CenteredInFov_GivenMirrorCalledWithXTrueYFalse_SpriteIsMirroredHorizontally)
+{
+    auto setup = SetupSceneWithBlackRedWhiteBlueSquare();
+    setup.sprite->Position(glm::vec2(-2.0f, -2.0f));
+    setup.sprite->Rotation(0.0f);
+    setup.sprite->Size(glm::vec2(4.0f, 4.0f));
+    setup.sprite->AtlasLocation(GridLocation(0, 0));
+    setup.camera->Center(glm::vec2(0.0f, 0.0f));
+
+    // Set FoV so that 8 units are visible horizontally and due
+    // to the aspect ration 6 units will be visible vertically
+    setup.camera->FieldOfView(ICamera2d::Fov(
+        -4.0f, 4.0f,
+        -3.0f, 3.0f));
+
+    setup.sprite->Mirror(true, false);
+
+    setup.scene->Render();
+
+    const unsigned int ColumnCount = 8;
+    const unsigned int RowCount = 6;
+    ExpectTileColorGridOnScreen<ColumnCount, RowCount>(
+        *(_engine->TakeScreenshot()),
+        std::array<std::array<Color, ColumnCount>, RowCount>(
+        { {
+            // 1st row is all background color
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+              ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            // 2nd row has red and black centered
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorRed, ColorRed,
+              ColorBlack, ColorBlack, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            // 3rd row also has red and black centered
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorRed, ColorRed,
+              ColorBlack, ColorBlack, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            // 4th row has white and blue centered
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorWhite, ColorWhite,
+              ColorBlue, ColorBlue, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            // 5th row also has white and blue centered
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorWhite, ColorWhite,
+              ColorBlue, ColorBlue, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            // 6th row is all background color
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+              ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow }
+
+        } })
+    );
+}
+
+TEST_F(SpriteTests, Sprite4x4CenteredInFov_GivenMirrorCalledWithXFalseYTrue_SpriteIsMirroredHorizontally)
+{
+    auto setup = SetupSceneWithBlackRedWhiteBlueSquare();
+    setup.sprite->Position(glm::vec2(-2.0f, -2.0f));
+    setup.sprite->Rotation(0.0f);
+    setup.sprite->Size(glm::vec2(4.0f, 4.0f));
+    setup.sprite->AtlasLocation(GridLocation(0, 0));
+    setup.camera->Center(glm::vec2(0.0f, 0.0f));
+
+    // Set FoV so that 8 units are visible horizontally and due
+    // to the aspect ration 6 units will be visible vertically
+    setup.camera->FieldOfView(ICamera2d::Fov(
+        -4.0f, 4.0f,
+        -3.0f, 3.0f));
+
+    setup.sprite->Mirror(false, true);
+
+    setup.scene->Render();
+
+    const unsigned int ColumnCount = 8;
+    const unsigned int RowCount = 6;
+    ExpectTileColorGridOnScreen<ColumnCount, RowCount>(
+        *(_engine->TakeScreenshot()),
+        std::array<std::array<Color, ColumnCount>, RowCount>(
+        { {
+            // 1st row is all background color
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+              ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            // 2nd row has blue and white centered
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBlue, ColorBlue,
+              ColorWhite, ColorWhite, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            // 3rd row also has blue and white centered
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBlue, ColorBlue,
+              ColorWhite, ColorWhite, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            // 4th row has black and red centered
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBlack, ColorBlack,
+              ColorRed, ColorRed, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            // 5th row also has black and red centered
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBlack, ColorBlack,
+              ColorRed, ColorRed, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow },
+
+            // 6th row is all background color
+            { ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow,
+              ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow, ColorBackgroundUglyYellow }
+
         } })
     );
 }

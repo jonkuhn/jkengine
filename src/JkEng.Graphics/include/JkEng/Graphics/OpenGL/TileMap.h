@@ -85,6 +85,11 @@ namespace JkEng::Graphics::OpenGL
             return _object2d.Rotation();
         }
 
+        inline void Mirror(bool mirrorX, bool mirrorY) override
+        {
+            return _object2d.Mirror(mirrorX, mirrorY);
+        }
+
         inline const glm::mat4& ModelMatrix() const
         {
             return _object2d.ModelMatrix();

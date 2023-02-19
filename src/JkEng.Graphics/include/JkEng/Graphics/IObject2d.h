@@ -20,5 +20,6 @@ namespace JkEng::Graphics
         virtual const glm::vec2& Size() const = 0;
         virtual void Rotation(float rotationDegrees) = 0;
         virtual float Rotation() const = 0;
+        virtual void Mirror(bool mirrorX, bool mirrorY) = 0;
     };
 }
