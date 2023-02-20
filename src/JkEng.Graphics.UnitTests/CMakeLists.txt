@@ -10,6 +10,7 @@ target_sources(JkEng.Graphics.UnitTests
     FakeImage.h
     PngImageTests.cpp
     TestHelpers.h
+    TileAtlasDefinitionTests.cpp
     OpenGL/MockOpenGLWrapper.h
     OpenGL/MockShader.h
     OpenGL/Object2dTests.cpp
