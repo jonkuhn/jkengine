@@ -27,7 +27,11 @@ namespace JkEng::Graphics
               _perLayerTileMapDefinitions(numberOfDrawingLayers),
               _perLayerSpriteDefinitions(numberOfDrawingLayers)
         {
-
+            if (_eachTileBorderThicknessInTiles.x >= 0.5 || _eachTileBorderThicknessInTiles.y >= 0.5 )
+            {
+                throw std::invalid_argument("eachTileBorderThicknessInTiles must be less than 50% "
+                    "(generally it should be equivalent to 1 pixel).");
+            }
         }
 
         inline void AddTileMap(TileMapDefinition tileMapDefinition)
