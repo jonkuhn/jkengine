@@ -18,7 +18,6 @@ namespace JkEng::Physics
         virtual ~IReadOnlyAabb2d() = default;
         virtual glm::vec2 Size() const = 0;
         virtual const glm::vec2& Position() const = 0;
-        virtual const glm::vec2& PreviousPosition() const = 0;
         virtual const glm::vec2& Velocity() const = 0;
         virtual const glm::vec2& Acceleration() const = 0;
         virtual const std::any& ObjectInfo() const = 0;

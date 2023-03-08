@@ -53,7 +53,6 @@ TEST_F(AabbTests, Constructor_GivenConstructedWithPositionAndSize_VerifyAllPrope
     EXPECT_EQ(a.BottomYMin(), position.y);
     EXPECT_EQ(a.TopYMax(), position.y + size.y);
     EXPECT_EQ(a.Position(), position);
-    EXPECT_EQ(a.PreviousPosition(), position);
     EXPECT_EQ(a.Size(), size);
     EXPECT_EQ(a.Velocity(), velocity);
     EXPECT_EQ(a.Acceleration(), acceleration);
@@ -86,7 +85,6 @@ TEST_F(AabbTests, Constructor_GivenConstructedWithXMinMaxYMinMax_VerifyAllProper
     EXPECT_EQ(a.BottomYMin(), bottomYMin);
     EXPECT_EQ(a.TopYMax(), topYMax);
     EXPECT_EQ(a.Position(), glm::vec2(leftXMin, bottomYMin));
-    EXPECT_EQ(a.PreviousPosition(), glm::vec2(leftXMin, bottomYMin));
     EXPECT_EQ(a.Size(), glm::vec2(rightXMax - leftXMin, topYMax - bottomYMin));
     EXPECT_EQ(a.Velocity(), velocity);
     EXPECT_EQ(a.Acceleration(), acceleration);
@@ -260,5 +258,4 @@ TEST_F(AabbTests, Position_GivenNewPositionSet_OldPositionSavedInPreviousPositio
     a.Position(newPosition2);
 
     EXPECT_EQ(newPosition2, a.Position());
-    EXPECT_EQ(newPosition1, a.PreviousPosition());
 }

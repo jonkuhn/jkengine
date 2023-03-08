@@ -14,7 +14,6 @@ namespace JkEng::Physics
     public:
         SnapshotOfReadOnlyAabb2d(const IReadOnlyAabb2d& aabb)
             : _position(aabb.Position()),
-              _previousPosition(aabb.PreviousPosition()),
               _size(aabb.Size()),
               _velocity(aabb.Velocity()),
               _acceleration(aabb.Acceleration()),
@@ -26,11 +25,6 @@ namespace JkEng::Physics
         const glm::vec2& Position() const override
         {
             return _position;
-        }
-
-        const glm::vec2& PreviousPosition() const override
-        {
-            return _previousPosition;
         }
 
         glm::vec2 Size() const override
@@ -55,7 +49,6 @@ namespace JkEng::Physics
 
     private:
         glm::vec2 _position;
-        glm::vec2 _previousPosition;
         glm::vec2 _size;
         glm::vec2 _velocity;
         glm::vec2 _acceleration;

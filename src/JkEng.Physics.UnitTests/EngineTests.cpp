@@ -503,9 +503,6 @@ TEST_F(EngineTests, Update_GivenUpdatesWithDeltaTimeEqualStepTime_PreviousPositi
     glm::vec2 expectedPosition = initialPosition + velocity * IScene::StepTime;
     EXPECT_FLOAT_EQ(expectedPosition.x, movableAabb->Position().x);
     EXPECT_FLOAT_EQ(expectedPosition.y, movableAabb->Position().y);
-    glm::vec2 expectedPreviousPosition = initialPosition;
-    EXPECT_FLOAT_EQ(expectedPreviousPosition.x, movableAabb->PreviousPosition().x);
-    EXPECT_FLOAT_EQ(expectedPreviousPosition.y, movableAabb->PreviousPosition().y);
 }
 
 TEST_F(EngineTests, Update_Given3UpdatesWithDeltaTimeOverStepTime_SceneNotSimulatedTimeEqualsTotalExcessTime)
