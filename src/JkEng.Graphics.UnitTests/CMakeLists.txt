@@ -7,8 +7,10 @@ endif()
 target_sources(JkEng.Graphics.UnitTests
   PRIVATE
     main_test.cpp
+    AnimationTests.cpp
     FakeImage.h
     PngImageTests.cpp
+    SpriteAnimatorTests.cpp
     TestHelpers.h
     TileAtlasDefinitionTests.cpp
     OpenGL/MockOpenGLWrapper.h
@@ -21,6 +23,7 @@ target_sources(JkEng.Graphics.UnitTests
     Window/MockGlfwWrapper.h
     Window/WindowTests.cpp
     MockLibPngWrapper.h
+    MockSprite.h
 )
 target_include_directories(JkEng.Graphics.UnitTests
   PRIVATE
