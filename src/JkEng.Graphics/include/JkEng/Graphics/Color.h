@@ -22,6 +22,11 @@ namespace JkEng::Graphics
         {
             return r == other.r && g == other.g && b == other.b && a == other.a;
         }
+
+        bool operator!=(const Color &other) const
+        {
+            return !operator==(other);
+        }
     };
 
     std::ostream& operator<<(std::ostream &strm, const JkEng::Graphics::Color &p);

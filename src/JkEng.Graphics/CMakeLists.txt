@@ -9,6 +9,7 @@ target_include_directories(JkEng.Graphics PRIVATE include/JkEng/Graphics)
 target_include_directories(JkEng.Graphics PRIVATE src)
 target_sources(JkEng.Graphics
   PRIVATE
+    include/JkEng/Graphics/Animation.h
     include/JkEng/Graphics/Color.h
     include/JkEng/Graphics/Graphics.h
     include/JkEng/Graphics/GridLocation.h
@@ -23,12 +24,15 @@ target_sources(JkEng.Graphics
     include/JkEng/Graphics/SceneDefinition.h
     include/JkEng/Graphics/IScreenshot.h
     include/JkEng/Graphics/ISprite.h
+    include/JkEng/Graphics/SpriteAnimator.h
     include/JkEng/Graphics/SpriteDefinition.h
     include/JkEng/Graphics/TileAtlasDefinition.h
     include/JkEng/Graphics/ITileMap.h
     include/JkEng/Graphics/TileMapDefinition.h
+    src/Animation.cpp
     src/Color.cpp
     src/PngImage.cpp
+    src/SpriteAnimator.cpp
     include/JkEng/Graphics/OpenGL/Camera2d.h
     include/JkEng/Graphics/OpenGL/Engine.h
     include/JkEng/Graphics/OpenGL/Object2d.h

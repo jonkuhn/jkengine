@@ -7,6 +7,6 @@
 #pragma clang diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
 class MockShader : public JkEng::Graphics::OpenGL::IShader {
 public:
-    MOCK_METHOD(GLuint, Handle, (), (const override));
+    MOCK_METHOD(GLuint, Handle, (), (const, override));
 };
 #pragma clang diagnostic pop
