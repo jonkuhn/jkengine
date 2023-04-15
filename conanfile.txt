@@ -9,5 +9,5 @@ libpng/1.6.37
 cmake
 
 [options]
-glad:gl_profile=core
+glad:gl_profile=compatibility
 glad:gl_version=3.3

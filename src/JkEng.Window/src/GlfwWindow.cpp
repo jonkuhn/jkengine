@@ -23,7 +23,7 @@ GlfwWindow::GlfwWindow(IGlfwWrapper& glfw, int winWidth, int winHeight, const st
 
     _glfw.WindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     _glfw.WindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    _glfw.WindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    _glfw.WindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
 #ifdef __APPLE__
     _glfw.WindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);

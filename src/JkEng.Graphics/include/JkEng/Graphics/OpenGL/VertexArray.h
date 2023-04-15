@@ -102,17 +102,21 @@ namespace JkEng::Graphics::OpenGL
         VertexArray(IOpenGLWrapper& gl, const Params& params)
             : _gl(&gl),
               _drawElements(false),
-              _vertexArray(*_gl, 0, [](IOpenGLWrapper& gl, GLuint h) { gl.DeleteVertexArrays(1, &h); }),
               _vertexBuffer(*_gl, 0, [](IOpenGLWrapper& gl, GLuint h) { gl.DeleteBuffers(1, &h); }),
-              _elementBuffer(*_gl, 0, [](IOpenGLWrapper& gl, GLuint h) { gl.DeleteBuffers(1, &h); })
+              _elementBuffer(*_gl, 0, [](IOpenGLWrapper& gl, GLuint h) { gl.DeleteBuffers(1, &h); }),
+              _vertexAttributes(params.Attributes())
         {
+            if (_vertexAttributes.empty())
+            {
+                throw std::invalid_argument(
+                    "At least one vertex attribute must be provided");
+            }
+
             // clear errors so get GetError below will be accurate
             _gl->GetError();
 
-            SetupVertexArray(params.Vertices());
+            SetupVertexBuffer(params.Vertices());
 
-            SetupAttributes(params.Attributes());
-        
             if (!params.TriangleElementIndices().empty())
             {
                 SetupForDrawingElements(params.TriangleElementIndices());
@@ -123,7 +127,7 @@ namespace JkEng::Graphics::OpenGL
             }
         
             _gl->BindBuffer(GL_ARRAY_BUFFER, 0); 
-            _gl->BindVertexArray(0); 
+            _gl->BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); 
 
             ThrowIfOpenGlError(*_gl, "VertexArray Constructor");
         }
@@ -135,14 +139,18 @@ namespace JkEng::Graphics::OpenGL
 
         void Draw()
         {
-            _gl->BindVertexArray(_vertexArray.get());
+            // TODO: bind buffers
         
             if (_drawElements)
             {
+
+                BindVertexArrayAndEnableVertexAttributes();
+                _gl->BindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBuffer.get());
                 _gl->DrawElements(GL_TRIANGLES, _drawCount, GL_UNSIGNED_INT, 0);
             }
             else
             {
+                BindVertexArrayAndEnableVertexAttributes();
                 _gl->DrawArrays(GL_TRIANGLES, 0, _drawCount);
             }
         }
@@ -155,46 +163,42 @@ namespace JkEng::Graphics::OpenGL
         typedef UniqueHandle<std::function<void (IOpenGLWrapper&, GLuint)>> UniqueVertexArrayHandle;
         typedef UniqueHandle<std::function<void (IOpenGLWrapper&, GLuint)>> UniqueBufferHandle;
 
-        UniqueVertexArrayHandle _vertexArray;
         UniqueBufferHandle _vertexBuffer;
         UniqueBufferHandle _elementBuffer;
+        std::vector<Attribute> _vertexAttributes;
 
-        void SetupVertexArray(const std::vector<TVertex>& vertices)
+        void SetupVertexBuffer(const std::vector<TVertex>& vertices)
         {
             {
                 GLuint tmpHandle = 0;
-                _gl->GenVertexArrays(1, &tmpHandle);
-                ThrowIfInvalidHandle(tmpHandle, "GenVertexArrays");
-                _vertexArray.reset(tmpHandle);
-
                 _gl->GenBuffers(1, &tmpHandle);
                 ThrowIfInvalidHandle(tmpHandle, "GenBuffers");
                 _vertexBuffer.reset(tmpHandle);
             }
         
-            _gl->BindVertexArray(_vertexArray.get());
-
             _gl->BindBuffer(GL_ARRAY_BUFFER, _vertexBuffer.get());
+            ThrowIfOpenGlError(*_gl, "BindBuffer (GL_ARRAY_BUFFER)");
 
             _gl->BufferData(
                 GL_ARRAY_BUFFER,
                 vertices.size() * sizeof(TVertex),
                 vertices.data(),
                 GL_STATIC_DRAW);
+            ThrowIfOpenGlError(*_gl, "BufferData (GL_ARRAY_BUFFER)");
+
+            _gl->BindBuffer(GL_ARRAY_BUFFER, 0);
+            ThrowIfOpenGlError(*_gl, "BufferData 0 (GL_ARRAY_BUFFER)");
         }
 
-        void SetupAttributes(const std::vector<Attribute>& attributes)
+        void BindVertexArrayAndEnableVertexAttributes()
         {
-            if (attributes.empty())
-            {
-                throw std::invalid_argument(
-                    "At least one vertex attribute must be provided");
-            }
+            // TODO: I think I need to bind the vertex array buffer and do this during draw
+            // (based on https://stackoverflow.com/questions/32161150/opengles-2-0-without-vao)
+
+            _gl->BindBuffer(GL_ARRAY_BUFFER, _vertexBuffer.get());
         
-            GLint bytesPerVertex = 0;
-            for (const auto& attr : attributes)
+            for (const auto& attr : _vertexAttributes)
             {
-                bytesPerVertex += attr.Size();
                 _gl->VertexAttribPointer(
                     attr.Index(),
                     attr.Size(),
@@ -202,8 +206,10 @@ namespace JkEng::Graphics::OpenGL
                     GL_FALSE,
                     sizeof(TVertex),
                     reinterpret_cast<void*>(attr.OffsetBytes()));
+                ThrowIfOpenGlError(*_gl, "VertexAttribPointer");
 
                 _gl->EnableVertexAttribArray(attr.Index());
+                ThrowIfOpenGlError(*_gl, "EnableVertexAttribArray");
             }
         }
 
@@ -218,12 +224,17 @@ namespace JkEng::Graphics::OpenGL
 
             // Setup element indices if they were provided.
             _gl->BindBuffer(GL_ELEMENT_ARRAY_BUFFER, _elementBuffer.get());
+            ThrowIfOpenGlError(*_gl, "BindBuffer (GL_ELEMENT_ARRAY_BUFFER)");
 
             _gl->BufferData(
                 GL_ELEMENT_ARRAY_BUFFER,
                 triangleElementIndices.size() * sizeof(GLuint),
                 triangleElementIndices.data(),
                 GL_STATIC_DRAW);
+            ThrowIfOpenGlError(*_gl, "BufferData (GL_ELEMENT_ARRAY_BUFFER)");
+
+            _gl->BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            ThrowIfOpenGlError(*_gl, "BufferData 0 (GL_ELEMENT_ARRAY_BUFFER)");
     
             // Element indices were provided, so set a flag to use
             // glDrawElements instead of glDrawArrays.  Set the count
