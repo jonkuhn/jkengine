@@ -1,7 +1,11 @@
 #pragma once
 
+#include <utility>
+
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #include <glm/glm.hpp>
 #pragma clang diagnostic pop
 

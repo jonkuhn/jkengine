@@ -6,6 +6,7 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #pragma clang diagnostic pop
